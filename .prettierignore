@@ -1,0 +1,18 @@
+node_modules/
+build/
+dist/
+coverage/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+*.min.js
+*.min.css
+public/
+
+# Ignore configuration files
+.prettierrc
+.prettierignore
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
