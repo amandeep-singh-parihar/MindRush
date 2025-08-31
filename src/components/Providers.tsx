@@ -13,8 +13,8 @@ type Props = {
 
 const providers = ({ children }: Props) => {
 	return (
-		<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-			<SessionProvider>{children}</SessionProvider>;
+		<ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+			<SessionProvider>{children}</SessionProvider>
 		</ThemeProvider>
 	);
 };

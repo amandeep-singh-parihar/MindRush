@@ -20,7 +20,7 @@ const ThemeToggle = ({
 
 	return (
 		<div className={className} {...props}>
-			<DropdownMenu>
+			<DropdownMenu modal={false}>
 				<DropdownMenuTrigger asChild>
 					<Button
 						variant="outline"
@@ -38,9 +38,6 @@ const ThemeToggle = ({
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={() => setTheme('dark')}>
 						Dark
-					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => setTheme('system')}>
-						System
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
