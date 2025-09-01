@@ -6,6 +6,7 @@ import {
 	CardTitle,
 	CardContent,
 } from '@/components/ui/card';
+import CustomWorldCloud from '@/components/CustomWorldCloud';
 type Props = {};
 
 const HotTopics = (props: Props) => {
@@ -18,7 +19,7 @@ const HotTopics = (props: Props) => {
 				</CardDescription>
 			</CardHeader>
 
-			<CardContent className="pl-2">Topics</CardContent>
+			<CardContent className="pl-2"><CustomWorldCloud/></CardContent>
 		</Card>
 	);
 };
