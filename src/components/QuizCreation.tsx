@@ -7,7 +7,7 @@ import {
 	CardTitle,
 	CardContent,
 } from './ui/card';
-import { useForm , FormProvider} from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { quizCreationSchema } from '@/schemas/form/quiz';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -48,7 +48,7 @@ const QuizCreation = (props: Props) => {
 					<CardDescription>Choose a topic</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<FormProvider  {...form}>
+					<FormProvider {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 							<FormField
 								control={form.control}
@@ -68,7 +68,7 @@ const QuizCreation = (props: Props) => {
 							/>
 							<Button type="submit">Submit</Button>
 						</form>
-					</FormProvider >
+					</FormProvider>
 				</CardContent>
 			</Card>
 		</div>

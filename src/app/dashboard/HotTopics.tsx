@@ -19,7 +19,9 @@ const HotTopics = (props: Props) => {
 				</CardDescription>
 			</CardHeader>
 
-			<CardContent className="pl-2"><CustomWorldCloud/></CardContent>
+			<CardContent className="pl-2">
+				<CustomWorldCloud />
+			</CardContent>
 		</Card>
 	);
 };
