@@ -4,6 +4,8 @@ import Link from 'next/link';
 import SignInButton from './SignInButton';
 import UserAccountsNav from './UserAccountsNav';
 import ThemeToggle from './ThemeToggle';
+import blacklogo from '../../public/mindrush-high-resolution-logo-transparent.png';
+import whitelogo from '../../public/mindrush-high-resolution-logo-transparent-white.png';
 
 type Props = {};
 
@@ -16,7 +18,20 @@ const Navbar = async (props: Props) => {
 				{/* logo */}
 				<Link href="/" className="flex items-center gap-2">
 					<p className="rounded-lg border-2 border-b-5 border-r-4  border-black px-2 py-1 text-xl font-bold transition-all hover:-translate-y-[2px] md:block dark:border-white">
-						Mindrush
+						<img
+							src={blacklogo.src}
+							alt="Mindrush logo"
+							width={100}
+							height={40}
+							className="block dark:hidden"
+						/>
+						<img
+							src={whitelogo.src}
+							alt="Mindrush logo"
+							width={100}
+							height={40}
+							className="hidden dark:block"
+						/>
 					</p>
 				</Link>
 
