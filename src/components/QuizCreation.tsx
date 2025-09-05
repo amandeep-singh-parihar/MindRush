@@ -124,7 +124,9 @@ const QuizCreation = (props: Props) => {
 									<BookOpen className="h-4 w-4 mr-2" /> Open Ended
 								</Button>
 							</div>
-							<Button type="submit" className='cursor-pointer'>Submit</Button>
+							<Button type="submit" className="cursor-pointer">
+								Submit
+							</Button>
 						</form>
 					</FormProvider>
 				</CardContent>
