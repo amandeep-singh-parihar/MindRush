@@ -72,10 +72,10 @@ model Question {
   question          String
   answer            String
   gameId            String
-  optins            Json?
+  options            Json?
   percentageCorrect Float?
   isCorrect         Boolean?
-  gameType          GameType
+  questionType          GameType
   userAnswer        String?
   game              Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
 

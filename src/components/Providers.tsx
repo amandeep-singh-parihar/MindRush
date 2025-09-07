@@ -5,6 +5,7 @@ import {
 	ThemeProvider as NextThemesProvider,
 	ThemeProvider,
 } from 'next-themes';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as React from 'react';
 
 type Props = {
@@ -12,9 +13,14 @@ type Props = {
 };
 
 const providers = ({ children }: Props) => {
+	const [queryClient] = React.useState(() => new QueryClient());
 	return (
 		<ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-			<SessionProvider>{children}</SessionProvider>
+			<SessionProvider>
+				<QueryClientProvider client={queryClient}>
+					{children}
+				</QueryClientProvider>
+			</SessionProvider>
 		</ThemeProvider>
 	);
 };

@@ -6,13 +6,13 @@ import { getAuthSession } from '@/lib/nextauth';
 
 export async function POST(req: NextRequest) {
 	try {
-		const session = await getAuthSession();
-		if (!session?.user) {
-			return NextResponse.json(
-				{ error: 'Unauthorized, You must be logged in to create a quiz!!!' },
-				{ status: 401 },
-			);
-		}
+		// const session = await getAuthSession();
+		// if (!session?.user) {
+		// 	return NextResponse.json(
+		// 		{ error: 'Unauthorized, You must be logged in to create a quiz!!!' },
+		// 		{ status: 401 },
+		// 	);
+		// }
 
 		const body = await req.json();
 		const { topic, type, amount } = quizCreationSchema.parse(body);
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 					`Generate ${amount} multiple-choice questions about the topic: ${topic}. Each question should have one correct answer and three plausible distractors.`,
 				),
 				{
-					questions: '<the actual question text>',
+					question: '<the actual question text>',
 					answer: '<the correct answer>',
 					option1: '<a plausible distractor>',
 					option2: '<a plausible distractor>',
