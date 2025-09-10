@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
 			gameId: game.id,
 		});
 	} catch (error) {
-		console.error('Error in POST /api/game:', error); 
+		console.error('Error in POST /api/game:', error);
 		if (error instanceof ZodError) {
 			return NextResponse.json(
 				{

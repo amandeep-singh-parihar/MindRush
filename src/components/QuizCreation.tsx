@@ -153,7 +153,11 @@ const QuizCreation = (props: Props) => {
 									<BookOpen className="h-4 w-4 mr-2" /> Open Ended
 								</Button>
 							</div>
-							<Button disabled={isPending} type="submit" className="cursor-pointer">
+							<Button
+								disabled={isPending}
+								type="submit"
+								className="cursor-pointer"
+							>
 								Submit
 							</Button>
 						</form>

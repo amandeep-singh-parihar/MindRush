@@ -6,6 +6,22 @@ interface OutputFormat {
 	[key: string]: string | string[] | OutputFormat;
 }
 
+function safeJSONParse(str: string) {
+	try {
+		return JSON.parse(str);
+	} catch (err) {
+		console.error('Invalid JSON, trying to fix:', str);
+
+		const fixed = str.replace(/: ?"([^"]*?)"([^",}])/g, ': "$1\\"$2');
+
+		try {
+			return JSON.parse(fixed);
+		} catch (err2) {
+			throw new Error('Still invalid JSON after fix');
+		}
+	}
+}
+
 export async function strict_output(
 	system_prompt: string,
 	user_prompt: string | string[],
@@ -72,7 +88,7 @@ export async function strict_output(
 				.replace(/```/g, '')
 				.trim();
 			// console.log("Raw GPT response:", res);
-			let output: any = JSON.parse(cleanRes);
+			let output: any = safeJSONParse(cleanRes);
 
 			if (list_input) {
 				if (!Array.isArray(output)) {
