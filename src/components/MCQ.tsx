@@ -5,6 +5,7 @@ import { Timer, ChevronRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { useState, useMemo } from 'react';
 import { Button } from './ui/button';
+import MCQCounter from './MCQCounter';
 
 type Props = {
 	game: Game & { questions: Pick<Question, 'id' | 'options' | 'question'>[] };
@@ -26,19 +27,21 @@ const MCQ = ({ game }: Props) => {
 	}, [currentQuestion]);
 
 	return (
-		<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:w-[80vw] max-w-4xl w-[90vw]">
+		<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:w-[80vw] max-w-4xl w-[90vw] mt-8">
 			<div className="flex flex-row justify-between">
-				<p>
-					<span className="text-slate-400 mr-2">Topic</span>
-					<span className="px-2 py-1 text-white rounded-lg bg-slate-800 capitalize">
-						{game.topic}
-					</span>
-				</p>
-				<div className="flex self-start mt-3 text-slate-400">
-					<Timer className="mr-2" />
-					<span>00:00</span>
+				<div className="flex flex-col">
+					<p>
+						<span className="text-slate-400 mr-2">Topic</span>
+						<span className="px-2 py-1 text-white rounded-lg bg-zinc-900 capitalize">
+							{game.topic}
+						</span>
+					</p>
+					<div className="flex self-start mt-3 text-slate-400">
+						<Timer className="mr-2" />
+						<span>00:00</span>
+					</div>
 				</div>
-				{/* MCQCounter */}
+				<MCQCounter correctAnswers={3} wrongAnswers={5} />
 			</div>
 
 			<Card className="w-full mt-4">
