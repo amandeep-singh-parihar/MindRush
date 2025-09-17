@@ -26,6 +26,7 @@ import { Separator } from './ui/separator';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 type Props = {};
 
@@ -41,6 +42,11 @@ const QuizCreation = (props: Props) => {
 				type,
 			});
 			return response.data;
+		},
+		onError: () => {
+			toast.error(
+				'The AI is taking a coffee break ☕ — try again and it should work!',
+			);
 		},
 	});
 	const form = useForm<Input>({
