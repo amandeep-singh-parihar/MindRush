@@ -66,13 +66,13 @@ const page = async ({ params: { gameId } }: Props) => {
 					</div>
 				</div>
 
-				<div className="grid gap-4 mt-4 md:grid-cols-7">
+				<div className="grid gap-4 mt-4 md:grid-cols-8">
 					<ResultCard accuracy={accuracy} />
 					<AccuracyCard accuracy={accuracy} />
 					<TimeTakeCard timeEnded={new Date()} timeStarted={game.timeStarted} />
 				</div>
 
-				<QuestionList />
+				<QuestionList questions={game.questions} />
 			</div>
 		</>
 	);
