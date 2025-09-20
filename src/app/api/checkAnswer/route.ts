@@ -3,6 +3,8 @@ import { ZodError } from 'zod';
 import { checkAnswerSchema } from '@/schemas/form/quiz';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { compareTwoStrings } from 'string-similarity';
+
 export async function POST(req: Request, res: Response) {
 	try {
 		const body = await req.json();
@@ -46,6 +48,28 @@ export async function POST(req: Request, res: Response) {
 			return NextResponse.json(
 				{
 					isCorrect,
+				},
+				{
+					status: 200,
+				},
+			);
+		} else if (question.questionType === 'open_ended') {
+			let percentageMatch = compareTwoStrings(
+				userAnswer.toLowerCase().trim(),
+				question.answer.toLowerCase().trimEnd(),
+			);
+			percentageMatch = Math.round(percentageMatch * 100) / 100;
+			await prisma.question.update({
+				where: {
+					id: questionId,
+				},
+				data: {
+					percentageCorrect: percentageMatch,
+				},
+			});
+			return NextResponse.json(
+				{
+					percentageMatch,
 				},
 				{
 					status: 200,

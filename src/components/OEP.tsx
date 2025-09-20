@@ -1,29 +1,28 @@
 'use client';
+import React from 'react';
 import { Game, Question } from '@prisma/client';
-import React, { use } from 'react';
-import { Timer, ChevronRight, Loader2 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription } from './ui/card';
+import { BarChart, Timer } from 'lucide-react';
+import { formatTime } from '@/lib/utils';
+import { differenceInSeconds } from 'date-fns';
+import { Card, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import MCQCounter from './MCQCounter';
+import { ChevronRight } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
-import { checkAnswerSchema } from '@/schemas/form/quiz';
 import { z } from 'zod';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
+import { checkAnswerSchema } from '@/schemas/form/quiz';
+import BlankAnswerInput from './BlankAnswerInput';
 import Link from 'next/link';
-import { BarChart } from 'lucide-react';
-import { formatTime } from '@/lib/utils';
-import { differenceInSeconds, parseISO } from 'date-fns';
 
 type Props = {
-	game: Game & { questions: Pick<Question, 'id' | 'options' | 'question'>[] };
+	game: Game & { questions: Pick<Question, 'id' | 'answer' | 'question'>[] };
 };
 
-const MCQ = ({ game }: Props) => {
+const OEP = ({ game }: Props) => {
 	const [questionIndex, setQuestionIndex] = React.useState(0);
-	const [seletedChoice, setSeletedChoice] = React.useState<number>(0);
-	const [correctAnswers, setCorrectAnswers] = React.useState(0);
-	const [wrongAnswers, setWrongAnswers] = React.useState(0);
+	const [blankAnswer, setBlankAnsewr] = React.useState<string>('');
 	const [hasEnded, setHasEnded] = React.useState(false);
 	const [now, setNow] = React.useState(new Date());
 
@@ -40,11 +39,18 @@ const MCQ = ({ game }: Props) => {
 		return game.questions[questionIndex];
 	}, [questionIndex, game.questions]);
 
+	// console.log(currentQuestion.answer);
+
 	const { mutate: checkAnswer, isPending: isChecking } = useMutation({
 		mutationFn: async () => {
+			let filledAnswer = blankAnswer;
+			document.querySelectorAll('#user_blank_input').forEach((input) => {
+				filledAnswer = filledAnswer.replace('_____', input.value);
+				input.value = '';
+			});
 			const payload: z.infer<typeof checkAnswerSchema> = {
 				questionId: currentQuestion.id,
-				userAnswer: options[seletedChoice],
+				userAnswer: filledAnswer,
 			};
 			const response = await axios.post('/api/checkAnswer', payload);
 			return response.data;
@@ -53,15 +59,13 @@ const MCQ = ({ game }: Props) => {
 
 	const handleNext = React.useCallback(() => {
 		if (isChecking) return;
+
+		// console.log(blankAnswer);
+
 		checkAnswer(undefined, {
-			onSuccess: ({ isCorrect }) => {
-				if (isCorrect) {
-					toast.success('Correct Answer');
-					setCorrectAnswers((prev) => prev + 1);
-				} else {
-					toast.error('Wrong Answer');
-					setWrongAnswers((prev) => prev + 1);
-				}
+			onSuccess: ({ percentageMatch }) => {
+				toast(`Your answer is ${Math.round(percentageMatch * 100)}% correct`);
+
 				if (questionIndex === game.questions.length - 1) {
 					setHasEnded(true);
 					toast('Quiz ended! Check your results on the next screen');
@@ -74,15 +78,7 @@ const MCQ = ({ game }: Props) => {
 
 	React.useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === '1') {
-				setSeletedChoice(0);
-			} else if (e.key === '2') {
-				setSeletedChoice(1);
-			} else if (e.key === '3') {
-				setSeletedChoice(2);
-			} else if (e.key === '4') {
-				setSeletedChoice(3);
-			} else if (e.key === 'Enter') {
+			if (e.key === 'Enter') {
 				handleNext();
 			}
 		};
@@ -92,12 +88,6 @@ const MCQ = ({ game }: Props) => {
 			document.removeEventListener('keydown', handleKeyDown);
 		};
 	}, [handleNext]);
-
-	const options = React.useMemo(() => {
-		if (!currentQuestion) return [];
-		if (!currentQuestion.options) return [];
-		return JSON.parse(currentQuestion.options as string) as string[];
-	}, [currentQuestion]);
 
 	if (hasEnded) {
 		return (
@@ -132,10 +122,6 @@ const MCQ = ({ game }: Props) => {
 						{formatTime(differenceInSeconds(now, game.timeStarted))}
 					</div>
 				</div>
-				<MCQCounter
-					correctAnswers={correctAnswers}
-					wrongAnswers={wrongAnswers}
-				/>
 			</div>
 
 			<Card className="w-full mt-4">
@@ -153,21 +139,11 @@ const MCQ = ({ game }: Props) => {
 			</Card>
 
 			<div className="flex flex-col items-center justify-center w-full mt-4">
-				{options.map((option, idx) => {
-					return (
-						<Button
-							key={idx}
-							className="justify-start w-full py-8 mb-4 cursor-pointer"
-							variant={seletedChoice === idx ? 'default' : 'secondary'}
-							onClick={() => setSeletedChoice(idx)}
-						>
-							<div className="flex items-center justify-start">
-								<div className="p-2 px-3 mr-5 border rounded-md">{idx + 1}</div>
-								<div className="text-start">{option}</div>
-							</div>
-						</Button>
-					);
-				})}
+				<BlankAnswerInput
+					answer={currentQuestion.answer}
+					setBlankAnswer={setBlankAnsewr}
+				/>
+
 				<Button
 					className="mt-2 cursor-pointer"
 					onClick={() => handleNext()}
@@ -181,4 +157,4 @@ const MCQ = ({ game }: Props) => {
 	);
 };
 
-export default MCQ;
+export default OEP;
