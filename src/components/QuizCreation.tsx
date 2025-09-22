@@ -27,6 +27,7 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import LoadingQuestions from './LoadingQuestions';
 
 type Props = {};
 
@@ -34,6 +35,8 @@ type Input = z.infer<typeof quizCreationSchema>;
 
 const QuizCreation = (props: Props) => {
 	const router = useRouter();
+	const [loading, setLoading] = React.useState(false);
+	const [finished, setFinished] = React.useState(false);
 	const { mutate: getQuestions, isPending } = useMutation({
 		mutationFn: async ({ amount, topic, type }: Input) => {
 			const response = await axios.post('/api/game', {
@@ -59,6 +62,7 @@ const QuizCreation = (props: Props) => {
 	});
 
 	function onSubmit(input: Input) {
+		setLoading(true);
 		// console.log(input);
 		getQuestions(
 			{
@@ -68,17 +72,26 @@ const QuizCreation = (props: Props) => {
 			},
 			{
 				onSuccess: ({ gameId }) => {
-					if (form.getValues('type') === 'open_ended') {
-						router.push(`/play/open-ended/${gameId}`);
-					} else {
-						router.push(`/play/multiple-choice/${gameId}`);
-					}
+					setFinished(true);
+					setTimeout(() => {
+						if (form.getValues('type') === 'open_ended') {
+							router.push(`/play/open-ended/${gameId}`);
+						} else {
+							router.push(`/play/multiple-choice/${gameId}`);
+						}
+					}, 1000);
+				},
+				onError: () => {
+					setLoading(false);
 				},
 			},
 		);
 	}
 
 	form.watch();
+	if (loading) {
+		return <LoadingQuestions finished={finished} />;
+	}
 
 	return (
 		<div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">

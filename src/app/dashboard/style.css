@@ -1,0 +1,18 @@
+/*
+
+.card {
+	background-color: rgba(244, 244, 244, 0.05);
+
+	background-image:
+		radial-gradient(
+			circle at 15% 30%,
+			rgba(239, 100, 56, 0.5),
+			transparent 55%
+		),
+		radial-gradient(circle at 75% 30%, rgba(255, 170, 10, 0.5), transparent 55%);
+
+	backdrop-filter: blur(25px);
+	-webkit-backdrop-filter: blur(25px);
+}
+
+*/
