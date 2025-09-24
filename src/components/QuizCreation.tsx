@@ -29,11 +29,13 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import LoadingQuestions from './LoadingQuestions';
 
-type Props = {};
+type Props = {
+	topicParam: string;
+};
 
 type Input = z.infer<typeof quizCreationSchema>;
 
-const QuizCreation = (props: Props) => {
+const QuizCreation = ({ topicParam }: Props) => {
 	const router = useRouter();
 	const [loading, setLoading] = React.useState(false);
 	const [finished, setFinished] = React.useState(false);
@@ -56,7 +58,7 @@ const QuizCreation = (props: Props) => {
 		resolver: zodResolver(quizCreationSchema),
 		defaultValues: {
 			amount: 1,
-			topic: '',
+			topic: topicParam,
 			type: 'open_ended',
 		},
 	});

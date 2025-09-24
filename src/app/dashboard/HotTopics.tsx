@@ -8,9 +8,17 @@ import {
 } from '@/components/ui/card';
 import CustomWorldCloud from '@/components/CustomWorldCloud';
 import './style.css';
+import { prisma } from '@/lib/db';
 type Props = {};
 
-const HotTopics = (props: Props) => {
+const HotTopics = async (props: Props) => {
+	const topics = await prisma.topicCount.findMany({});
+	const formattedTopics = topics.map((topic) => {
+		return {
+			text: topic.topic,
+			value: topic.count,
+		};
+	});
 	return (
 		<Card className="card hover:cursor-pointer hover:opacity-75 border-2 border-zinc-100 shadow-lg">
 			<CardHeader>
@@ -21,7 +29,7 @@ const HotTopics = (props: Props) => {
 			</CardHeader>
 
 			<CardContent className="flex items-center justify-center">
-				<CustomWorldCloud />
+				<CustomWorldCloud formattedTopics={formattedTopics} />
 			</CardContent>
 		</Card>
 	);

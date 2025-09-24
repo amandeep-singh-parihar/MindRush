@@ -67,15 +67,21 @@ model Game {
   @@index([userId])
 }
 
+model TopicCount {
+  id    String @id @default(cuid())
+  topic String @unique
+  count Int
+}
+
 model Question {
   id                String   @id @default(cuid())
   question          String
   answer            String
   gameId            String
-  options            Json?
+  options           Json?
   percentageCorrect Float?
   isCorrect         Boolean?
-  questionType          GameType
+  questionType      GameType
   userAnswer        String?
   game              Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
