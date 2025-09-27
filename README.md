@@ -58,8 +58,11 @@ cd mindrush
 npm install
 ```
 3. **Setup environment variables**
+
 <br/>
+
 ```bash
+
 DATABASE_URL=""
 DIRECT_URL=""
 NEXTAUTH_SECRET=""
@@ -67,6 +70,7 @@ GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
 GEMINI_API_KEY=""
 API_URL ="http://localhost:3000/"
+
 ```
 
 4. **Run Prisma migrations**
