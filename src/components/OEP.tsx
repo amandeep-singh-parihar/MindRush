@@ -23,7 +23,8 @@ type Props = {
 
 const OEP = ({ game }: Props) => {
 	const [questionIndex, setQuestionIndex] = React.useState(0);
-	const [blankAnswer, setBlankAnswer] = React.useState<string>('');
+	// const [blankAnswer, setBlankAnswer] = React.useState<string>('');
+	const [userAnswer, setUserAnswer] = React.useState('');
 	const [hasEnded, setHasEnded] = React.useState(false);
 	const [now, setNow] = React.useState(new Date());
 
@@ -44,14 +45,9 @@ const OEP = ({ game }: Props) => {
 
 	const { mutate: checkAnswer, isPending: isChecking } = useMutation({
 		mutationFn: async () => {
-			let filledAnswer = blankAnswer;
-			document.querySelectorAll('#user_blank_input').forEach((input) => {
-				filledAnswer = filledAnswer.replace('_____', input.value);
-				input.value = '';
-			});
 			const payload: z.infer<typeof checkAnswerSchema> = {
 				questionId: currentQuestion.id,
-				userAnswer: filledAnswer,
+				userAnswer: userAnswer,
 			};
 			const response = await axios.post('/api/checkAnswer', payload);
 			return response.data;
@@ -146,7 +142,7 @@ const OEP = ({ game }: Props) => {
 			<div className="flex flex-col items-center justify-center w-full mt-4">
 				<BlankAnswerInput
 					answer={currentQuestion?.answer}
-					setBlankAnswer={setBlankAnswer}
+					onAnswerChange={setUserAnswer}
 				/>
 
 				<Button
@@ -154,8 +150,8 @@ const OEP = ({ game }: Props) => {
 					onClick={() => handleNext()}
 					disabled={isChecking}
 				>
-					{isChecking && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-					Next <ChevronRight className="w-4 h-4 ml-2" />
+					{/* {isChecking && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+					Next <ChevronRight className="w-4 h-4 ml-2" /> */}
 				</Button>
 			</div>
 		</div>

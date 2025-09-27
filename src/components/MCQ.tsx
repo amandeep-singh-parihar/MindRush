@@ -50,9 +50,26 @@ const MCQ = ({ game }: Props) => {
 		return game.questions[questionIndex];
 	}, [questionIndex, game.questions]);
 
+	// const options = React.useMemo(() => {
+	// 	if (!currentQuestion) return [];
+	// 	return JSON.parse(currentQuestion.options) as string[];
+	// }, [currentQuestion]);
+
 	const options = React.useMemo(() => {
-		if (!currentQuestion) return [];
-		return JSON.parse(currentQuestion.options) as string[];
+		if (!currentQuestion?.options) return [];
+		try {
+			let parsedData = JSON.parse(currentQuestion.options);
+			if (typeof parsedData === 'string') {
+				parsedData = JSON.parse(parsedData);
+			}
+			if (Array.isArray(parsedData)) {
+				return parsedData as string[];
+			}
+			return [];
+		} catch (error) {
+			console.error('Failed to parse question options:', error);
+			return [];
+		}
 	}, [currentQuestion]);
 
 	const { mutate: checkAnswer, isPending: isChecking } = useMutation({

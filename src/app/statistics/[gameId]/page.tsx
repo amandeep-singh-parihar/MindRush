@@ -37,20 +37,22 @@ const page = async ({ params }: Props) => {
 	}
 
 	let accuracy: number = 0;
-	if (game.gameType === 'multiple_choice') {
-		let totalCorrect = game.questions.reduce((acc, question) => {
-			if (question.isCorrect) {
-				return acc + 1;
-			}
-			return acc;
-		}, 0);
-		accuracy = (totalCorrect / game.questions.length) * 100;
-	} else if (game.gameType === 'open_ended') {
-		let totalPercentage = game.questions.reduce((acc, question) => {
-			return acc + (question.percentageCorrect || 0);
-		}, 0);
+	if (game.questions.length > 0) {
+		if (game.gameType === 'multiple_choice') {
+			let totalCorrect = game.questions.reduce((acc, question) => {
+				if (question.isCorrect) {
+					return acc + 1;
+				}
+				return acc;
+			}, 0);
+			accuracy = (totalCorrect / game.questions.length) * 100;
+		} else if (game.gameType === 'open_ended') {
+			let totalPercentage = game.questions.reduce((acc, question) => {
+				return acc + (question.percentageCorrect || 0);
+			}, 0);
 
-		accuracy = (totalPercentage / game.questions.length) * 100;
+			accuracy = totalPercentage / game.questions.length;
+		}
 	}
 
 	accuracy = Math.round(accuracy * 100) / 100;

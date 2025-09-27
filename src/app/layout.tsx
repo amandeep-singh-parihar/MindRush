@@ -1,20 +1,11 @@
 import Providers from '@/components/Providers';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import Navbar from '@/components/Navbar';
 import { Toaster } from '@/components/ui/sonner';
-
-const geistSans = Geist({
-	variable: '--font-geist-sans',
-	subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-	variable: '--font-geist-mono',
-	subsets: ['latin'],
-});
 
 export const metadata: Metadata = {
 	title: 'Mindrush',
@@ -30,8 +21,9 @@ export default function RootLayout({
 		<html lang="en">
 			<body
 				className={cn(
-					geistSans.variable,
-					geistMono.variable,
+					// 3. Use the variables directly from the correct imports
+					GeistSans.variable,
+					GeistMono.variable,
 					'antialiased min-h-screen pt-16',
 				)}
 			>
