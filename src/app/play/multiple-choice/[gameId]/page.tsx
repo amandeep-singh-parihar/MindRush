@@ -4,21 +4,22 @@ import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import MCQ from '@/components/MCQ';
 
-type Props = {
+interface PageProps {
 	params: {
 		gameId: string;
 	};
-};
+}
 
-const MultipleChoicePage = async ({ params: { gameId } }: Props) => {
+const MultipleChoicePage = async ({ params }: PageProps) => {
+	const { gameId } = params;
+
 	const session = await getAuthSession();
 	if (!session?.user) {
-		return redirect('/');
+		redirect('/'); // no need to return
 	}
+
 	const game = await prisma.game.findUnique({
-		where: {
-			id: gameId,
-		},
+		where: { id: gameId },
 		include: {
 			questions: {
 				select: {
@@ -29,9 +30,11 @@ const MultipleChoicePage = async ({ params: { gameId } }: Props) => {
 			},
 		},
 	});
+
 	if (!game || game.gameType !== 'multiple_choice') {
-		return redirect('/quiz');
+		redirect('/quiz');
 	}
+
 	return <MCQ game={game} />;
 };
 
