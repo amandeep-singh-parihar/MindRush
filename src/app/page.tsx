@@ -17,7 +17,7 @@ export default async function Home() {
 	}
 	return (
 		<div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-			<Card className="w-[300px] border-1 border-zinc-100 shadow-lg">
+			<Card className="w-[300px] border-2 border-[#e6e8ed] shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-linear">
 				<CardHeader>
 					<CardTitle>Welcome to MindRush !!!</CardTitle>
 					<CardDescription>

@@ -123,7 +123,7 @@ const MCQ = ({ game }: Props) => {
 				<div className="flex flex-col">
 					<p>
 						<span className="text-slate-400 mr-2">Topic</span>
-						<span className="px-2 py-1 text-white rounded-lg bg-zinc-900 capitalize">
+						<span className="px-2 py-1 text-white rounded-lg bg-[#292929] capitalize">
 							{game.topic}
 						</span>
 					</p>

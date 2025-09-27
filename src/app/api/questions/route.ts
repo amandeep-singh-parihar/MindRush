@@ -22,9 +22,7 @@ export async function POST(req: NextRequest) {
 		if (type === 'open_ended') {
 			questions = await strict_output(
 				'You are a helpful assistant that creates open-ended questions for quizzes. The questions should be clear, concise, and relevant to the given topic. Each question should encourage critical thinking and creativity.',
-				new Array(amount).fill(
-					`Generate ${amount} open-ended questions about the topic: ${topic}.`,
-				),
+				[`Generate ${amount} open-ended questions about the topic: ${topic}.`],
 				{
 					question: '<the actual question text>',
 					answer: '<answer (max 15 words)>',
@@ -33,9 +31,9 @@ export async function POST(req: NextRequest) {
 		} else if (type === 'multiple_choice') {
 			questions = await strict_output(
 				'You are a helpful assistant that creates multiple-choice questions for quizzes. The questions should be clear, concise, and relevant to the given topic. Each question should have one correct answer and three plausible distractors.',
-				new Array(amount).fill(
+				[
 					`Generate ${amount} multiple-choice questions about the topic: ${topic}. Each question should have one correct answer and three plausible distractors.`,
-				),
+				],
 				{
 					question: '<the actual question text>',
 					answer: '<the correct answer>',

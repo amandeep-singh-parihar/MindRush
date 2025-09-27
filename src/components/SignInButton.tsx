@@ -11,6 +11,7 @@ type Props = {
 const SignInButton = ({ text }: Props) => {
 	return (
 		<Button
+			className="cursor-pointer"
 			onClick={() => {
 				signIn('google').catch(console.error);
 			}}
