@@ -23,22 +23,25 @@ Mindrush is an interactive web application that allows users to **create, take, 
 
 ## Tech Stack
 
-- **Frontend:** React, Next.js, Tailwind CSS, Lucide Icons  
-- **Backend:** Next.js API Routes, Node.js  
-- **Database:** Prisma ORM with PostgreSQL  
-- **Other:** Axios, React Query, Zod for validation, date-fns for time calculations, Sonner for toast notifications  
+- **Frontend:** React, Next.js, Tailwind CSS, Lucide Icons
+- **Backend:** Next.js API Routes, Node.js
+- **Database:** Prisma ORM with PostgreSQL
+- **Other:** Axios, React Query, Zod for validation, date-fns for time calculations, Sonner for toast notifications
 
 ---
 
 ## Screenshots
 
 ### Home / Quiz Selection
+
 ![Home](./public/screenshots/home.png)
 
 ### Quiz in Progress
+
 ![Quiz](./public/screenshots/quiz.png)
 
 ### Statistics Page
+
 ![Statistics](./public/screenshots/stats.png)
 
 ---
@@ -57,6 +60,7 @@ cd mindrush
 ```bash
 npm install
 ```
+
 3. **Setup environment variables**
 
 <br/>
@@ -74,14 +78,17 @@ API_URL ="http://localhost:3000/"
 ```
 
 4. **Run Prisma migrations**
+
 ```bash
 npx prisma migrate dev
 ```
 
 4. **Start the development server**
+
 ```bash
 npm run dev
 ```
+
 <br/>
 
 **Contributions**
