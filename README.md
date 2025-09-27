@@ -1,6 +1,6 @@
-# AI Quiz Generator
+# Mindrush
 
-AI Quiz Generator is an interactive web application that allows users to **create, take, and analyze quizzes** using AI-generated questions. Users can generate multiple-choice or open-ended quizzes on any topic, answer questions in real-time, and get detailed statistics about their performance. This project showcases fullstack development skills with **Next.js, React, Tailwind CSS, and Prisma**, and includes features like live timers, instant answer validation, and responsive design.
+Mindrush is an interactive web application that allows users to **create, take, and analyze quizzes** using AI-generated questions. Users can generate multiple-choice or open-ended quizzes on any topic, answer questions in real-time, and get detailed statistics about their performance. This project showcases fullstack development skills with **Next.js, React, Tailwind CSS, and Prisma**, and includes features like live timers, instant answer validation, and responsive design.
 
 ---
 
