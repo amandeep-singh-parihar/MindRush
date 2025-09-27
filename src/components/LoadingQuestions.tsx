@@ -52,7 +52,7 @@ const LoadingQuestions = ({ finished }: Props) => {
 	}, [finished]);
 
 	const loadingGIF =
-		resolvedTheme === 'dark' ? '/loading2.gif' : '/loading.gif';
+		resolvedTheme === 'dark' ? '/loading2.gif' : '/loading1.gif';
 
 	return (
 		<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] md:w-[60vw] flex flex-col items-center">
