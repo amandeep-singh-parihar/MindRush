@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Quiz Generator
+
+AI Quiz Generator is an interactive web application that allows users to **create, take, and analyze quizzes** using AI-generated questions. Users can generate multiple-choice or open-ended quizzes on any topic, answer questions in real-time, and get detailed statistics about their performance. This project showcases fullstack development skills with **Next.js, React, Tailwind CSS, and Prisma**, and includes features like live timers, instant answer validation, and responsive design.
+
+---
+
+## Features
+
+- **AI-Powered Quiz Generation:** Generate quizzes on any topic using AI. Supports multiple-choice and open-ended questions.
+- **Real-Time Quiz Experience:**
+  - Live timer while taking the quiz
+  - Keyboard shortcuts to select answers and navigate questions
+  - Visual progress tracking
+- **Instant Feedback:** Correct and wrong answers are indicated immediately with toast notifications.
+- **Statistics & Analytics:**
+  - Track total time taken for a quiz
+  - Correct vs Wrong answers breakdown
+  - Detailed performance page for each quiz
+- **Responsive Design:** Works seamlessly on desktop and mobile devices.
+- **Persistent Data:** Quiz attempts, questions, and statistics are saved in the database for future reference.
+
+---
+
+## Tech Stack
+
+- **Frontend:** React, Next.js, Tailwind CSS, Lucide Icons  
+- **Backend:** Next.js API Routes, Node.js  
+- **Database:** Prisma ORM with PostgreSQL  
+- **Other:** Axios, React Query, Zod for validation, date-fns for time calculations, Sonner for toast notifications  
+
+---
+
+## Screenshots
+
+### Home / Quiz Selection
+![Home](./public/screenshots/home.png)
+
+![Home](./public/screenshots/Screenshot%202025-09-27%20154741.png)
+
+
+### Quiz in Progress
+![Quiz](./public/screenshots/Screenshot%202025-09-27%20165752.png)
+
+### Statistics Page
+![Statistics](./public/screenshots/Screenshot%202025-09-27%20171035.png)
+
+---
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the repository**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/amandeep-singh-parihar/MindRush
+cd mindrush
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. **Install dependencies**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+```
+3. **Setup environment variables**
+<br/>
+```bash
+DATABASE_URL=""
+DIRECT_URL=""
+NEXTAUTH_SECRET=""
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+GEMINI_API_KEY=""
+API_URL ="http://localhost:3000/"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **Run Prisma migrations**
+```bash
+npx prisma migrate dev
+```
 
-## Learn More
+4. **Start the development server**
+```bash
+npm run dev
+```
+<br/>
 
-To learn more about Next.js, take a look at the following resources:
+**Contributions**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Contributions are welcome! If you want to improve the app, fix bugs, or add new features, feel free to open a pull request or submit an issue.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Steps to contribute:
 
-## Deploy on Vercel
+1. Fork the repository
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Create a new branch (git checkout -b feature/your-feature)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Make your changes and commit (git commit -m 'Add some feature')
+
+4. Push to the branch (git push origin feature/your-feature)
+
+5. Open a pull request
