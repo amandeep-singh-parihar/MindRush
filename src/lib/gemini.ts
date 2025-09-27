@@ -9,14 +9,14 @@ interface OutputFormat {
 function safeJSONParse(str: string) {
 	try {
 		return JSON.parse(str);
-	} catch (err) {
+	} catch (_) {
 		console.error('Invalid JSON, trying to fix:', str);
 
 		const fixed = str.replace(/: ?"([^"]*?)"([^",}])/g, ': "$1\\"$2');
 
 		try {
 			return JSON.parse(fixed);
-		} catch (err2) {
+		} catch (_) {
 			throw new Error('Still invalid JSON after fix');
 		}
 	}
@@ -59,9 +59,7 @@ export async function strict_output(
 		}
 
 		// --- Gemini request ---
-		const modelInstance = genAI.getGenerativeModel({
-			model: 'gemini-2.5-flash',
-		});
+		const modelInstance = genAI.getGenerativeModel({ model });
 		const prompt = `${system_prompt}${output_format_prompt}${error_msg}\n\nUser: ${user_prompt.toString()}`;
 		const response = await modelInstance.generateContent({
 			contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -83,12 +81,12 @@ export async function strict_output(
 		}
 
 		try {
-			let cleanRes = res
+			const cleanRes = res
 				.replace(/```json/g, '')
 				.replace(/```/g, '')
 				.trim();
-			// console.log("Raw GPT response:", res);
-			let output: any = safeJSONParse(cleanRes);
+
+			let output: unknown = safeJSONParse(cleanRes);
 
 			if (list_input) {
 				if (!Array.isArray(output)) {
@@ -98,36 +96,41 @@ export async function strict_output(
 				output = [output];
 			}
 
-			for (let index = 0; index < output.length; index++) {
+			for (let index = 0; index < (output as any[]).length; index++) {
 				for (const key in output_format) {
 					if (/<.*?>/.test(key)) continue;
-					if (!(key in output[index])) {
+					if (!(key in (output as any[])[index])) {
 						throw new Error(`${key} not in json output`);
 					}
 
 					if (Array.isArray(output_format[key])) {
 						const choices = output_format[key] as string[];
-						if (Array.isArray(output[index][key])) {
-							output[index][key] = output[index][key][0];
+						if (Array.isArray((output as any[])[index][key])) {
+							(output as any[])[index][key] = (output as any[])[index][key][0];
 						}
-						if (!choices.includes(output[index][key]) && default_category) {
-							output[index][key] = default_category;
+						if (
+							!choices.includes((output as any[])[index][key]) &&
+							default_category
+						) {
+							(output as any[])[index][key] = default_category;
 						}
-						if (output[index][key].includes(':')) {
-							output[index][key] = output[index][key].split(':')[0];
+						if ((output as any[])[index][key].includes(':')) {
+							(output as any[])[index][key] = (output as any[])[index][
+								key
+							].split(':')[0];
 						}
 					}
 				}
 
 				if (output_value_only) {
-					output[index] = Object.values(output[index]);
-					if (output[index].length === 1) {
-						output[index] = output[index][0];
+					(output as any[])[index] = Object.values((output as any[])[index]);
+					if ((output as any[])[index].length === 1) {
+						(output as any[])[index] = (output as any[])[index][0];
 					}
 				}
 			}
 
-			return list_input ? output : output[0];
+			return list_input ? output : (output as any[])[0];
 		} catch (e) {
 			error_msg = `\n\nResult: ${res}\n\nError message: ${e}`;
 			console.log('An exception occurred:', e);

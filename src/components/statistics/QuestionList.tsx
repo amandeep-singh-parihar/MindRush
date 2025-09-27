@@ -19,7 +19,7 @@ const QuestionList = ({ questions }: Props) => {
 	if (!questions || questions.length === 0) {
 		return <p className="text-center text-gray-500">No questions available</p>;
 	}
-	let gameType = questions[0].questionType;
+	const gameType = questions[0].questionType;
 	return (
 		<Table className="mt-4">
 			<TableHeader>
