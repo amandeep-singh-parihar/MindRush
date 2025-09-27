@@ -10,11 +10,11 @@ const QuizMeCard = (props: Props) => {
 
 	return (
 		<Card
-			className="hover:cursor-pointer hover:opacity-75 border-2 border-zinc-100 shadow-lg"
+			className="hover:cursor-pointer border-2 border-[#e6e8ed] shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-linear"
 			onClick={() => router.push('/quiz')}
 		>
 			<CardHeader className="flex flex-row items-center justify-between space-y-0">
-				<CardTitle className="text-2xl font-bold">Quiz Me!</CardTitle>
+				<CardTitle className="text-3xl font-bold">Quiz Me!</CardTitle>
 				<BrainCircuit size={28} strokeWidth={2.5} />
 			</CardHeader>
 

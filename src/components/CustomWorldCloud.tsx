@@ -12,11 +12,11 @@ type Props = {
 const CustomWordCloud = ({ formattedTopics }: Props) => {
 	const svgRef = useRef<SVGSVGElement | null>(null);
 	const { theme } = useTheme();
-	// 1. Correctly initialize the router
 	const router = useRouter();
 
 	useEffect(() => {
 		if (!svgRef.current || !formattedTopics) return;
+
 		d3.select(svgRef.current).selectAll('*').remove();
 
 		const words = formattedTopics.map((topic) => ({
@@ -27,8 +27,11 @@ const CustomWordCloud = ({ formattedTopics }: Props) => {
 		const fontScale = d3
 			.scaleLinear()
 			.domain(d3.extent(words, (d) => d.size) as [number, number])
-			.range([20, 80]);
+			.range([30, 100]);
 
+		const colors = ['#e1ff59', '#000000', '#475261'];
+
+		// Create cloud layout
 		const layout = cloud()
 			.size([500, 400])
 			.words(words)
@@ -54,7 +57,10 @@ const CustomWordCloud = ({ formattedTopics }: Props) => {
 				.append('text')
 				.style('font-size', (d: any) => `${d.size}px`)
 				.style('font-family', 'sans-serif')
-				.style('fill', theme === 'dark' ? 'white' : 'black')
+				.style(
+					'fill',
+					(d: any) => colors[Math.floor(Math.random() * colors.length)],
+				)
 				.style('cursor', 'pointer')
 				.attr('text-anchor', 'middle')
 				.attr(

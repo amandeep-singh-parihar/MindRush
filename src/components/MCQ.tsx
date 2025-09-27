@@ -102,13 +102,13 @@ const MCQ = ({ game }: Props) => {
 	if (hasEnded) {
 		return (
 			<div className="absolute flex flex-col justify-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-				<div className="px-4 py-2 mt-2 font-semibold text-white bg-green-600 rounded-md whitespace-nowrap">
-					Quiz Ended! You Complete in{' '}
+				<div className="px-4 py-2 mt-2 font-semibold text-[#292929] bg-[#e6ff78] rounded-md whitespace-nowrap">
+					Quiz Ended! You Completed in{' '}
 					{`${formatTime(differenceInSeconds(now, game.timeStarted))}`}.
 				</div>
 				<Link
 					href={`/statistics/${game.id}`}
-					className="flex items-center justify-center px-4 py-2 mt-4 font-semibold text-white bg-slate-900 rounded-md whitespace-nowrap hover:bg-slate-700 transition-colors"
+					className="flex items-center justify-center px-4 py-2 mt-4 font-semibold text-white bg-[#292929] rounded-md whitespace-nowrap  transition-colors hover:opacity-80"
 				>
 					View Statistics
 					<BarChart className="w-4 h-4 ml-2" />
@@ -138,7 +138,7 @@ const MCQ = ({ game }: Props) => {
 				/>
 			</div>
 
-			<Card className="w-full mt-4">
+			<Card className="w-full mt-4 border-none">
 				<CardHeader className="flex flex-row items-center">
 					<CardTitle className="mr-5 text-center divide-y divide-zinc-600/50">
 						<div>{questionIndex + 1}</div>

@@ -28,7 +28,7 @@ export async function strict_output(
 	output_format: OutputFormat,
 	default_category: string = '',
 	output_value_only: boolean = false,
-	model: string = 'gemini-1.5-flash',
+	model: string = 'gemini-2.5-flash',
 	temperature: number = 1,
 	num_tries: number = 3,
 	verbose: boolean = false,
@@ -60,7 +60,7 @@ export async function strict_output(
 
 		// --- Gemini request ---
 		const modelInstance = genAI.getGenerativeModel({
-			model: 'gemini-1.5-flash',
+			model: 'gemini-2.5-flash',
 		});
 		const prompt = `${system_prompt}${output_format_prompt}${error_msg}\n\nUser: ${user_prompt.toString()}`;
 		const response = await modelInstance.generateContent({

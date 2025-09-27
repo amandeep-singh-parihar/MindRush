@@ -9,7 +9,7 @@ type Props = {
 
 const MCQCounter = ({ correctAnswers, wrongAnswers }: Props) => {
 	return (
-		<Card className="flex flex-row items-center justify-center p-2 border-1 border-zinc-100 rounded-lg shadow-md">
+		<Card className="flex flex-row items-center justify-center p-2 border-none rounded-lg shadow-md">
 			<CheckCircle2 color="green" size={30} />
 			<span className="mx-2 text-2xl text-[green]">{correctAnswers}</span>
 			<Separator orientation="vertical" className="!w-[2px]" />

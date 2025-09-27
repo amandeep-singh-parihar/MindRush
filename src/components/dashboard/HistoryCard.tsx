@@ -10,11 +10,11 @@ const HistoryCard = (props: Props) => {
 	const router = useRouter();
 	return (
 		<Card
-			className="hover:cursor-pointer hover:opacity-75 border-2 border-zinc-100 shadow-lg"
+			className="hover:cursor-pointer border-2 border-[#e6e8ed] shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-linear"
 			onClick={() => router.push('/history')}
 		>
 			<CardHeader className="flex flex-row items-center justify-between space-y-0">
-				<CardTitle className="text-2xl font-bold">History</CardTitle>
+				<CardTitle className="text-3xl font-bold">History</CardTitle>
 				<History size={28} strokeWidth={2.5} />
 			</CardHeader>
 

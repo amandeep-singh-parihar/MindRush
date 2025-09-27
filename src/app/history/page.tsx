@@ -17,7 +17,7 @@ const HistoryPage = async (props: Props) => {
 
 	return (
 		<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] mt-8">
-			<Card className="">
+			<Card className="border-2 border-[#e6e8ed] shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-linear">
 				<CardHeader className="">
 					<div className="flex items-center justify-between flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
 						<CardTitle className="text-2xl font-bold">History</CardTitle>

@@ -16,7 +16,9 @@ type Props = {
 	};
 };
 
-const page = async ({ params: { gameId } }: Props) => {
+const page = async ({ params }: Props) => {
+	const gameId = params.gameId;
+
 	const session = await getAuthSession();
 	if (!session?.user) {
 		redirect('/');
@@ -69,7 +71,10 @@ const page = async ({ params: { gameId } }: Props) => {
 				<div className="grid gap-4 mt-4 md:grid-cols-8">
 					<ResultCard accuracy={accuracy} />
 					<AccuracyCard accuracy={accuracy} />
-					<TimeTakeCard timeEnded={new Date()} timeStarted={game.timeStarted} />
+					<TimeTakeCard
+						timeEnded={game.timeEnded}
+						timeStarted={game.timeStarted}
+					/>
 				</div>
 
 				<QuestionList questions={game.questions} />

@@ -5,7 +5,7 @@ import React from 'react';
 
 type Props = {
 	searchParams: {
-		topic?: string;
+		topic?: string | string[];
 	};
 };
 
@@ -18,7 +18,11 @@ const QuizPage = async ({ searchParams }: Props) => {
 	if (!session?.user) {
 		return redirect('/');
 	}
-	return <QuizCreation topicParam={searchParams.topic ?? ''} />;
+
+	const topic = searchParams?.topic;
+	const topicParam = Array.isArray(topic) ? topic[0] : (topic ?? '');
+
+	return <QuizCreation topicParam={topicParam} />;
 };
 
 export default QuizPage;

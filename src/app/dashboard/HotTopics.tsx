@@ -7,7 +7,6 @@ import {
 	CardContent,
 } from '@/components/ui/card';
 import CustomWorldCloud from '@/components/CustomWorldCloud';
-import './style.css';
 import { prisma } from '@/lib/db';
 type Props = {};
 
@@ -20,9 +19,9 @@ const HotTopics = async (props: Props) => {
 		};
 	});
 	return (
-		<Card className="card hover:cursor-pointer hover:opacity-75 border-2 border-zinc-100 shadow-lg">
+		<Card className="hover:cursor-pointer border-2 border-[#e6e8ed] shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-linear">
 			<CardHeader>
-				<CardTitle className="text-2xl font-bold">Hot Topics</CardTitle>
+				<CardTitle className="text-3xl font-bold">Hot Topics</CardTitle>
 				<CardDescription>
 					Explore trending subjects and stay updated with the latest
 				</CardDescription>

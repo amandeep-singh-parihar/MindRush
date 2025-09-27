@@ -2,6 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Progress } from './ui/progress';
+import { useTheme } from 'next-themes';
 
 type Props = {
 	finished: boolean;
@@ -24,6 +25,8 @@ const loadingTexts = [
 const LoadingQuestions = ({ finished }: Props) => {
 	const [progress, setProgress] = React.useState(0);
 	const [loadingText, setLoadingText] = React.useState(loadingTexts[0]);
+	const theme = useTheme();
+	const { resolvedTheme } = useTheme();
 	React.useEffect(() => {
 		const interval = setInterval(() => {
 			const rIdx = Math.floor(Math.random() * loadingTexts.length);
@@ -47,10 +50,14 @@ const LoadingQuestions = ({ finished }: Props) => {
 		}, 100);
 		return () => clearInterval(interval);
 	}, [finished]);
+
+	const loadingGIF =
+		resolvedTheme === 'dark' ? '/loading2.gif' : '/loading.gif';
+
 	return (
 		<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] md:w-[60vw] flex flex-col items-center">
 			<Image
-				src={'/loading.gif'}
+				src={loadingGIF}
 				width={550}
 				height={550}
 				alt="loading animation"

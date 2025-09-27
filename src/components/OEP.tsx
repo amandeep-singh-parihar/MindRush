@@ -15,6 +15,7 @@ import { Loader2 } from 'lucide-react';
 import { checkAnswerSchema } from '@/schemas/form/quiz';
 import BlankAnswerInput from './BlankAnswerInput';
 import Link from 'next/link';
+// import { useTheme } from 'next-themes';
 
 type Props = {
 	game: Game & { questions: Pick<Question, 'id' | 'answer' | 'question'>[] };
@@ -22,7 +23,7 @@ type Props = {
 
 const OEP = ({ game }: Props) => {
 	const [questionIndex, setQuestionIndex] = React.useState(0);
-	const [blankAnswer, setBlankAnsewr] = React.useState<string>('');
+	const [blankAnswer, setBlankAnswer] = React.useState<string>('');
 	const [hasEnded, setHasEnded] = React.useState(false);
 	const [now, setNow] = React.useState(new Date());
 
@@ -89,16 +90,20 @@ const OEP = ({ game }: Props) => {
 		};
 	}, [handleNext]);
 
+	// const {theme} = useTheme();
+
 	if (hasEnded) {
 		return (
 			<div className="absolute flex flex-col justify-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-				<div className="px-4 py-2 mt-2 font-semibold text-white bg-green-600 rounded-md whitespace-nowrap">
+				<div
+					className={`px-4 py-2 mt-2 font-semibold bg-[#e6ff78] text-[#292929] rounded-md whitespace-nowrap`}
+				>
 					Quiz Ended! You Complete in{' '}
 					{`${formatTime(differenceInSeconds(now, game.timeStarted))}`}.
 				</div>
 				<Link
 					href={`/statistics/${game.id}`}
-					className="flex items-center justify-center px-4 py-2 mt-4 font-semibold text-white bg-slate-900 rounded-md whitespace-nowrap hover:bg-slate-700 transition-colors"
+					className="flex items-center justify-center px-4 py-2 mt-4 font-semibold text-white bg-[#292929] rounded-md whitespace-nowrap hover:bg-[#292929c1] transition-colors"
 				>
 					View Statistics
 					<BarChart className="w-4 h-4 ml-2" />
@@ -124,7 +129,7 @@ const OEP = ({ game }: Props) => {
 				</div>
 			</div>
 
-			<Card className="w-full mt-4">
+			<Card className="w-full mt-4 border-none">
 				<CardHeader className="flex flex-row items-center">
 					<CardTitle className="mr-5 text-center divide-y divide-zinc-600/50">
 						<div>{questionIndex + 1}</div>
@@ -140,8 +145,8 @@ const OEP = ({ game }: Props) => {
 
 			<div className="flex flex-col items-center justify-center w-full mt-4">
 				<BlankAnswerInput
-					answer={currentQuestion.answer}
-					setBlankAnswer={setBlankAnsewr}
+					answer={currentQuestion?.answer}
+					setBlankAnswer={setBlankAnswer}
 				/>
 
 				<Button
