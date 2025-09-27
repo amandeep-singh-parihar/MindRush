@@ -35,14 +35,11 @@ AI Quiz Generator is an interactive web application that allows users to **creat
 ### Home / Quiz Selection
 ![Home](./public/screenshots/home.png)
 
-![Home](./public/screenshots/Screenshot%202025-09-27%20154741.png)
-
-
 ### Quiz in Progress
-![Quiz](./public/screenshots/Screenshot%202025-09-27%20165752.png)
+![Quiz](./public/screenshots/quiz.png)
 
 ### Statistics Page
-![Statistics](./public/screenshots/Screenshot%202025-09-27%20171035.png)
+![Statistics](./public/screenshots/stats.png)
 
 ---
 
