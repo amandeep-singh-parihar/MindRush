@@ -15,7 +15,7 @@ const MultipleChoicePage = async ({ params }: PageProps) => {
 
 	const session = await getAuthSession();
 	if (!session?.user) {
-		redirect('/'); // no need to return
+		return redirect('/');
 	}
 
 	const game = await prisma.game.findUnique({
@@ -32,10 +32,18 @@ const MultipleChoicePage = async ({ params }: PageProps) => {
 	});
 
 	if (!game || game.gameType !== 'multiple_choice') {
-		redirect('/quiz');
+		return redirect('/quiz');
 	}
+	const serializableGame = {
+		...game,
+		timeStarted: game.timeStarted.toISOString(),
+		questions: game.questions.map((question) => ({
+			...question,
+			options: JSON.stringify(question.options),
+		})),
+	};
 
-	return <MCQ game={game} />;
+	return <MCQ game={serializableGame} />;
 };
 
 export default MultipleChoicePage;

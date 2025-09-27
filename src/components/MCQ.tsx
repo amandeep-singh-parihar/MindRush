@@ -1,7 +1,7 @@
 'use client';
 import { Game, Question } from '@prisma/client';
-import React, { use } from 'react';
-import { Timer, ChevronRight, Loader2 } from 'lucide-react';
+import React from 'react';
+import { Timer, ChevronRight, Loader2, BarChart } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import MCQCounter from './MCQCounter';
@@ -11,12 +11,18 @@ import { z } from 'zod';
 import axios from 'axios';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import { BarChart } from 'lucide-react';
 import { formatTime } from '@/lib/utils';
 import { differenceInSeconds, parseISO } from 'date-fns';
 
 type Props = {
-	game: Game & { questions: Pick<Question, 'id' | 'options' | 'question'>[] };
+	game: Omit<Game, 'timeStarted'> & {
+		timeStarted: string;
+		questions: {
+			id: string;
+			question: string;
+			options: string;
+		}[];
+	};
 };
 
 const MCQ = ({ game }: Props) => {
@@ -26,6 +32,10 @@ const MCQ = ({ game }: Props) => {
 	const [wrongAnswers, setWrongAnswers] = React.useState(0);
 	const [hasEnded, setHasEnded] = React.useState(false);
 	const [now, setNow] = React.useState(new Date());
+
+	const timeStarted = React.useMemo(() => {
+		return parseISO(game.timeStarted);
+	}, [game.timeStarted]);
 
 	React.useEffect(() => {
 		const interval = setInterval(() => {
@@ -39,6 +49,11 @@ const MCQ = ({ game }: Props) => {
 	const currentQuestion = React.useMemo(() => {
 		return game.questions[questionIndex];
 	}, [questionIndex, game.questions]);
+
+	const options = React.useMemo(() => {
+		if (!currentQuestion) return [];
+		return JSON.parse(currentQuestion.options) as string[];
+	}, [currentQuestion]);
 
 	const { mutate: checkAnswer, isPending: isChecking } = useMutation({
 		mutationFn: async () => {
@@ -70,7 +85,15 @@ const MCQ = ({ game }: Props) => {
 				setQuestionIndex((prev) => prev + 1);
 			},
 		});
-	}, [checkAnswer, toast, isChecking, questionIndex, game.questions.length]);
+	}, [
+		checkAnswer,
+		toast,
+		isChecking,
+		questionIndex,
+		game.questions.length,
+		options,
+		seletedChoice,
+	]);
 
 	React.useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -93,22 +116,16 @@ const MCQ = ({ game }: Props) => {
 		};
 	}, [handleNext]);
 
-	const options = React.useMemo(() => {
-		if (!currentQuestion) return [];
-		if (!currentQuestion.options) return [];
-		return JSON.parse(currentQuestion.options as string) as string[];
-	}, [currentQuestion]);
-
 	if (hasEnded) {
 		return (
 			<div className="absolute flex flex-col justify-center top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 				<div className="px-4 py-2 mt-2 font-semibold text-[#292929] bg-[#e6ff78] rounded-md whitespace-nowrap">
 					Quiz Ended! You Completed in{' '}
-					{`${formatTime(differenceInSeconds(now, game.timeStarted))}`}.
+					{`${formatTime(differenceInSeconds(now, timeStarted))}`}.
 				</div>
 				<Link
 					href={`/statistics/${game.id}`}
-					className="flex items-center justify-center px-4 py-2 mt-4 font-semibold text-white bg-[#292929] rounded-md whitespace-nowrap  transition-colors hover:opacity-80"
+					className="flex items-center justify-center px-4 py-2 mt-4 font-semibold text-white bg-[#292929] rounded-md whitespace-nowrap transition-colors hover:opacity-80"
 				>
 					View Statistics
 					<BarChart className="w-4 h-4 ml-2" />
@@ -129,7 +146,7 @@ const MCQ = ({ game }: Props) => {
 					</p>
 					<div className="flex self-start mt-3 text-slate-400">
 						<Timer className="mr-2" />
-						{formatTime(differenceInSeconds(now, game.timeStarted))}
+						{formatTime(differenceInSeconds(now, timeStarted))}
 					</div>
 				</div>
 				<MCQCounter
@@ -153,24 +170,22 @@ const MCQ = ({ game }: Props) => {
 			</Card>
 
 			<div className="flex flex-col items-center justify-center w-full mt-4">
-				{options.map((option, idx) => {
-					return (
-						<Button
-							key={idx}
-							className="justify-start w-full py-8 mb-4 cursor-pointer"
-							variant={seletedChoice === idx ? 'default' : 'secondary'}
-							onClick={() => setSeletedChoice(idx)}
-						>
-							<div className="flex items-center justify-start">
-								<div className="p-2 px-3 mr-5 border rounded-md">{idx + 1}</div>
-								<div className="text-start">{option}</div>
-							</div>
-						</Button>
-					);
-				})}
+				{options.map((option, idx) => (
+					<Button
+						key={idx}
+						className="justify-start w-full py-8 mb-4 cursor-pointer"
+						variant={seletedChoice === idx ? 'default' : 'secondary'}
+						onClick={() => setSeletedChoice(idx)}
+					>
+						<div className="flex items-center justify-start">
+							<div className="p-2 px-3 mr-5 border rounded-md">{idx + 1}</div>
+							<div className="text-start">{option}</div>
+						</div>
+					</Button>
+				))}
 				<Button
 					className="mt-2 cursor-pointer"
-					onClick={() => handleNext()}
+					onClick={handleNext}
 					disabled={isChecking}
 				>
 					{isChecking && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
