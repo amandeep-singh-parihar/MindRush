@@ -32,7 +32,7 @@ Mindrush is an interactive web application that allows users to **create, take, 
 
 ## Screenshots
 
-### Home / Quiz Selection
+### Home
 
 ![Home](./public/screenshots/home.png)
 
