@@ -1,5 +1,5 @@
 import QuizCreation from '@/components/QuizCreation';
-import { getAuthSession } from '@/lib/nextauth';
+import { getDbSession } from '@/lib/auth0';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
@@ -14,7 +14,7 @@ export const metadata = {
 };
 
 const QuizPage = async ({ searchParams }: Props) => {
-	const session = await getAuthSession();
+	const session = await getDbSession();
 	if (!session?.user) {
 		return redirect('/');
 	}

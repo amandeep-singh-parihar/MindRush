@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Button } from './ui/button';
-import { signIn } from 'next-auth/react';
 
 type Props = {
 	text: string;
@@ -12,11 +11,9 @@ const SignInButton = ({ text }: Props) => {
 	return (
 		<Button
 			className="cursor-pointer"
-			onClick={() => {
-				signIn('google').catch(console.error);
-			}}
+			asChild
 		>
-			{text}
+			<a href="/auth/login">{text}</a>
 		</Button>
 	);
 };

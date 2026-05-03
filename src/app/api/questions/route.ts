@@ -2,17 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { quizCreationSchema } from '@/schemas/form/quiz';
 import { ZodError } from 'zod';
 import { strict_output } from '@/lib/gemini';
-import { getAuthSession } from '@/lib/nextauth';
+import { getDbSession } from '@/lib/auth0';
 
 export async function POST(req: NextRequest) {
 	try {
-		// const session = await getAuthSession();
-		// if (!session?.user) {
-		// 	return NextResponse.json(
-		// 		{ error: 'Unauthorized, You must be logged in to create a quiz!!!' },
-		// 		{ status: 401 },
-		// 	);
-		// }
+		const session = await getDbSession();
+		if (!session?.user) {
+			return NextResponse.json(
+				{ error: 'Unauthorized, You must be logged in to create a quiz!!!' },
+				{ status: 401 },
+			);
+		}
 
 		const body = await req.json();
 		const { topic, type, amount } = quizCreationSchema.parse(body);
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
 					option1: '<a plausible distractor>',
 					option2: '<a plausible distractor>',
 					option3: '<a plausible distractor>',
+					// option4: '<a plausible distractor>',
 				},
 			);
 		}

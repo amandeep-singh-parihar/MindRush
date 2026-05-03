@@ -4,7 +4,7 @@ import ResultCard from '@/components/statistics/ResultCard';
 import TimeTakeCard from '@/components/statistics/TimeTakeCard';
 import { buttonVariants } from '@/components/ui/button';
 import { prisma } from '@/lib/db';
-import { getAuthSession } from '@/lib/nextauth';
+import { getDbSession } from '@/lib/auth0';
 import { LucideLayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -19,7 +19,7 @@ type Props = {
 const page = async ({ params }: Props) => {
 	const gameId = params.gameId;
 
-	const session = await getAuthSession();
+	const session = await getDbSession();
 	if (!session?.user) {
 		redirect('/');
 	}

@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
-import { getAuthSession } from '@/lib/nextauth';
+import { getDbSession } from '@/lib/auth0';
 import { quizCreationSchema } from '@/schemas/form/quiz';
 import { prisma } from '@/lib/db';
 import axios from 'axios';
 
 export async function POST(req: NextRequest) {
 	try {
-		const session = await getAuthSession();
+		const session = await getDbSession();
 		if (!session?.user) {
 			return NextResponse.json(
 				{

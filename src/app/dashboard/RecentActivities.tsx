@@ -6,7 +6,7 @@ import {
 	CardDescription,
 	CardContent,
 } from '@/components/ui/card';
-import { getAuthSession } from '@/lib/nextauth';
+import { getDbSession } from '@/lib/auth0';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import HistoryComponent from '@/components/HistoryComponent';
@@ -14,7 +14,7 @@ import HistoryComponent from '@/components/HistoryComponent';
 type Props = {};
 
 const RecentActivities = async (props: Props) => {
-	const session = await getAuthSession();
+	const session = await getDbSession();
 	if (!session?.user) {
 		return redirect('/');
 	}

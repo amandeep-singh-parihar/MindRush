@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { User } from 'next-auth';
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
@@ -9,12 +8,15 @@ import {
 	DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
 import { LogOut } from 'lucide-react';
 import UserAvatar from './UserAvatar';
 
 type Props = {
-	user: Pick<User, 'name' | 'image' | 'email'>;
+	user: {
+		name?: string | null;
+		image?: string | null;
+		email?: string | null;
+	};
 };
 
 const UserAccountsNav = ({ user }: Props) => {
@@ -48,14 +50,13 @@ const UserAccountsNav = ({ user }: Props) => {
 				<DropdownMenuSeparator />
 
 				<DropdownMenuItem
-					onClick={(e) => {
-						e.preventDefault();
-						signOut().catch(console.error);
-					}}
+					asChild
 					className="text-red-600 cursor-pointer px-2 flex items-center justify-start hover:bg-zinc-100 dark:hover:bg-zinc-800"
 				>
-					Sign Out
-					<LogOut className="w-4 h-4 ml-2" />
+					<a href="/auth/logout" className="flex items-center w-full">
+						Sign Out
+						<LogOut className="w-4 h-4 ml-2" />
+					</a>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

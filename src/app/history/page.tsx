@@ -1,7 +1,7 @@
 import HistoryComponent from '@/components/HistoryComponent';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getAuthSession } from '@/lib/nextauth';
+import { getDbSession } from '@/lib/auth0';
 import { LucideLayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -10,7 +10,7 @@ import React from 'react';
 type Props = {};
 
 const HistoryPage = async (props: Props) => {
-	const session = await getAuthSession();
+	const session = await getDbSession();
 	if (!session?.user) {
 		return redirect('/');
 	}

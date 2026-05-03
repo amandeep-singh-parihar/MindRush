@@ -1,5 +1,5 @@
 import React from 'react';
-import { getAuthSession } from '@/lib/nextauth';
+import { getDbSession } from '@/lib/auth0';
 import Link from 'next/link';
 import SignInButton from './SignInButton';
 import UserAccountsNav from './UserAccountsNav';
@@ -10,8 +10,8 @@ import whitelogo from '../../public/mindrush-high-resolution-logo-transparent-wh
 type Props = {};
 
 const Navbar = async (props: Props) => {
-	const session = await getAuthSession();
-	// console.log(session?.user);
+	const session = await getDbSession();
+	
 	return (
 		<div className="fixed inset-x-0 top-0 bg-[#faf8f5] dark:bg-[#000] z-[10] h-fit border-b border-[#c2cad1] py-3">
 			<div className="flex items-center justify-between h-full gap-2 px-8 mx-auto max-w-7xl">

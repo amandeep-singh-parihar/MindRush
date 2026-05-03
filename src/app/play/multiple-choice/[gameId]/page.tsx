@@ -1,5 +1,5 @@
 import React from 'react';
-import { getAuthSession } from '@/lib/nextauth';
+import { getDbSession } from '@/lib/auth0';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import MCQ from '@/components/MCQ';
@@ -13,7 +13,7 @@ interface PageProps {
 const MultipleChoicePage = async ({ params }: PageProps) => {
 	const { gameId } = params;
 
-	const session = await getAuthSession();
+	const session = await getDbSession();
 	if (!session?.user) {
 		return redirect('/');
 	}
