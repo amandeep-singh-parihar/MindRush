@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDbSession } from '@/lib/auth0';
+import { getDbSession } from '@/lib/auth0-db';
 import Link from 'next/link';
 import SignInButton from './SignInButton';
 import UserAccountsNav from './UserAccountsNav';

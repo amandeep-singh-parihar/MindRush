@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError } from 'zod';
-import { getDbSession } from '@/lib/auth0';
+import { getDbSession } from '@/lib/auth0-db';
 import { quizCreationSchema } from '@/schemas/form/quiz';
 import { prisma } from '@/lib/db';
 import axios from 'axios';

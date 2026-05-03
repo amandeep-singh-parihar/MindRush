@@ -6,7 +6,7 @@ import {
 	CardDescription,
 	CardContent,
 } from '@/components/ui/card';
-import { getDbSession } from '@/lib/auth0';
+import { getDbSession } from '@/lib/auth0-db';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import HistoryComponent from '@/components/HistoryComponent';

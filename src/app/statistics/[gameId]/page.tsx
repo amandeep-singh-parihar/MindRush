@@ -4,7 +4,7 @@ import ResultCard from '@/components/statistics/ResultCard';
 import TimeTakeCard from '@/components/statistics/TimeTakeCard';
 import { buttonVariants } from '@/components/ui/button';
 import { prisma } from '@/lib/db';
-import { getDbSession } from '@/lib/auth0';
+import { getDbSession } from '@/lib/auth0-db';
 import { LucideLayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

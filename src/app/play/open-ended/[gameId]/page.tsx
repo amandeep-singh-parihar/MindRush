@@ -1,5 +1,5 @@
 import React from 'react';
-import { getDbSession } from '@/lib/auth0';
+import { getDbSession } from '@/lib/auth0-db';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import OEP from '@/components/OEP';

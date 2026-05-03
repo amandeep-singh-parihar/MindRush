@@ -5,12 +5,12 @@ import {
 	CardDescription,
 	CardContent,
 } from '@/components/ui/card';
-import { auth0 } from '@/lib/auth0';
+import { getDbSession } from '@/lib/auth0-db';
 import { redirect } from 'next/navigation';
 
 export default async function Home() {
 	// Check if user is authenticated using the official Auth0 SDK
-	const session = await auth0.getSession();
+	const session = await getDbSession();
 
 	if (session?.user) {
 		// user is logged in

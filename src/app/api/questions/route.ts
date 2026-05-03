@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { quizCreationSchema } from '@/schemas/form/quiz';
 import { ZodError } from 'zod';
 import { strict_output } from '@/lib/gemini';
-import { getDbSession } from '@/lib/auth0';
+import { getDbSession } from '@/lib/auth0-db';
 
 export async function POST(req: NextRequest) {
 	try {

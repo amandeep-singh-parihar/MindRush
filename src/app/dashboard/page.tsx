@@ -1,6 +1,6 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { getDbSession } from '@/lib/auth0';
+import { getDbSession } from '@/lib/auth0-db';
 import QuizMeCard from '@/components/dashboard/QuizMeCard';
 import HistoryCard from '@/components/dashboard/HistoryCard';
 import HotTopics from './HotTopics';
