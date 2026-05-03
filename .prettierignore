@@ -1,4 +1,6 @@
 node_modules/
+.next/
+out/
 build/
 dist/
 coverage/
@@ -12,7 +14,9 @@ public/
 # Ignore configuration files
 .prettierrc
 .prettierignore
+.eslintrc.json
 
 # Ignore IDE/editor files
 .vscode/
 .idea/
+.env*
