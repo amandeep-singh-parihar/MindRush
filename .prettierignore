@@ -1,0 +1,36 @@
+# === Build Outputs ===
+.next/
+out/
+dist/
+build/
+
+# === Dependencies ===
+node_modules/
+
+# === Package manager lockfiles ===
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# === Generated & Auto-managed files ===
+next-env.d.ts
+*.d.ts
+
+# === Environment & Secrets ===
+.env
+.env.*
+!.env.example
+
+# === Static & Media Assets ===
+public/
+
+# === Tooling configs (managed by tools, not Prettier) ===
+.eslintcache
+*.min.js
+*.min.css
+
+# === OS & editor artifacts ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
