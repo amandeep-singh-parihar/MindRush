@@ -1,0 +1,137 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quizzes    Quiz[] // here quizzes array is for all the quizzes created by the user. 
+  attempts   QuizAttempt[]
+  statistics UserStatistics? // one to one
+  account    Account[]
+  session    Session[]
+}
+
+model Quiz {
+  id          Int      @id @default(autoincrement())
+  title       String
+  topic       String
+  difficulty  String
+  description String
+  timeLimit   Int
+  visibility  String   @default("public")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy User          @relation(fields: [creatorId], references: [id])
+  creatorId Int // this is foreign key connecting the User to the Quiz
+  questions Question[] // this array is for all the questions in the quiz.
+  attempts  QuizAttempt[]
+}
+
+model Question {
+  id             Int      @id @default(autoincrement())
+  quizId         Int // this is foreign key connecting the Quiz to the Question
+  question       String
+  type           String
+  options        String[]
+  correctAnswers String[]
+  explanation    String
+  difficulty     String
+  marks          Int
+
+  quiz    Quiz     @relation(fields: [quizId], references: [id])
+  answers Answer[] // this array is for all the answers to the questions in the quiz.
+}
+
+model Answer {
+  id             Int      @id @default(autoincrement())
+  attemptId      Int
+  questionId     Int
+  selectedAnswer String[]
+  isCorrect      Boolean
+  timeTaken      Int
+
+  question    Question    @relation(fields: [questionId], references: [id])
+  quizAttempt QuizAttempt @relation(fields: [attemptId], references: [id])
+}
+
+model QuizAttempt {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  quizId      Int
+  score       Int
+  percentage  Float
+  startedAt   DateTime @default(now())
+  completedAt DateTime @default(now())
+  timeTaken   Int
+
+  user User @relation(fields: [userId], references: [id])
+  quiz Quiz @relation(fields: [quizId], references: [id])
+
+  answers Answer[]
+}
+
+model UserStatistics {
+  userId                 Int   @unique
+  totalQuizzesTaken      Int   @default(0)
+  totalQuestionsAnswered Int   @default(0)
+  correctlyAnswered      Int   @default(0)
+  accuracy               Float @default(0)
+  currentStreak          Int   @default(0)
+  maxStreak              Int   @default(0)
+  totalStudyTime         Int   @default(0)
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
