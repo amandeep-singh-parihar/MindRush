@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Navbar from "../components/Navbar";
 import QuizForm from "../components/QuizForm";
 import Stats from "../components/Stats";
@@ -20,50 +19,28 @@ export default function Home() {
       <Navbar />
 
       {/* Main Page Wrapper */}
-      <main className="relative flex-1 w-full max-w-7xl mx-auto pt-32 md:pt-40 pb-20 z-10 flex flex-col gap-16 md:gap-24">
+      <main className="relative flex-1 w-full max-w-7xl mx-auto pt-24 md:pt-30 pb-20 z-10 flex flex-col gap-16 md:gap-24">
         {/* Hero Section */}
         <section
-          className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center"
+          className="flex flex-col items-center text-center gap-8 w-full"
           id="home"
         >
-          {/* Hero Left Column (Content & Form) */}
-          <div className="lg:col-span-6 flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight font-sans">
-                Generate AI Quizzes <br />
-                <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-                  in Seconds
-                </span>
-              </h1>
-              <p className="text-base md:text-lg text-zinc-400 leading-relaxed max-w-xl">
-                Enter any topic, difficulty, and number of questions. MindRush instantly creates
-                personalized quizzes using AI to help you learn faster.
-              </p>
-            </div>
-
-            {/* Modular Quiz Form Component */}
-            <div className="max-w-md w-full">
-              <QuizForm />
-            </div>
+          <div className="flex flex-col gap-4 items-center">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight font-sans">
+              Generate AI Quizzes <br />
+              <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                in Seconds
+              </span>
+            </h1>
+            <p className="text-base md:text-lg text-zinc-400 leading-relaxed max-w-2xl">
+              Enter any topic, difficulty, and number of questions. MindRush instantly creates
+              personalized quizzes using AI to help you learn faster.
+            </p>
           </div>
 
-          {/* Hero Right Column (3D Brain Illustration) */}
-          <div className="lg:col-span-6 flex justify-center items-center relative">
-            {/* Glowing background behind image */}
-            <div className="absolute w-[300px] h-[300px] md:w-[450px] md:h-[450px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none z-0 animate-pulse"></div>
-            <div className="absolute w-[200px] h-[200px] md:w-[300px] md:h-[300px] bg-pink-500/10 rounded-full blur-[80px] pointer-events-none z-0"></div>
-
-            {/* Responsive Floating Brain Platform Image */}
-            <div className="relative z-10 floating-brain w-full max-w-[450px] aspect-square flex items-center justify-center">
-              <Image
-                src="/brain_platform.png"
-                alt="MindRush AI brain platform"
-                width={500}
-                height={500}
-                priority
-                className="w-full h-auto object-contain drop-shadow-[0_0_35px_rgba(168,85,247,0.3)]"
-              />
-            </div>
+          {/* Modular Quiz Form Component */}
+          <div className="max-w-lg w-full">
+            <QuizForm />
           </div>
         </section>
 
