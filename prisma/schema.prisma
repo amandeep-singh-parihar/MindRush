@@ -13,18 +13,19 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  quizzes    Quiz[] // here quizzes array is for all the quizzes created by the user. 
-  attempts   QuizAttempt[]
-  statistics UserStatistics? // one to one
-  account    Account[]
-  session    Session[]
+  id            Int             @id @default(autoincrement())
+  name          String
+  email         String          @unique
+  password      String?
+  image         String? // for oauth
+  emailVerified DateTime? // required by NextAuth
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  quizzes       Quiz[] // here quizzes array is for all the quizzes created by the user. 
+  attempts      QuizAttempt[]
+  statistics    UserStatistics? // one to one
+  account       Account[]
+  session       Session[]
 }
 
 model Quiz {
