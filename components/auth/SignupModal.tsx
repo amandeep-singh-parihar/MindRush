@@ -271,7 +271,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
             </div>
 
             {/* Terms */}
-            <label className="flex items-start gap-3 cursor-pointer group mt-0.5">
+            {/* <label className="flex items-start gap-3 cursor-pointer group mt-0.5">
               <div className="relative flex-shrink-0 mt-0.5">
                 <input id="signup-terms" type="checkbox" className="peer sr-only" />
                 <div
@@ -306,7 +306,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
                   Privacy Policy
                 </span>
               </span>
-            </label>
+            </label> */}
 
             {/* Submit */}
             <button
