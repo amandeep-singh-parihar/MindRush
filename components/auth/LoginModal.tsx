@@ -3,7 +3,8 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Brain, X, Mail, Lock, Eye, EyeOff, Sparkles, ArrowRight } from "lucide-react";
-import { signIn } from "next-auth/react"
+import { signIn } from "next-auth/react";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 interface LoginModalInterface {
   open: boolean;
@@ -11,9 +12,16 @@ interface LoginModalInterface {
   onSwitchToSignup?: () => void;
 }
 
+interface IFormInput {
+  email: String;
+  password: String;
+}
+
 const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
+  const { register, handleSubmit } = useForm<IFormInput>();
+  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
 
   React.useEffect(() => {
     setMounted(true);
@@ -44,11 +52,15 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
         {/* ── Ambient glows ── */}
         <div
           className="absolute -top-20 -left-20 w-64 h-64 rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(219,39,119,0.18) 0%, transparent 70%)" }}
+          style={{
+            background: "radial-gradient(circle, rgba(219,39,119,0.18) 0%, transparent 70%)",
+          }}
         />
         <div
           className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(147,51,234,0.18) 0%, transparent 70%)" }}
+          style={{
+            background: "radial-gradient(circle, rgba(147,51,234,0.18) 0%, transparent 70%)",
+          }}
         />
 
         {/* ── Grid bg overlay ── */}
@@ -94,7 +106,8 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
               <div
                 className="relative flex items-center justify-center w-11 h-11 rounded-xl"
                 style={{
-                  background: "linear-gradient(135deg, rgba(219,39,119,0.25) 0%, rgba(147,51,234,0.25) 100%)",
+                  background:
+                    "linear-gradient(135deg, rgba(219,39,119,0.25) 0%, rgba(147,51,234,0.25) 100%)",
                   border: "1px solid rgba(219,39,119,0.3)",
                 }}
               >
@@ -103,9 +116,7 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
             </div>
 
             <div className="text-center">
-              <h2 className="text-xl font-bold text-white tracking-tight">
-                Welcome back
-              </h2>
+              <h2 className="text-xl font-bold text-white tracking-tight">Welcome back</h2>
               <p className="text-xs text-zinc-400 mt-0.5">
                 Sign in to your MindRush account to continue
               </p>
@@ -153,7 +164,7 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
           </div>
 
           {/* ── Form Fields ── */}
-          <form className="flex flex-col gap-3.5" onSubmit={(e) => e.preventDefault()}>
+          <form className="flex flex-col gap-3.5" onSubmit={handleSubmit(onSubmit)}>
             {/* Email */}
             <div className="flex flex-col gap-1">
               <label
@@ -165,6 +176,7 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
                 <input
+                  {...register("email")}
                   id="login-email"
                   type="email"
                   placeholder="you@example.com"
@@ -194,13 +206,14 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
                 >
                   Password
                 </label>
-                <span className="text-[10px] text-pink-400 hover:text-pink-300 font-medium cursor-pointer transition-colors">
+                {/* <span className="text-[10px] text-pink-400 hover:text-pink-300 font-medium cursor-pointer transition-colors">
                   Forgot password?
-                </span>
+                </span> */}
               </div>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
                 <input
+                  {...register("password")}
                   id="login-password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
@@ -230,7 +243,7 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
             </div>
 
             {/* Remember Me */}
-            <label className="flex items-center gap-3 cursor-pointer group mt-0.5">
+            {/* <label className="flex items-center gap-3 cursor-pointer group mt-0.5">
               <div className="relative flex-shrink-0">
                 <input
                   id="login-remember"
@@ -253,7 +266,7 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
               <span className="text-[11px] text-zinc-500 select-none group-hover:text-zinc-400 transition-colors">
                 Remember me on this device
               </span>
-            </label>
+            </label> */}
 
             {/* Submit */}
             <button

@@ -3,7 +3,8 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Brain, X, Mail, Lock, User, Eye, EyeOff, Sparkles, ArrowRight } from "lucide-react";
-import { signIn } from "next-auth/react"
+import { signIn } from "next-auth/react";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 interface SignupModalProps {
   open: boolean;
@@ -11,10 +12,17 @@ interface SignupModalProps {
   onSwitchToLogin?: () => void;
 }
 
+interface IFormInput {
+  fullName: String;
+  email: String;
+  password: String;
+}
+
 const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
   const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
+  const { register, handleSubmit } = useForm<IFormInput>();
+  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
 
   React.useEffect(() => {
     setMounted(true);
@@ -45,11 +53,15 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
         {/* ── Ambient glows ── */}
         <div
           className="absolute -top-20 -left-20 w-64 h-64 rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(219,39,119,0.18) 0%, transparent 70%)" }}
+          style={{
+            background: "radial-gradient(circle, rgba(219,39,119,0.18) 0%, transparent 70%)",
+          }}
         />
         <div
           className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(147,51,234,0.18) 0%, transparent 70%)" }}
+          style={{
+            background: "radial-gradient(circle, rgba(147,51,234,0.18) 0%, transparent 70%)",
+          }}
         />
 
         {/* ── Grid bg overlay ── */}
@@ -95,7 +107,8 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
               <div
                 className="relative flex items-center justify-center w-11 h-11 rounded-xl"
                 style={{
-                  background: "linear-gradient(135deg, rgba(219,39,119,0.25) 0%, rgba(147,51,234,0.25) 100%)",
+                  background:
+                    "linear-gradient(135deg, rgba(219,39,119,0.25) 0%, rgba(147,51,234,0.25) 100%)",
                   border: "1px solid rgba(219,39,119,0.3)",
                 }}
               >
@@ -104,9 +117,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
             </div>
 
             <div className="text-center">
-              <h2 className="text-xl font-bold text-white tracking-tight">
-                Create your account
-              </h2>
+              <h2 className="text-xl font-bold text-white tracking-tight">Create your account</h2>
               <p className="text-xs text-zinc-400 mt-0.5">
                 Join MindRush and start generating AI-powered quizzes
               </p>
@@ -154,8 +165,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
           </div>
 
           {/* ── Form Fields ── */}
-          <form className="flex flex-col gap-3.5" onSubmit={(e) => e.preventDefault()}>
-
+          <form className="flex flex-col gap-3.5" onSubmit={handleSubmit(onSubmit)}>
             {/* Full Name */}
             <div className="flex flex-col gap-1">
               <label
@@ -167,6 +177,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
               <div className="relative">
                 <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
                 <input
+                  {...register("fullName")}
                   id="signup-name"
                   type="text"
                   placeholder="Alex Johnson"
@@ -198,6 +209,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
                 <input
+                  {...register("email")}
                   id="signup-email"
                   type="email"
                   placeholder="you@example.com"
@@ -229,6 +241,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
                 <input
+                  {...register("password")}
                   id="signup-password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Min. 8 characters"
@@ -260,29 +273,38 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
             {/* Terms */}
             <label className="flex items-start gap-3 cursor-pointer group mt-0.5">
               <div className="relative flex-shrink-0 mt-0.5">
-                <input
-                  id="signup-terms"
-                  type="checkbox"
-                  className="peer sr-only"
-                />
+                <input id="signup-terms" type="checkbox" className="peer sr-only" />
                 <div
                   className="w-4 h-4 rounded-[5px] transition-all duration-200 peer-checked:opacity-0"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)" }}
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                  }}
                 />
                 <div
                   className="absolute inset-0 rounded-[5px] flex items-center justify-center opacity-0 peer-checked:opacity-100 transition-all duration-200"
                   style={{ background: "linear-gradient(135deg, #ec4899 0%, #a855f7 100%)" }}
                 >
                   <svg viewBox="0 0 10 8" className="w-2.5 h-2" fill="none" aria-hidden="true">
-                    <path d="M1 4l2.5 2.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <path
+                      d="M1 4l2.5 2.5L9 1"
+                      stroke="white"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </div>
               </div>
               <span className="text-[11px] text-zinc-500 leading-relaxed group-hover:text-zinc-400 transition-colors">
                 I agree to the{" "}
-                <span className="text-pink-400 hover:text-pink-300 cursor-pointer transition-colors font-medium">Terms of Service</span>
-                {" "}and{" "}
-                <span className="text-pink-400 hover:text-pink-300 cursor-pointer transition-colors font-medium">Privacy Policy</span>
+                <span className="text-pink-400 hover:text-pink-300 cursor-pointer transition-colors font-medium">
+                  Terms of Service
+                </span>{" "}
+                and{" "}
+                <span className="text-pink-400 hover:text-pink-300 cursor-pointer transition-colors font-medium">
+                  Privacy Policy
+                </span>
               </span>
             </label>
 
