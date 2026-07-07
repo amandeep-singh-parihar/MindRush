@@ -3,9 +3,13 @@
 import { useState } from "react";
 import { Brain, Menu, X } from "lucide-react";
 import Link from "next/link";
+import SignupModal from "./auth/SignupModal";
+import LoginModal from "./auth/LoginModal";
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [openSignUpModal, setOpenSignUpModal] = useState(false);
+  const [openLoginModal, setOpenLoginModal] = useState(false);
 
   const navLinks = [
     { name: "Home", href: "#home" },
@@ -44,38 +48,57 @@ export default function Navbar() {
 
         {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            href="#login"
-            className="text-sm font-medium text-zinc-300 hover:text-white transition-colors duration-200"
+          <button
+            onClick={()=>setOpenLoginModal(true)}
+            className="cursor-pointer text-sm font-medium text-zinc-300 hover:text-white transition-colors duration-200"
           >
             Login
-          </Link>
-          <Link
-            href="#generate"
-            className="btn-gradient text-sm font-semibold text-white px-5 py-2 rounded-xl transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] shadow-lg shadow-pink-500/20"
+          </button>
+
+          <LoginModal
+            open={openLoginModal}
+            onClose={() => setOpenLoginModal(false)}
+            onSwitchToSignup={() => {
+              setOpenLoginModal(false);
+              setOpenSignUpModal(true);
+            }}
+          />
+
+          <button
+            onClick={() => setOpenSignUpModal(true)}
+            className="cursor-pointer btn-gradient text-sm font-semibold text-white px-5 py-2 rounded-xl transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] shadow-lg shadow-pink-500/20"
           >
             Get Started
-          </Link>
+          </button>
+
+          <SignupModal
+            open={openSignUpModal}
+            onClose={() => setOpenSignUpModal(false)}
+            onSwitchToLogin={() => {
+              setOpenSignUpModal(false);
+              setOpenLoginModal(true);
+            }}
+          />
         </div>
 
         {/* Mobile menu toggle */}
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => setOpen(!open)}
           className="md:hidden p-1.5 text-zinc-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
           aria-label="Toggle Menu"
         >
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
       {/* Mobile Drawer */}
-      {isOpen && (
+      {open && (
         <div className="md:hidden mt-4 pt-4 border-t border-white/5 flex flex-col gap-4 animate-fadeIn">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              onClick={() => setIsOpen(false)}
+              onClick={() => setOpen(false)}
               className="text-base font-medium text-zinc-400 hover:text-white transition-colors py-1.5 px-2 rounded-lg hover:bg-white/5"
             >
               {link.name}
@@ -85,14 +108,14 @@ export default function Navbar() {
           <div className="flex flex-col gap-3 pb-2">
             <Link
               href="#login"
-              onClick={() => setIsOpen(false)}
+              onClick={() => setOpen(false)}
               className="text-center text-base font-medium text-zinc-300 hover:text-white py-2 rounded-lg hover:bg-white/5 transition-colors"
             >
               Login
             </Link>
             <Link
               href="#generate"
-              onClick={() => setIsOpen(false)}
+              onClick={() => setOpen(false)}
               className="btn-gradient text-center text-base font-semibold text-white py-2.5 rounded-xl shadow-lg shadow-pink-500/20 transition-transform duration-200 active:scale-95"
             >
               Get Started

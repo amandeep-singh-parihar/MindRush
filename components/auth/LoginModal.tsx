@@ -3,6 +3,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Brain, X, Mail, Lock, Eye, EyeOff, Sparkles, ArrowRight } from "lucide-react";
+import { signIn } from "next-auth/react"
 
 interface LoginModalInterface {
   open: boolean;
@@ -113,6 +114,7 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
 
           {/* ── Google OAuth Button ── */}
           <button
+            onClick={() => signIn("google")}
             type="button"
             id="login-google-btn"
             className="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl font-semibold text-xs text-white transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] mb-4 cursor-pointer"

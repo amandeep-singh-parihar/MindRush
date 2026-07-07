@@ -8,8 +8,11 @@ import Testimonials from "../components/Testimonials";
 import FAQ from "../components/FAQ";
 import CTA from "../components/CTA";
 import Footer from "../components/Footer";
+import { auth } from "@/auth";
 
-export default function Home() {
+export default async function Home() {
+  const s = await auth();
+  console.log("this is the s -> ",s);
   return (
     <div className="min-h-screen w-full relative flex flex-col font-sans overflow-x-hidden selection:bg-pink-500/30 selection:text-pink-200">
       {/* Background Grid Overlay */}
