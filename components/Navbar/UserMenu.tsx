@@ -19,12 +19,15 @@ export default function UserMenu({ session }: UserMenuProps) {
 
   if (!session?.user) return null;
 
-  const initials = session.user.name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) ?? "U";
+  const initials =
+    session.user.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) ?? "U";
+
+  const firstName = session.user.name?.split(" ")[0] ?? "User";
 
   return (
     <div className="relative hidden md:block">
@@ -51,7 +54,7 @@ export default function UserMenu({ session }: UserMenuProps) {
         )}
 
         <span className="text-sm font-medium text-zinc-300 max-w-[120px] truncate">
-          {session.user.name}
+          {firstName}
         </span>
 
         <ChevronDown
@@ -63,10 +66,7 @@ export default function UserMenu({ session }: UserMenuProps) {
       {open && (
         <>
           {/* Invisible overlay to close on outside click */}
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setOpen(false)}
-          />
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
 
           <div
             className="absolute right-0 top-full mt-2 w-56 rounded-xl z-50 py-2 overflow-hidden"
@@ -80,12 +80,8 @@ export default function UserMenu({ session }: UserMenuProps) {
           >
             {/* User info header */}
             <div className="px-4 py-3 border-b border-white/5">
-              <p className="text-sm font-semibold text-white truncate">
-                {session.user.name}
-              </p>
-              <p className="text-xs text-zinc-500 truncate mt-0.5">
-                {session.user.email}
-              </p>
+              <p className="text-sm font-semibold text-white truncate">{session.user.name}</p>
+              <p className="text-xs text-zinc-500 truncate mt-0.5">{session.user.email}</p>
             </div>
 
             {/* Menu items */}

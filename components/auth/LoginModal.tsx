@@ -13,15 +13,38 @@ interface LoginModalInterface {
 }
 
 interface IFormInput {
-  email: String;
-  password: String;
+  email: string;
+  password: string;
 }
 
 const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const { register, handleSubmit } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setErrorMessage("Invalid email or password.");
+        setIsLoading(false);
+      } else {
+        onClose();
+        window.location.reload();
+      }
+    } catch (err) {
+      setErrorMessage("An unexpected error occurred.");
+      setIsLoading(false);
+    }
+  };
 
   React.useEffect(() => {
     setMounted(true);
@@ -165,6 +188,11 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
 
           {/* ── Form Fields ── */}
           <form className="flex flex-col gap-3.5" onSubmit={handleSubmit(onSubmit)}>
+            {errorMessage && (
+              <div className="p-3 rounded-xl text-xs bg-red-500/10 border border-red-500/20 text-red-400">
+                {errorMessage}
+              </div>
+            )}
             {/* Email */}
             <div className="flex flex-col gap-1">
               <label
@@ -272,12 +300,22 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
             <button
               id="login-submit-btn"
               type="submit"
-              className="btn-gradient w-full flex items-center justify-center gap-2 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-xl mt-1.5 cursor-pointer"
+              disabled={isLoading}
+              className="btn-gradient w-full flex items-center justify-center gap-2 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-xl mt-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ boxShadow: "0 8px 32px rgba(236,72,153,0.3)" }}
             >
-              <Sparkles className="w-4 h-4" />
-              Sign In
-              <ArrowRight className="w-4 h-4" />
+              {isLoading ? (
+                <>
+                  <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  Please wait...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Sign In
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
 

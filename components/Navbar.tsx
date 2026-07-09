@@ -49,7 +49,7 @@ export default function Navbar() {
         {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-4">
           <button
-            onClick={()=>setOpenLoginModal(true)}
+            onClick={() => setOpenLoginModal(true)}
             className="cursor-pointer text-sm font-medium text-zinc-300 hover:text-white transition-colors duration-200"
           >
             Login

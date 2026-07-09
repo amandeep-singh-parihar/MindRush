@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { Brain, X, Mail, Lock, User, Eye, EyeOff, Sparkles, ArrowRight } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { signUpUser } from "@/actions/auth";
 
 interface SignupModalProps {
   open: boolean;
@@ -13,17 +14,51 @@ interface SignupModalProps {
 }
 
 interface IFormInput {
-  fullName: String;
-  email: String;
-  password: String;
+  name: string;
+  email: string;
+  password: string;
 }
 
 const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
   const { register, handleSubmit } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    try {
+      const result = await signUpUser(data);
+      if (!result?.success) {
+        setErrorMessage(result?.message || "Something went wrong.");
+        setIsLoading(false);
+        return;
+      }
 
+      setSuccessMessage("Account created successfully! Logging you in...");
+      const loginResult = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (loginResult?.error) {
+        setErrorMessage("Account created, but automatic login failed. Please sign in manually.");
+        setIsLoading(false);
+      } else {
+        setTimeout(() => {
+          onClose();
+          window.location.reload();
+        }, 1500);
+      }
+    } catch (err) {
+      setErrorMessage("An unexpected error occurred.");
+      setIsLoading(false);
+    }
+  };
   React.useEffect(() => {
     setMounted(true);
   }, []);
@@ -166,6 +201,16 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
 
           {/* ── Form Fields ── */}
           <form className="flex flex-col gap-3.5" onSubmit={handleSubmit(onSubmit)}>
+            {errorMessage && (
+              <div className="p-3 rounded-xl text-xs bg-red-500/10 border border-red-500/20 text-red-400">
+                {errorMessage}
+              </div>
+            )}
+            {successMessage && (
+              <div className="p-3 rounded-xl text-xs bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                {successMessage}
+              </div>
+            )}
             {/* Full Name */}
             <div className="flex flex-col gap-1">
               <label
@@ -177,7 +222,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
               <div className="relative">
                 <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 pointer-events-none" />
                 <input
-                  {...register("fullName")}
+                  {...register("name")}
                   id="signup-name"
                   type="text"
                   placeholder="Alex Johnson"
@@ -312,12 +357,22 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
             <button
               id="signup-submit-btn"
               type="submit"
-              className="btn-gradient w-full flex items-center justify-center gap-2 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-xl mt-1.5 cursor-pointer"
+              disabled={isLoading}
+              className="btn-gradient w-full flex items-center justify-center gap-2 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-xl mt-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ boxShadow: "0 8px 32px rgba(236,72,153,0.3)" }}
             >
-              <Sparkles className="w-4 h-4" />
-              Create Account
-              <ArrowRight className="w-4 h-4" />
+              {isLoading ? (
+                <>
+                  <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  Please wait...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Create Account
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
 

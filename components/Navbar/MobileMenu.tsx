@@ -36,7 +36,8 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
 
       {/* Drawer */}
       {open && (
-        <div className="md:hidden absolute left-0 right-0 top-full mt-1 mx-0 px-6 pb-4 pt-4 border-t border-white/5 flex flex-col gap-4 animate-fadeIn rounded-b-2xl"
+        <div
+          className="md:hidden absolute left-0 right-0 top-full mt-1 mx-0 px-6 pb-4 pt-4 border-t border-white/5 flex flex-col gap-4 animate-fadeIn rounded-b-2xl"
           style={{
             background: "inherit",
             backdropFilter: "inherit",
@@ -76,7 +77,7 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
                   </div>
                 )}
                 <span className="text-sm font-medium text-white truncate">
-                  {session.user.name}
+                  {session.user.name?.split(" ")[0] ?? "User"}
                 </span>
               </div>
             ) : (
