@@ -1,5 +1,7 @@
 import { User, Lock, CreditCard, ExternalLink } from "lucide-react";
 import { auth } from "@/auth";
+import prisma from "@/lib/prisma";
+import ProfileForm from "@/components/Profile/ProfileForm";
 
 const MOCK_USER = {
   name: "Mock",
@@ -8,8 +10,28 @@ const MOCK_USER = {
 };
 
 export default async function SettingsPage() {
-  const user = await auth();
-  // console.log("testing from the settings", user)
+  const session = await auth();
+
+  let dbUser = null;
+  if (session?.user?.email) {
+    dbUser = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { name: true, email: true },
+    });
+  }
+
+  const user =
+    session && dbUser
+      ? {
+          ...session,
+          user: {
+            ...session.user,
+            name: dbUser.name,
+            email: dbUser.email,
+          },
+        }
+      : session;
+
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
@@ -23,37 +45,7 @@ export default async function SettingsPage() {
         {/* Profile Edit Cards (8 cols on desktop) */}
         <div className="lg:col-span-8 space-y-6">
           {/* Basic Info */}
-          <div className="glass-card rounded-2xl p-6 border border-white/5 space-y-4">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <User className="w-4 h-4 text-pink-500" />
-              Personal Profile Details
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-400">Full Name</label>
-                <input
-                  type="text"
-                  defaultValue={user?.user?.name || ""}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-pink-500/50 outline-none transition-all"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-400">Email Address</label>
-                <input
-                  readOnly
-                  type="email"
-                  defaultValue={user?.user?.email || ""}
-                  className="hover:cursor-not-allowed w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-pink-500/50 outline-none transition-all"
-                />
-              </div>
-            </div>
-
-            <button className="btn-gradient px-4 py-2.5 rounded-xl text-xs font-semibold text-white cursor-pointer shadow-lg shadow-pink-500/10 hover:shadow-pink-500/20 transition-all self-start">
-              Save Profiles
-            </button>
-          </div>
+          <ProfileForm user={user} />
 
           {/* Password Modification */}
           <div className="glass-card rounded-2xl p-6 border border-white/5 space-y-4">

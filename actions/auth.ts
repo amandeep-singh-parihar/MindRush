@@ -10,6 +10,11 @@ interface SingupData {
   password: string;
 }
 
+interface User {
+  name: string;
+  email: string;
+}
+
 export async function signUpUser(data: SingupData) {
   try {
     // Validate inputs
@@ -54,6 +59,32 @@ export async function signUpUser(data: SingupData) {
     };
   } catch (error) {
     console.log("Error while signing up: ", error);
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function updateProfileName(data: User) {
+  try {
+    const { name, email } = data;
+
+    await prisma.user.update({
+      where: {
+        email: email,
+      },
+      data: {
+        name: name,
+      },
+    });
+
+    return {
+      success: true,
+      message: "Profile updated successfully",
+    };
+  } catch (error) {
+    console.log("Error while updating the profile", error);
     return {
       success: false,
       message: "Something went wrong",

@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import {
   Flame,
@@ -12,6 +9,8 @@ import {
   History,
   Calendar,
 } from "lucide-react";
+import { auth } from "@/auth";
+import prisma from "@/lib/prisma";
 
 const MOCK_USER = {
   name: "Amandeep Singh",
@@ -102,8 +101,19 @@ const MOCK_RECENT_ATTEMPTS = [
   },
 ];
 
-export default function OverviewPage() {
-  const firstName = MOCK_USER.name.split(" ")[0];
+export default async function OverviewPage() {
+  const session = await auth();
+
+  let dbUser = null;
+  if (session?.user?.email) {
+    dbUser = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { name: true },
+    });
+  }
+
+  const name = dbUser?.name || session?.user?.name || MOCK_USER.name;
+  const firstName = name.split(" ")[0];
 
   const renderHeatmap = () => {
     const cells = [];
