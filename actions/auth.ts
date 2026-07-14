@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { signUpSchema } from "@/lib/zod";
+import { auth } from "@/auth";
 
 interface SingupData {
   name: string;
@@ -13,6 +14,12 @@ interface SingupData {
 interface User {
   name: string;
   email: string;
+}
+
+interface PasswordFormInput {
+  currentPassword: string;
+  newPassword: string;
+  verifyPassword: string;
 }
 
 export async function signUpUser(data: SingupData) {
@@ -88,6 +95,80 @@ export async function updateProfileName(data: User) {
     return {
       success: false,
       message: "Something went wrong",
+    };
+  }
+}
+
+export async function updatePassword(data: PasswordFormInput) {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return {
+        success: false,
+        message: "Unauthorized. Please log in.",
+      };
+    }
+
+    const { currentPassword, newPassword, verifyPassword } = data;
+
+    if (!currentPassword || !newPassword || !verifyPassword) {
+      return {
+        success: false,
+        message: "All fields are required.",
+      };
+    }
+
+    if (newPassword !== verifyPassword) {
+      return {
+        success: false,
+        message: "New passwords do not match",
+      };
+    }
+
+    if (newPassword.length < 6) {
+      return {
+        success: false,
+        message: "New password must be at least 6 characters long",
+      };
+    }
+
+    // Get user to check current password
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user || !user.password) {
+      return {
+        success: false,
+        message: "User not found or credentials not configured",
+      };
+    }
+
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+      return {
+        success: false,
+        message: "Incorrect current password",
+      };
+    }
+
+    // Hash and save new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { email: session.user.email },
+      data: { password: hashedPassword },
+    });
+
+    return {
+      success: true,
+      message: "Password updated successfully",
+    };
+  } catch (error) {
+    console.log("Error while updating password:", error);
+    return {
+      success: false,
+      message: "Something went wrong while updating password",
     };
   }
 }

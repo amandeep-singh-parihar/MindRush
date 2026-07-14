@@ -5,6 +5,8 @@ import DashboardLayoutClient from "@/app/dashboard/DashboardLayoutClient";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
+  // console.log("session", session);
+
   let dbUser = null;
   if (session?.user?.email) {
     dbUser = await prisma.user.findUnique({

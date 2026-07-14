@@ -2,6 +2,7 @@ import { User, Lock, CreditCard, ExternalLink } from "lucide-react";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import ProfileForm from "@/components/Profile/ProfileForm";
+import PasswordForm from "@/components/Profile/PasswordForm";
 
 const MOCK_USER = {
   name: "Mock",
@@ -16,7 +17,6 @@ export default async function SettingsPage() {
   if (session?.user?.email) {
     dbUser = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { name: true, email: true },
     });
   }
 
@@ -31,6 +31,8 @@ export default async function SettingsPage() {
           },
         }
       : session;
+
+  // console.log("page -> ", user);
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -48,45 +50,7 @@ export default async function SettingsPage() {
           <ProfileForm user={user} />
 
           {/* Password Modification */}
-          <div className="glass-card rounded-2xl p-6 border border-white/5 space-y-4">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <Lock className="w-4 h-4 text-purple-500" />
-              Update Password Security
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-400">Current Password</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-pink-500/50 outline-none transition-all"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-400">New Password</label>
-                <input
-                  type="password"
-                  placeholder="New password"
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-pink-500/50 outline-none transition-all"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-zinc-400">Verify Password</label>
-                <input
-                  type="password"
-                  placeholder="Re-type password"
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-pink-500/50 outline-none transition-all"
-                />
-              </div>
-            </div>
-
-            <button className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-xs font-semibold text-white transition-all cursor-pointer">
-              Change Security Password
-            </button>
-          </div>
+          <PasswordForm hasPassword={!!dbUser?.password} />
         </div>
 
         {/* Subscriptions Card (4 cols on desktop) */}
