@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { LogOut, User, ChevronDown } from "lucide-react";
+import { LogOut, User, ChevronDown, LayoutDashboard } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface UserMenuProps {
   session: {
@@ -16,6 +17,7 @@ interface UserMenuProps {
 
 export default function UserMenu({ session }: UserMenuProps) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   if (!session?.user) return null;
 
@@ -95,6 +97,14 @@ export default function UserMenu({ session }: UserMenuProps) {
               >
                 <User className="w-4 h-4 text-zinc-500" />
                 My Profile
+              </button>
+
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
               </button>
 
               <button
