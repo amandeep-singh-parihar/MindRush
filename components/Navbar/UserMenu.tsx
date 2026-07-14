@@ -91,7 +91,7 @@ export default function UserMenu({ session }: UserMenuProps) {
               <button
                 onClick={() => {
                   setOpen(false);
-                  router.push("/dashboard/settings")
+                  router.push("/dashboard/settings");
                 }}
                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
               >

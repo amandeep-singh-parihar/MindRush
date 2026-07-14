@@ -1,14 +1,15 @@
-"use client";
-
 import { User, Lock, CreditCard, ExternalLink } from "lucide-react";
+import { auth } from "@/auth";
 
 const MOCK_USER = {
-  name: "Amandeep Singh",
-  email: "amandeep@example.com",
+  name: "Mock",
+  email: "Mock@example.com",
   tier: "Premium Creator",
 };
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const user = await auth();
+  // console.log("testing from the settings", user)
   return (
     <div className="space-y-8 animate-fadeIn">
       <div>
@@ -33,7 +34,7 @@ export default function SettingsPage() {
                 <label className="text-xs font-semibold text-zinc-400">Full Name</label>
                 <input
                   type="text"
-                  defaultValue={MOCK_USER.name}
+                  defaultValue={user?.user?.name || ""}
                   className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-pink-500/50 outline-none transition-all"
                 />
               </div>
@@ -41,9 +42,10 @@ export default function SettingsPage() {
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-zinc-400">Email Address</label>
                 <input
+                  readOnly
                   type="email"
-                  defaultValue={MOCK_USER.email}
-                  className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-pink-500/50 outline-none transition-all"
+                  defaultValue={user?.user?.email || ""}
+                  className="hover:cursor-not-allowed w-full bg-white/[0.02] border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:border-pink-500/50 outline-none transition-all"
                 />
               </div>
             </div>
@@ -114,7 +116,7 @@ export default function SettingsPage() {
               <div className="flex justify-between text-xs">
                 <span className="text-zinc-400">Current Plan:</span>
                 <span className="text-pink-400 font-bold tracking-wider uppercase text-[10px] px-2 py-0.5 rounded bg-pink-500/10 border border-pink-500/20">
-                  {MOCK_USER.tier}
+                  {(user as any)?.tier || MOCK_USER.tier}
                 </span>
               </div>
               <div className="flex justify-between text-xs">
