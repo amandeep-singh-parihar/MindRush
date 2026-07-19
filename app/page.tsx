@@ -19,7 +19,7 @@ export default async function Home() {
       <Navbar />
 
       {/* Main Page Wrapper */}
-      <main className="relative flex-1 w-full max-w-7xl mx-auto pt-24 md:pt-30 pb-20 z-10 flex flex-col gap-16 md:gap-24">
+      <main className="relative flex-1 w-full max-w-7xl mx-auto pt-24 md:pt-24 pb-20 z-10 flex flex-col gap-16 md:gap-24">
         {/* Hero Section */}
         <section className="flex flex-col items-center text-center gap-8 w-full" id="home">
           <div className="flex flex-col gap-4 items-center">
