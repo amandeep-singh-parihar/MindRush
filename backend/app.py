@@ -8,6 +8,8 @@ from typing import Optional
 import tempfile
 import os
 import uuid
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from sentence_transformers import SentenceTransformer
 
 app = FastAPI()
 app.add_middleware(
@@ -19,9 +21,27 @@ app.add_middleware(
 )
 # Ingestion Pipeline 
 
+# document loader
 def load_pdf(filePath: str):
     loader = PyMuPDFLoader(filePath)
     return loader.load()
+
+# chunking
+def split_docs(document, chunk_size = 500, chunk_overlap = 50):
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size = chunk_size, chunk_overlap = chunk_overlap)
+    chunked_doc = text_splitter.split_documents(document)
+    return chunked_doc
+
+# embeddings
+class EmbeddingManager:
+    def __init__(self, model_name = "all-MiniLM-L6-v2"):
+        self.model_name = model_name
+        self.model = SentenceTransformer(self.model_name)
+
+    def generate_embeddings(self, text):
+        embeddings = self.model.encode(text)
+        return embeddings
+
 
 class QuizRequest(BaseModel):
     text_or_pdf: str
