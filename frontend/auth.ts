@@ -59,12 +59,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user, account, profile }) {
-      // On first sign-in, persist the profile image from Google into the token
+      // On first Google sign-in, persist the profile picture from OAuth profile
       if (account?.provider === "google" && profile) {
         token.picture = (profile as any).picture ?? token.picture;
       }
+      // On any sign-in (including credentials), capture the user image
       if (user?.image) {
         token.picture = user.image;
+      }
+      // If token.picture is still missing, fetch it from the DB via the user's ID
+      if (!token.picture && token.sub) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: parseInt(token.sub!) },
+          select: { image: true },
+        });
+        if (dbUser?.image) {
+          token.picture = dbUser.image;
+        }
       }
       return token;
     },
