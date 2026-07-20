@@ -10,6 +10,7 @@ import os
 import uuid
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
+import chromadb
 
 app = FastAPI()
 app.add_middleware(
@@ -19,28 +20,97 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# Ingestion Pipeline 
+# Ingestion Pipeline
+
 
 # document loader
 def load_pdf(filePath: str):
     loader = PyMuPDFLoader(filePath)
     return loader.load()
 
+
 # chunking
-def split_docs(document, chunk_size = 500, chunk_overlap = 50):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size = chunk_size, chunk_overlap = chunk_overlap)
+def split_docs(document, chunk_size=500, chunk_overlap=50):
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap
+    )
     chunked_doc = text_splitter.split_documents(document)
     return chunked_doc
 
+
 # embeddings
 class EmbeddingManager:
-    def __init__(self, model_name = "all-MiniLM-L6-v2"):
+    def __init__(self, model_name="all-MiniLM-L6-v2"):
         self.model_name = model_name
         self.model = SentenceTransformer(self.model_name)
 
     def generate_embeddings(self, text):
         embeddings = self.model.encode(text)
         return embeddings
+
+
+# initilize embedding manager
+embedding_manager = EmbeddingManager()
+
+
+# vector Store
+class VectorStoreManager:
+    def __init__(
+        self,
+        persist_directory=os.path.join(os.path.dirname(__file__), "chroma_db"),
+        collection_name="pdf_document",
+    ):
+        self.collection_name = collection_name
+        self.persist_directory = persist_directory
+        self.collection = None
+        self.client = None
+
+        self._initialize_store()
+
+    # initilize the store
+    def _initialize_store(self):
+        os.makedirs(self.persist_directory, exist_ok=True)
+        self.client = chromadb.PersistentClient(path=self.persist_directory)
+
+        # create the collection
+        self.collection = self.client.get_or_create_collection(
+            name=self.collection_name,
+            metadata={"description": "vector store collection for pdfs"},
+        )
+
+    # add document
+    def add_documents(self, documents, embeddings):
+        if len(documents) != len(embeddings):
+            raise ValueError("num of documents does not match num of embeddings")
+
+        ids = []
+        all_metadata = []
+        documents_content = []
+        embeddings_list = []
+
+        for i, (doc, embedding) in enumerate(zip(documents, embeddings)):
+            doc_id = f"doc_{uuid.uuid4()}"
+
+            ids.append(doc_id)
+
+            metadata = dict(doc.metadata)
+            metadata["doc_index"] = i
+            metadata["content_length"] = len(doc.page_content)
+            all_metadata.append(metadata)
+
+            documents_content.append(doc.page_content)
+            embeddings_list.append(embedding)
+
+            self.collection.add(
+                ids=ids,
+                metadatas=all_metadata,
+                documents=documents_content,
+                embeddings=embeddings_list,
+            )
+
+
+# initilize vector store manager
+vector_store = VectorStoreManager()
 
 
 class QuizRequest(BaseModel):
@@ -73,7 +143,6 @@ async def generate_quiz(
         # Unique UUID filename prevents collisions in multi-user environments
         unique_filename = f"{uuid.uuid4()}.pdf"
         temp_path = os.path.join(temp_dir, unique_filename)
-
 
         try:
             # Save file temporarily
