@@ -37,6 +37,8 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
   const [toast, setToast] = useState<ToastState | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -50,26 +52,48 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
       return () => clearTimeout(timer);
     }
   }, [toast]);
+  // console.log(pastedText);
+  console.log(inputMode);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (inputMode === "topic" && !topic.trim()) return;
     if (inputMode === "content" && !pastedText.trim() && !pdfFile) return;
 
     setIsGenerating(true);
-    setTimeout(() => {
+    try {
+      // 1. creating native formData object
+      const formData = new FormData();
+
+      // 2. appending general fields
+      formData.append("difficulty", difficulty);
+      formData.append("questions_count", questionsCount.toString());
+
+      // 3. if sending pdf or pasted text
+      if (pdfFile) {
+        formData.append("input_type", "pdf");
+        formData.append("file", pdfFile);
+      } else {
+        formData.append("input_type", "text");
+        formData.append("text", pastedText);
+      }
+
+      // 4. send requset
+      const response = await fetch(`${API_URL}/generate-quiz`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      console.log("Response from FastAPI", data);
+    } catch (error) {
+      console.error("Failed to generate quiz", error);
+    } finally {
       setIsGenerating(false);
-      const source =
-        inputMode === "topic"
-          ? `topic: "${topic}"`
-          : pdfFile
-            ? `PDF: "${pdfFile.name}"`
-            : "pasted text";
-      alert(`Generating ${questionsCount} ${difficulty} level questions from ${source}`);
-    }, 2000);
+    }
   };
 
   const handleIncrement = () => {
