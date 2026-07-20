@@ -1,8 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
+# ── Dependencies (root + any sub-project like /frontend) ──
+node_modules
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,34 +8,67 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# ── Next.js build output ───────────────────────────────────
+.next/
+out/
 
-# next.js
-/.next/
-/out/
+# ── Production / dist ─────────────────────────────────────
+build/
+dist/
 
-# production
-/build
+# ── Testing / Coverage ────────────────────────────────────
+coverage/
 
-# misc
-.DS_Store
-*.pem
+# ── Prisma generated client ───────────────────────────────
+# (schema.prisma and migrations are source → DO commit them)
+app/generated/
+frontend/app/generated/
+prisma/generated/
+frontend/prisma/generated/
 
-# debug
+# ── TypeScript build info ─────────────────────────────────
+*.tsbuildinfo
+next-env.d.ts
+
+# ── Environment variables ─────────────────────────────────
+# Commit .env.example if you have one; ignore everything else
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# ── Package lock files ────────────────────────────────────
+# Keep package-lock.json committed (deterministic installs)
+# But ignore yarn/pnpm lock if you are not using them
+yarn.lock
+pnpm-lock.yaml
+
+# ── Vercel ────────────────────────────────────────────────
+.vercel
+
+# ── Debug / logs ──────────────────────────────────────────
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
-# env files (can opt-in for committing if needed)
-.env*
+# ── OS files ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.pem
 
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-/app/generated/prisma
+# ── Editor / IDE ──────────────────────────────────────────
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp

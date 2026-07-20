@@ -8,7 +8,9 @@ import bcrypt from "bcryptjs";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
-    Google,
+    Google({
+      allowDangerousEmailAccountLinking: true,
+    }),
     Credentials({
       credentials: {
         email: {},
@@ -56,6 +58,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: "/", // on error redirects to home
   },
   callbacks: {
+    async jwt({ token, user, account, profile }) {
+      // On first sign-in, persist the profile image from Google into the token
+      if (account?.provider === "google" && profile) {
+        token.picture = (profile as any).picture ?? token.picture;
+      }
+      if (user?.image) {
+        token.picture = user.image;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Expose the image from the token to the session
+      if (session.user) {
+        session.user.image = (token.picture as string) ?? session.user.image;
+      }
+      return session;
+    },
     async redirect({ url, baseUrl }) {
       if (url.startsWith(baseUrl) || url.startsWith("/")) {
         const parsedUrl = new URL(url, baseUrl);
