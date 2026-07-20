@@ -52,11 +52,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  // callbacks: {
-  //   authorized: async ({ auth }) => {
-  //     return !!auth;
-  //   },
-  // },
+  pages: {
+    error: "/", // on error redirects to home
+  },
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith(baseUrl) || url.startsWith("/")) {
+        const parsedUrl = new URL(url, baseUrl);
+        if (parsedUrl.pathname === "/" && parsedUrl.searchParams.has("error")) {
+          return baseUrl; // Redirect to clean homepage
+        }
+        return url;
+      }
+      return baseUrl;
+    },
+  },
   session: {
     strategy: "jwt",
   },

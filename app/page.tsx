@@ -24,8 +24,13 @@ export default async function Home() {
         <section className="flex flex-col items-center text-center gap-8 w-full" id="home">
           <div className="flex flex-col gap-4 items-center">
             <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight font-sans">
-              Generate AI Quizzes <br />
+              Generate{" "}
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                AI{" "}
+              </span>
+              Quizzes
+              <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
+                {" "}
                 in Seconds
               </span>
             </h1>
