@@ -12,6 +12,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 import chromadb
 from sklearn.metrics.pairwise import cosine_similarity
+from langchain_groq import ChatGroq
 
 app = FastAPI()
 app.add_middleware(
@@ -159,6 +160,38 @@ def create_session_store(session_id: str) -> VectorStoreManager:
     """Create an isolated VectorStoreManager for the given session."""
     collection_name = f"session_{session_id.replace('-', '_')}"
     return VectorStoreManager(collection_name=collection_name)
+
+
+# Integrating LLM
+
+llm = ChatGroq(
+    groq_api_key=os.getenv("GROQ_API_KEY"),
+    model_name="openai/gpt-oss-120b",
+    temperature=0.1,
+    max_tokens=1024,
+)
+
+# Generate
+
+
+def generate_output(query, retriever, llm, questions_count, difficulty, top_k=3):
+    results = retriever.retrieve(query, top_k)
+
+    context = ""
+
+    if results:
+        for doc in results:
+            context += doc["document"]
+            context += "\n"
+
+    prompt = f""" You are a Quiz Generator. Create {questions_count} {difficulty} multiple choice questions based on the provided context. 
+                Generate a JSON object with a single key "questions" which contains a list of {questions_count} questions. Each question should have "question", "options" (list of 4 strings), and "answer" (string) keys. Do not include any extra text outside the JSON object. 
+                Context: {context} 
+                Query: {query} 
+                output should be a JSON """
+
+    response = llm.invoke(prompt)
+    return response.content
 
 
 class QuizRequest(BaseModel):
