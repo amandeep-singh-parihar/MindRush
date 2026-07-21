@@ -110,10 +110,6 @@ class VectorStoreManager:
         )
 
 
-# initilize vector store manager
-vector_store = VectorStoreManager()
-
-
 # Retrieval pipeline
 class RAGRetriever:
     def __init__(self, embedding_manager, vector_store):
@@ -159,8 +155,10 @@ class RAGRetriever:
         return retrived_documents
 
 
-# initilize rag retriver
-rag_retriever = RAGRetriever(embedding_manager, vector_store)
+def create_session_store(session_id: str) -> VectorStoreManager:
+    """Create an isolated VectorStoreManager for the given session."""
+    collection_name = f"session_{session_id.replace('-', '_')}"
+    return VectorStoreManager(collection_name=collection_name)
 
 
 class QuizRequest(BaseModel):
@@ -182,6 +180,11 @@ async def generate_quiz(
     print(f"Received questions_count: {questions_count}")
     print(f"Received text: {text}")
     print(f"Received pdf: {file}")
+
+    # Each request gets its own isolated collection — no cross-user contamination
+    session_id = str(uuid.uuid4())
+    vector_store = create_session_store(session_id)
+    rag_retriever = RAGRetriever(embedding_manager, vector_store)
 
     if input_type == "pdf" and file:
         print(f"Processing pdf file: {file.filename}")
@@ -218,6 +221,7 @@ async def generate_quiz(
             return {
                 "status": "success",
                 "message": f"Successfully processed '{file.filename}'",
+                "session_id": session_id,
             }
         finally:
             # Always clean up and delete the temp file immediately after processing
@@ -226,10 +230,25 @@ async def generate_quiz(
                 print(f"Cleaned up temp file: {temp_path}")
 
     elif input_type == "text" and text:
-        print(f"Processing text: {text[:30]}...")
+        doc = Document(
+            page_content=text,
+            metadata={"source": "user_input", "doc_index": str(uuid.uuid4())},
+        )
+
+        chunks = split_docs([doc])
+        texts = []
+        for doc in chunks:
+            texts.append(doc.page_content)
+
+        embedding = embedding_manager.generate_embeddings(texts)
+
+        vector_store.add_documents(chunks, embedding)
+        print("vector store updated successfully")
+
         return {
             "status": "success",
             "message": "Text received successfully!",
+            "session_id": session_id,
             "text": text,
         }
     else:
