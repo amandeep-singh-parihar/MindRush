@@ -101,3 +101,19 @@ body {
 .pulse-glow-pink {
   box-shadow: 0 0 25px rgba(236, 72, 153, 0.2);
 }
+
+/* Slide in from right keyframe animation for toasts */
+@keyframes slideInRight {
+  0% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

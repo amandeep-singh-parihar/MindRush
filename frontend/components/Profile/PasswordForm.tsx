@@ -108,31 +108,33 @@ const PasswordForm = ({ hasPassword }: { hasPassword: boolean }) => {
     <div className="relative">
       {/* ----------------- CUSTOM PREMIUM TOAST NOTIFIER ----------------- */}
       {toast?.show && (
-        <div className="fixed top-6 right-6 z-50 animate-slideIn">
-          <div
-            className={`glass-card rounded-2xl p-4 border flex items-start gap-3.5 max-w-sm shadow-2xl transition-all duration-300 ${
-              toast.type === "success"
-                ? "border-emerald-500/30 bg-[#050409]/90 shadow-emerald-500/5"
-                : "border-red-500/30 bg-[#050409]/90 shadow-red-500/5"
-            }`}
-          >
+        <div className="fixed top-6 right-6 z-50 animate-slide-in-right">
+          <div className="rounded-2xl p-3.5 border border-white/10 bg-[#13151f]/95 backdrop-blur-xl shadow-2xl shadow-black/80 flex items-center gap-3.5 max-w-sm">
             {/* Status Icon */}
-            <div className="shrink-0 mt-0.5">
+            <div
+              className={`shrink-0 w-9 h-9 rounded-xl flex items-center justify-center border ${
+                toast.type === "success"
+                  ? "bg-emerald-500/15 border-emerald-500/20 text-emerald-400"
+                  : "bg-red-500/15 border-red-500/20 text-red-400"
+              }`}
+            >
               {toast.type === "success" ? (
-                <div className="p-1.5 bg-emerald-500/10 rounded-xl text-emerald-400">
-                  <CheckCircle2 className="w-5 h-5" />
-                </div>
+                <CheckCircle2 className="w-5 h-5" />
               ) : (
-                <div className="p-1.5 bg-red-500/10 rounded-xl text-red-400">
-                  <AlertCircle className="w-5 h-5" />
-                </div>
+                <AlertCircle className="w-5 h-5" />
               )}
             </div>
 
             {/* Toast Details */}
-            <div className="flex-1 min-w-0 pr-4">
-              <h4 className="text-sm font-bold text-white tracking-tight">{toast.title}</h4>
-              <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{toast.message}</p>
+            <div className="flex-1 min-w-0 pr-2">
+              <h4
+                className={`text-sm font-bold tracking-tight ${
+                  toast.type === "success" ? "text-emerald-400" : "text-red-400"
+                }`}
+              >
+                {toast.title}
+              </h4>
+              <p className="text-xs text-zinc-400 mt-0.5 leading-snug">{toast.message}</p>
             </div>
 
             {/* Close Button */}

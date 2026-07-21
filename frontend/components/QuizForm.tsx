@@ -89,8 +89,16 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
       });
 
       if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.detail || "Failed to generate quiz");
+        let errorMsg = "Our servers are facing high traffic, please try after some time.";
+        try {
+          const err = await response.json();
+          if (err?.detail) {
+            errorMsg = err.detail;
+          }
+        } catch {
+          // Ignore JSON parsing errors for non-JSON responses
+        }
+        throw new Error(errorMsg);
       }
 
       const data = await response.json();
@@ -108,8 +116,15 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
 
       window.location.href = `/dashboard/quiz/${data.session_id}`;
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      let message = "Our servers are facing high traffic, please try after some time.";
+      if (error instanceof Error && error.message) {
+        if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+          message = "Our servers are facing high traffic, please try after some time.";
+        } else {
+          message = error.message;
+        }
+      }
+
       setToast({
         show: true,
         title: "Generation Failed",
@@ -146,14 +161,14 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
       {isMounted &&
         toast?.show &&
         createPortal(
-          <div className="fixed top-6 right-6 z-[9999] animate-slideIn">
-            <div className="rounded-2xl p-4 border border-red-500/30 bg-[#0d0b14] backdrop-blur-xl shadow-2xl shadow-red-500/10 flex items-start gap-3.5 max-w-sm">
-              <div className="shrink-0 mt-0.5 p-1.5 bg-red-500/10 rounded-xl text-red-400">
+          <div className="fixed top-6 right-6 z-[9999] animate-slide-in-right">
+            <div className="rounded-2xl p-3.5 border border-white/10 bg-[#13151f]/95 backdrop-blur-xl shadow-2xl shadow-black/80 flex items-center gap-3.5 max-w-sm">
+              <div className="shrink-0 w-9 h-9 rounded-xl bg-red-500/15 border border-red-500/20 flex items-center justify-center text-red-400">
                 <AlertCircle className="w-5 h-5" />
               </div>
-              <div className="flex-1 min-w-0 pr-4">
-                <h4 className="text-sm font-bold text-white tracking-tight">{toast.title}</h4>
-                <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{toast.message}</p>
+              <div className="flex-1 min-w-0 pr-2">
+                <h4 className="text-sm font-bold text-red-400 tracking-tight">{toast.title}</h4>
+                <p className="text-xs text-zinc-400 mt-0.5 leading-snug">{toast.message}</p>
               </div>
               <button
                 onClick={() => setToast((prev) => (prev ? { ...prev, show: false } : null))}
