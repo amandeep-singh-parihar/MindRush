@@ -41,6 +41,7 @@ export default function DashboardLayoutClient({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   // Hide sidebar/nav while actively playing a quiz — but NOT on the results page
   const isQuizRoute = /^\/dashboard\/quiz\/[^/]+$/.test(pathname);
@@ -129,10 +130,12 @@ export default function DashboardLayoutClient({
           {/* User Card */}
           <div className="p-4 border-t border-white/5 bg-white/[0.01]">
             <div className="flex items-center gap-3 mb-4">
-              {user.image ? (
+              {user.image && !imgError ? (
                 <img
                   src={user.image}
                   alt={user.name}
+                  referrerPolicy="no-referrer"
+                  onError={() => setImgError(true)}
                   className="w-9 h-9 rounded-full ring-1 ring-pink-500/20 object-cover"
                 />
               ) : (

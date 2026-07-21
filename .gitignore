@@ -115,3 +115,19 @@ dmypy.json
 
 # FastAPI / Uvicorn
 *.pid
+
+# ── Neon CLI & Cloud Services ──────────────────────────────
+.neon
+*.neon
+
+# ── Local Caches & Temp Folders ───────────────────────────
+.agents/
+.turbo/
+temp/
+tmp/
+
+# ── Database Files ─────────────────────────────────────────
+*.sqlite
+*.sqlite3
+*.db
+

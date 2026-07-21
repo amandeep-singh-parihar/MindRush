@@ -27,6 +27,7 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
   const [openSignUpModal, setOpenSignUpModal] = useState(false);
   const [openLoginModal, setOpenLoginModal] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <>
@@ -63,10 +64,12 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
             {session?.user ? (
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/5">
-                  {session.user.image ? (
+                  {session.user.image && !imgError ? (
                     <img
                       src={session.user.image}
                       alt={session.user.name ?? "User"}
+                      referrerPolicy="no-referrer"
+                      onError={() => setImgError(true)}
                       className="w-9 h-9 rounded-full ring-2 ring-pink-500/30 object-cover"
                     />
                   ) : (

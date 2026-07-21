@@ -17,6 +17,7 @@ interface UserMenuProps {
 
 export default function UserMenu({ session }: UserMenuProps) {
   const [open, setOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const router = useRouter();
 
   if (!session?.user) return null;
@@ -38,10 +39,12 @@ export default function UserMenu({ session }: UserMenuProps) {
         className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl cursor-pointer transition-all duration-200 hover:bg-white/5"
       >
         {/* Avatar */}
-        {session.user.image ? (
+        {session.user.image && !imgError ? (
           <img
             src={session.user.image}
             alt={session.user.name ?? "User"}
+            referrerPolicy="no-referrer"
+            onError={() => setImgError(true)}
             className="w-8 h-8 rounded-full ring-2 ring-pink-500/30 object-cover"
           />
         ) : (
