@@ -49,6 +49,11 @@ async def generate_quiz(
             )
         except ValueError as e:
             raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail="Our servers are facing high traffic, please try after some time.",
+            )
 
         return {"status": "success", "session_id": session_id, "quiz": quiz}
 
@@ -78,6 +83,11 @@ async def generate_quiz(
                 )
             except ValueError as e:
                 raise HTTPException(status_code=500, detail=str(e))
+            except Exception as e:
+                raise HTTPException(
+                    status_code=500,
+                    detail="Our servers are facing high traffic, please try after some time.",
+                )
 
             return {"status": "success", "session_id": session_id, "quiz": quiz}
 
@@ -105,6 +115,11 @@ async def generate_quiz(
             )
         except ValueError as e:
             raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail="Our servers are facing high traffic, please try after some time.",
+            )
 
         return {"status": "success", "session_id": session_id, "quiz": quiz}
 

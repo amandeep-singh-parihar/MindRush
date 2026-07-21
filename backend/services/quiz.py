@@ -66,21 +66,18 @@ Do not include any extra text, markdown, or code fences outside the JSON object.
 Context:
 {context}"""
 
-    response = llm.invoke(prompt, config={"max_tokens": max_tokens})
-    raw = response.content.strip()
-
-    # print("raw reponse from quiz.py -> ", raw)
-
-    # Strip ```json ... ``` fences if present
-    raw = re.sub(r"^```(?:json)?\s*", "", raw)
-    raw = re.sub(r"\s*```$", "", raw)
-
-    # print("clean reposse from the quiz.py -> ", raw)
-
     try:
+        response = llm.invoke(prompt, config={"max_tokens": max_tokens})
+        raw = response.content.strip()
+
+        # Strip ```json ... ``` fences if present
+        raw = re.sub(r"^```(?:json)?\s*", "", raw)
+        raw = re.sub(r"\s*```$", "", raw)
+
         return json.loads(raw)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"LLM returned invalid JSON: {e}\nRaw output:\n{raw}")
+    except Exception as e:
+        print("Quiz generation API error:", e)
+        raise ValueError("Our servers are facing high traffic, please try after some time.")
 
 
 def generate_output_from_topic(
@@ -103,17 +100,18 @@ Each question must have:
 Do not include any extra text, markdown, or code fences outside the JSON object.
 """
 
-    response = llm.invoke(prompt, config={"max_tokens": max_tokens})
-    raw = response.content.strip()
-
-    # Strip ```json ... ``` fences if present
-    raw = re.sub(r"^```(?:json)?\s*", "", raw)
-    raw = re.sub(r"\s*```$", "", raw)
-
     try:
+        response = llm.invoke(prompt, config={"max_tokens": max_tokens})
+        raw = response.content.strip()
+
+        # Strip ```json ... ``` fences if present
+        raw = re.sub(r"^```(?:json)?\s*", "", raw)
+        raw = re.sub(r"\s*```$", "", raw)
+
         return json.loads(raw)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"LLM returned invalid JSON: {e}\nRaw output:\n{raw}")
+    except Exception as e:
+        print("Topic quiz generation API error:", e)
+        raise ValueError("Our servers are facing high traffic, please try after some time.")
 
 
 def extract_topics_from_docs(context: str, llm, num_topics: int = 4) -> list[str]:
@@ -125,15 +123,16 @@ Do not include extra text or markdown formatting outside the JSON array.
 Context sample:
 {context[:3000]}"""
 
-    response = llm.invoke(prompt)
-    raw = response.content.strip()
-    raw = re.sub(r"^```(?:json)?\s*", "", raw)
-    raw = re.sub(r"\s*```$", "", raw)
-
     try:
+        response = llm.invoke(prompt)
+        raw = response.content.strip()
+        raw = re.sub(r"^```(?:json)?\s*", "", raw)
+        raw = re.sub(r"\s*```$", "", raw)
         topics = json.loads(raw)
-        if isinstance(topics, list):
+        if isinstance(topics, list) and len(topics) > 0:
             return topics
-    except Exception:
-        pass
-    return ["General Overview"]
+    except Exception as e:
+        print("Topic extraction API error:", e)
+        raise ValueError("Our servers are facing high traffic, please try after some time.")
+
+    raise ValueError("Our servers are facing high traffic, please try after some time.")
