@@ -1,12 +1,9 @@
 import Navbar from "../components/Navbar/Navbar";
 import QuizForm from "../components/QuizForm";
-import Stats from "../components/Stats";
 import Features from "../components/Features";
 import HowItWorks from "../components/HowItWorks";
 import WhyChooseUs from "../components/WhyChooseUs";
-import Testimonials from "../components/Testimonials";
 import FAQ from "../components/FAQ";
-import CTA from "../components/CTA";
 import Footer from "../components/Footer";
 import { auth } from "@/auth";
 
@@ -22,7 +19,7 @@ export default async function Home() {
       <Navbar />
 
       {/* Main Page Wrapper */}
-      <main className="relative flex-1 w-full max-w-7xl mx-auto pt-24 md:pt-24 pb-20 z-10 flex flex-col gap-16 md:gap-24">
+      <main className="relative flex-1 w-full max-w-7xl mx-auto pt-20 md:pt-20 pb-8 z-10 flex flex-col gap-10 md:gap-14">
         {/* Hero Section */}
         <section className="flex flex-col items-center text-center gap-8 w-full" id="home">
           <div className="flex flex-col gap-4 items-center">
@@ -49,9 +46,6 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Stats Section */}
-        <Stats />
-
         {/* Features Section */}
         <Features />
 
@@ -61,14 +55,8 @@ export default async function Home() {
         {/* Why Choose Us Section */}
         <WhyChooseUs />
 
-        {/* Testimonials Section */}
-        <Testimonials />
-
         {/* FAQ Section */}
         <FAQ />
-
-        {/* CTA Section */}
-        <CTA />
       </main>
 
       {/* Footer */}

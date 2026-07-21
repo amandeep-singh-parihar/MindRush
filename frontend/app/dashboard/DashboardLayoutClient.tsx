@@ -126,9 +126,9 @@ export default function DashboardLayoutClient({
             })}
           </nav>
 
-          {/* User Card & Credits Tracker */}
+          {/* User Card */}
           <div className="p-4 border-t border-white/5 bg-white/[0.01]">
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-3 mb-4">
               {user.image ? (
                 <img
                   src={user.image}
@@ -142,24 +142,9 @@ export default function DashboardLayoutClient({
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-white truncate">{user.name}</p>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-500/10 text-pink-400 border border-pink-500/20 font-medium">
-                  {MOCK_USER.tier}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-1 mb-4">
-              <div className="flex justify-between text-[11px]">
-                <span className="text-zinc-400">Monthly AI Credits</span>
-                <span className="text-zinc-200 font-semibold">
-                  {MOCK_USER.creditsUsed}/{MOCK_USER.creditsTotal}
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"
-                  style={{ width: `${(MOCK_USER.creditsUsed / MOCK_USER.creditsTotal) * 100}%` }}
-                ></div>
+                <p className="text-[11px] text-zinc-400 truncate">
+                  {user.email || "Free Tier User"}
+                </p>
               </div>
             </div>
 
@@ -202,17 +187,18 @@ export default function DashboardLayoutClient({
         {/* Mobile Header */}
         {!isQuizRoute && (
           <header className="lg:hidden p-4 flex items-center justify-between border-b border-white/5 bg-[#050409]/60 backdrop-blur-md sticky top-0 z-30">
-            <div className="flex items-center gap-2">
-              <Brain className="w-6 h-6 text-pink-500" />
+            <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+              <Brain className="w-6 h-6 text-pink-500 group-hover:scale-110 transition-transform" />
               <span className="text-lg font-bold bg-gradient-to-r from-white via-zinc-100 to-pink-500 bg-clip-text text-transparent">
                 MindRush
               </span>
-            </div>
+            </Link>
 
             <div className="flex items-center gap-3">
               <Link
-                href={`${pathname}?create=true`}
-                className="btn-gradient p-2 rounded-xl text-white shadow-md shadow-pink-500/20"
+                href="/"
+                className="btn-gradient p-2 rounded-xl text-white shadow-md shadow-pink-500/20 cursor-pointer"
+                title="Create Quiz"
               >
                 <Plus className="w-4 h-4" />
               </Link>

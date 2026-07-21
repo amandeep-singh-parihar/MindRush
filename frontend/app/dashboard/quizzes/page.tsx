@@ -65,7 +65,7 @@ export default function MyQuizzesPage() {
         </div>
 
         <Link
-          href="/dashboard/quizzes?create=true"
+          href="/"
           className="btn-gradient px-5 py-3 rounded-2xl text-sm font-semibold text-white shadow-lg shadow-pink-500/25 flex items-center justify-center gap-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />

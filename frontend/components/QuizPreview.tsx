@@ -122,7 +122,7 @@ export default function QuizPreview() {
           <button
             onClick={handleCheck}
             disabled={!selectedOption}
-            className="btn-gradient w-full flex items-center justify-center gap-2 text-white font-bold py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-pink-500/20"
+            className="cursor-pointer btn-gradient w-full flex items-center justify-center gap-2 text-white font-bold py-3.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-pink-500/20"
           >
             Check Answer
           </button>

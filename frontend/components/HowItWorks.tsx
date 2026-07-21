@@ -25,12 +25,12 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section className="w-full flex flex-col gap-6 py-10" id="how-it-works">
+    <section className="w-full flex flex-col gap-5 py-4" id="how-it-works">
       <h2 className="text-2xl font-bold text-white text-center font-sans tracking-tight">
         How It Works
       </h2>
 
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-6 mt-4">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-6 mt-2">
         {steps.map((step, index) => (
           <div
             key={index}

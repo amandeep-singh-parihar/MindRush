@@ -8,24 +8,24 @@ export default function FAQ() {
 
   const faqData = [
     {
-      question: "How does the AI generate quizzes?",
+      question: "How does MindRush generate quizzes from my input?",
       answer:
-        "Our engine uses advanced Large Language Models (LLMs) to parse your topic, find core curriculum concepts, and synthesize high-quality questions with correct options and detailed explanations.",
+        "MindRush uses advanced Large Language Models (LLMs) combined with Retrieval-Augmented Generation (RAG). Whether you enter a topic, paste text, or upload a PDF, our system extracts key concepts and retrieves context to synthesize accurate questions with clear explanations.",
     },
     {
-      question: "What topics can I search for?",
+      question: "Can I generate quizzes from my own notes or PDF documents?",
       answer:
-        "You can enter literally any topic! From high-level academic fields like Machine Learning and Quantum Mechanics to specific subjects, language studies, or custom text uploads.",
+        "Yes! Simply switch to the 'Paste PDF / Text' tab on the homepage or dashboard, upload your study PDF or paste raw text notes, and MindRush will extract key topics and build a custom quiz directly from your source material.",
     },
     {
-      question: "Can I customize the question limits?",
+      question: "What customization options are available for quiz generation?",
       answer:
-        "Yes, you can generate anywhere from 1 to 50 questions per quiz. You can also select between Easy, Medium, and Hard difficulties depending on your learning objectives.",
+        "You can customize your quiz by choosing between Easy, Medium, and Hard difficulty levels, as well as setting the exact number of questions you want (from 1 to 10 questions).",
     },
     {
-      question: "Is there a free trial version?",
+      question: "Do I need an account to generate and take quizzes?",
       answer:
-        "Yes, MindRush offers free credits upon signup so you can generate your first few quizzes. We also offer premium tiers for unlimited quiz generation, analytics dashboard access, and sharing features.",
+        "Signing up for a free account unlocks your personal learning dashboard where you can track your daily streaks, review detailed quiz attempt statistics, and access your full history.",
     },
   ];
 
@@ -34,10 +34,12 @@ export default function FAQ() {
   };
 
   return (
-    <section className="w-full flex flex-col gap-6 py-10" id="faq">
-      <h2 className="text-2xl font-bold text-white text-center font-sans tracking-tight">FAQ</h2>
+    <section className="w-full flex flex-col gap-4 py-4" id="faq">
+      <h2 className="text-2xl font-bold text-white text-center font-sans tracking-tight">
+        Frequently Asked Questions
+      </h2>
 
-      <div className="w-full max-w-3xl mx-auto flex flex-col gap-4 mt-4">
+      <div className="w-full max-w-3xl mx-auto flex flex-col gap-3 mt-2">
         {faqData.map((item, index) => {
           const isOpen = openIndex === index;
           return (
@@ -52,14 +54,16 @@ export default function FAQ() {
               >
                 <span>{item.question}</span>
                 <ChevronDown
-                  className={`w-5 h-5 text-zinc-400 transition-transform duration-300 ${isOpen ? "rotate-180 text-pink-500" : ""}`}
+                  className={`w-5 h-5 text-zinc-400 shrink-0 transition-transform duration-300 ${
+                    isOpen ? "rotate-180 text-pink-500" : ""
+                  }`}
                 />
               </button>
 
               {/* Accordion Content */}
               <div
                 className={`transition-all duration-300 ease-in-out ${
-                  isOpen ? "max-h-40 border-t border-white/5" : "max-h-0"
+                  isOpen ? "max-h-96 border-t border-white/5" : "max-h-0"
                 } overflow-hidden`}
               >
                 <p className="p-5 text-xs md:text-sm text-zinc-400 leading-relaxed bg-zinc-950/20">
