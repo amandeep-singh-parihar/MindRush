@@ -42,6 +42,9 @@ export default function DashboardLayoutClient({
   const searchParams = useSearchParams();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Hide sidebar/nav while actively playing a quiz — but NOT on the results page
+  const isQuizRoute = /^\/dashboard\/quiz\/[^/]+$/.test(pathname);
+
   // Check if ?create=true query parameter is present to open the global generator modal
   const isCreateModalOpen = searchParams.get("create") === "true";
 
@@ -80,23 +83,100 @@ export default function DashboardLayoutClient({
       <div className="absolute inset-0 grid-bg opacity-[0.15] pointer-events-none z-0"></div>
 
       {/* ----------------- DESKTOP SIDEBAR ----------------- */}
-      <aside className="hidden lg:flex flex-col w-64 border-r border-white/5 z-20 sticky top-0 h-screen glass-card select-none">
-        {/* Brand Logo */}
-        <div className="p-6 border-b border-white/5 flex items-center gap-2.5">
-          <div className="relative">
-            <div className="absolute inset-0 bg-pink-500 rounded-full blur-md opacity-75"></div>
-            <Brain className="relative w-7 h-7 text-pink-500 stroke-[2.5]" />
+      {!isQuizRoute && (
+        <aside className="hidden lg:flex flex-col w-64 border-r border-white/5 z-20 sticky top-0 h-screen glass-card select-none">
+          {/* Brand Logo */}
+          <div className="p-6 border-b border-white/5 flex items-center gap-2.5">
+            <div className="relative">
+              <div className="absolute inset-0 bg-pink-500 rounded-full blur-md opacity-75"></div>
+              <Brain className="relative w-7 h-7 text-pink-500 stroke-[2.5]" />
+            </div>
+            <span
+              onClick={() => router.push("/")}
+              className="cursor-pointer text-xl font-bold bg-gradient-to-r from-white via-zinc-100 to-pink-500 bg-clip-text text-transparent tracking-tight hover:opacity-80 transition-opacity"
+            >
+              MindRush
+            </span>
           </div>
-          <span
-            onClick={() => router.push("/")}
-            className="cursor-pointer text-xl font-bold bg-gradient-to-r from-white via-zinc-100 to-pink-500 bg-clip-text text-transparent tracking-tight hover:opacity-80 transition-opacity"
-          >
-            MindRush
-          </span>
-        </div>
 
-        {/* Navigation Link Menu */}
-        <nav className="flex-1 px-4 py-6 space-y-1">
+          {/* Navigation Link Menu */}
+          <nav className="flex-1 px-4 py-6 space-y-1">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 relative ${
+                    isActive
+                      ? "bg-white/[0.04] text-white border-l-2 border-pink-500 pl-3.5 shadow-[inset_4px_0_15px_-4px_rgba(236,72,153,0.15)]"
+                      : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]"
+                  }`}
+                >
+                  <Icon
+                    className={`w-4 h-4 transition-colors duration-300 ${
+                      isActive ? "text-pink-500" : "text-zinc-500 group-hover:text-zinc-400"
+                    }`}
+                  />
+                  {item.name}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* User Card & Credits Tracker */}
+          <div className="p-4 border-t border-white/5 bg-white/[0.01]">
+            <div className="flex items-center gap-3 mb-3">
+              {user.image ? (
+                <img
+                  src={user.image}
+                  alt={user.name}
+                  className="w-9 h-9 rounded-full ring-1 ring-pink-500/20 object-cover"
+                />
+              ) : (
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-tr from-pink-500 to-purple-600">
+                  {initials}
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-white truncate">{user.name}</p>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-500/10 text-pink-400 border border-pink-500/20 font-medium">
+                  {MOCK_USER.tier}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-1 mb-4">
+              <div className="flex justify-between text-[11px]">
+                <span className="text-zinc-400">Monthly AI Credits</span>
+                <span className="text-zinc-200 font-semibold">
+                  {MOCK_USER.creditsUsed}/{MOCK_USER.creditsTotal}
+                </span>
+              </div>
+              <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"
+                  style={{ width: `${(MOCK_USER.creditsUsed / MOCK_USER.creditsTotal) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => signOut()}
+              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-200 cursor-pointer border border-transparent hover:border-red-500/10"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {/* ----------------- MOBILE NAVIGATION BAR ----------------- */}
+      {!isQuizRoute && (
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#050409]/95 backdrop-blur-md border-t border-white/5 px-2 py-2 flex justify-around">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -105,117 +185,46 @@ export default function DashboardLayoutClient({
               <Link
                 key={item.name}
                 href={item.href}
-                className={`group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 relative ${
-                  isActive
-                    ? "bg-white/[0.04] text-white border-l-2 border-pink-500 pl-3.5 shadow-[inset_4px_0_15px_-4px_rgba(236,72,153,0.15)]"
-                    : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]"
+                className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-xl transition-all ${
+                  isActive ? "text-pink-500" : "text-zinc-400"
                 }`}
               >
-                <Icon
-                  className={`w-4 h-4 transition-colors duration-300 ${
-                    isActive ? "text-pink-500" : "text-zinc-500 group-hover:text-zinc-400"
-                  }`}
-                />
-                {item.name}
+                <Icon className="w-5 h-5" />
+                <span className="text-[10px] font-semibold">{item.name.replace("Quiz ", "")}</span>
               </Link>
             );
           })}
         </nav>
-
-        {/* User Card & Credits Tracker */}
-        <div className="p-4 border-t border-white/5 bg-white/[0.01]">
-          <div className="flex items-center gap-3 mb-3">
-            {user.image ? (
-              <img
-                src={user.image}
-                alt={user.name}
-                className="w-9 h-9 rounded-full ring-1 ring-pink-500/20 object-cover"
-              />
-            ) : (
-              <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-tr from-pink-500 to-purple-600">
-                {initials}
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">{user.name}</p>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-pink-500/10 text-pink-400 border border-pink-500/20 font-medium">
-                {MOCK_USER.tier}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-1 mb-4">
-            <div className="flex justify-between text-[11px]">
-              <span className="text-zinc-400">Monthly AI Credits</span>
-              <span className="text-zinc-200 font-semibold">
-                {MOCK_USER.creditsUsed}/{MOCK_USER.creditsTotal}
-              </span>
-            </div>
-            <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"
-                style={{ width: `${(MOCK_USER.creditsUsed / MOCK_USER.creditsTotal) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-
-          <button
-            onClick={() => signOut()}
-            className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-200 cursor-pointer border border-transparent hover:border-red-500/10"
-          >
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </button>
-        </div>
-      </aside>
-
-      {/* ----------------- MOBILE NAVIGATION BAR ----------------- */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#050409]/95 backdrop-blur-md border-t border-white/5 px-2 py-2 flex justify-around">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-xl transition-all ${
-                isActive ? "text-pink-500" : "text-zinc-400"
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-semibold">{item.name.replace("Quiz ", "")}</span>
-            </Link>
-          );
-        })}
-      </nav>
+      )}
 
       {/* ----------------- MAIN VIEWPORT ----------------- */}
       <main className="flex-1 min-w-0 z-10 flex flex-col pb-24 lg:pb-8">
         {/* Mobile Header */}
-        <header className="lg:hidden p-4 flex items-center justify-between border-b border-white/5 bg-[#050409]/60 backdrop-blur-md sticky top-0 z-30">
-          <div className="flex items-center gap-2">
-            <Brain className="w-6 h-6 text-pink-500" />
-            <span className="text-lg font-bold bg-gradient-to-r from-white via-zinc-100 to-pink-500 bg-clip-text text-transparent">
-              MindRush
-            </span>
-          </div>
+        {!isQuizRoute && (
+          <header className="lg:hidden p-4 flex items-center justify-between border-b border-white/5 bg-[#050409]/60 backdrop-blur-md sticky top-0 z-30">
+            <div className="flex items-center gap-2">
+              <Brain className="w-6 h-6 text-pink-500" />
+              <span className="text-lg font-bold bg-gradient-to-r from-white via-zinc-100 to-pink-500 bg-clip-text text-transparent">
+                MindRush
+              </span>
+            </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href={`${pathname}?create=true`}
-              className="btn-gradient p-2 rounded-xl text-white shadow-md shadow-pink-500/20"
-            >
-              <Plus className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/dashboard/settings"
-              className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-tr from-pink-500 to-purple-600"
-            >
-              {initials}
-            </Link>
-          </div>
-        </header>
+            <div className="flex items-center gap-3">
+              <Link
+                href={`${pathname}?create=true`}
+                className="btn-gradient p-2 rounded-xl text-white shadow-md shadow-pink-500/20"
+              >
+                <Plus className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/dashboard/settings"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-tr from-pink-500 to-purple-600"
+              >
+                {initials}
+              </Link>
+            </div>
+          </header>
+        )}
 
         {/* Child Pages Port */}
         <div className="max-w-7xl w-full mx-auto p-4 md:p-8">{children}</div>

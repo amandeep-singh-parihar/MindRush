@@ -52,8 +52,6 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
       return () => clearTimeout(timer);
     }
   }, [toast]);
-  // console.log(pastedText);
-  console.log(inputMode);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -87,10 +85,33 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
         body: formData,
       });
 
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || "Failed to generate quiz");
+      }
+
       const data = await response.json();
-      console.log("Response from FastAPI", data);
-    } catch (error) {
-      console.error("Failed to generate quiz", error);
+
+      // Store quiz payload in sessionStorage keyed by session_id,
+      // then navigate to the quiz play page.
+      sessionStorage.setItem(
+        `quiz_${data.session_id}`,
+        JSON.stringify({
+          questions: data.quiz.questions,
+          difficulty,
+          questionsCount,
+        })
+      );
+
+      window.location.href = `/dashboard/quiz/${data.session_id}`;
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      setToast({
+        show: true,
+        title: "Generation Failed",
+        message,
+      });
     } finally {
       setIsGenerating(false);
     }
