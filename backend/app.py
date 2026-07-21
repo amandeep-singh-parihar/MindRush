@@ -11,6 +11,7 @@ import uuid
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 import chromadb
+from sklearn.metrics.pairwise import cosine_similarity
 
 app = FastAPI()
 app.add_middleware(
@@ -99,18 +100,67 @@ class VectorStoreManager:
             all_metadata.append(metadata)
 
             documents_content.append(doc.page_content)
-            embeddings_list.append(embedding)
+            embeddings_list.append(embedding.tolist())
 
-            self.collection.add(
-                ids=ids,
-                metadatas=all_metadata,
-                documents=documents_content,
-                embeddings=embeddings_list,
-            )
+        self.collection.add(
+            ids=ids,
+            metadatas=all_metadata,
+            documents=documents_content,
+            embeddings=embeddings_list,
+        )
 
 
 # initilize vector store manager
 vector_store = VectorStoreManager()
+
+
+# Retrieval pipeline
+class RAGRetriever:
+    def __init__(self, embedding_manager, vector_store):
+        self.embedding_manager = embedding_manager
+        self.vector_store = vector_store
+
+    def retrieve(self, query, top_k=3, score_thres=0.0):
+        # query -> embeddings
+        query_embeddings = self.embedding_manager.generate_embeddings([query])[0]
+
+        # semantic search
+        results = self.vector_store.collection.query(
+            query_embeddings=[query_embeddings.tolist()], n_results=top_k
+        )
+
+        # cosine similarity
+        retrived_documents = []
+        if results["documents"] and results["documents"][0]:
+            ids = results["ids"][0]
+            metadatas = results["metadatas"][0]
+            distances = results["distances"][0]
+            documents = results["documents"][0]
+
+            for i, (doc_id, metadata, distance, document) in enumerate(
+                zip(ids, metadatas, distances, documents)
+            ):
+                similarity_score = 1 - distance
+
+                if similarity_score > score_thres:
+                    retrived_documents.append(
+                        {
+                            "id": doc_id,
+                            "document": document,
+                            "metadata": metadata,
+                            "distance": distance,
+                            "similarity_score": similarity_score,
+                            "rank": i + 1,
+                        }
+                    )
+        else:
+            print("No documents found!!!")
+
+        return retrived_documents
+
+
+# initilize rag retriver
+rag_retriever = RAGRetriever(embedding_manager, vector_store)
 
 
 class QuizRequest(BaseModel):
@@ -154,6 +204,16 @@ async def generate_quiz(
             # PyMuPDF processing will happen here
             pdf_doc = load_pdf(temp_path)
             print(pdf_doc)
+
+            # data => documents => chunks => embeddings => store in vector store
+            chunks = split_docs(pdf_doc)
+            texts = []
+            for doc in chunks:
+                texts.append(doc.page_content)
+
+            embedding = embedding_manager.generate_embeddings(texts)
+
+            vector_store.add_documents(chunks, embedding)
 
             return {
                 "status": "success",
