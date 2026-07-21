@@ -68,8 +68,14 @@ async def generate_quiz(
             embeddings = embedding_manager.generate_embeddings(texts)
             vector_store.add_documents(chunks, embeddings)
 
+            retriever = RAGRetriever(
+                embedding_manager=embedding_manager, vector_store=vector_store
+            )
+
             try:
-                quiz = generate_output(vector_store, llm, questions_count, difficulty)
+                quiz = generate_output(
+                    vector_store, retriever, llm, questions_count, difficulty
+                )
             except ValueError as e:
                 raise HTTPException(status_code=500, detail=str(e))
 
@@ -90,8 +96,13 @@ async def generate_quiz(
         embeddings = embedding_manager.generate_embeddings(texts)
         vector_store.add_documents(chunks, embeddings)
 
+        retriever = RAGRetriever(
+            embedding_manager=embedding_manager, vector_store=vector_store
+        )
         try:
-            quiz = generate_output(vector_store, llm, questions_count, difficulty)
+            quiz = generate_output(
+                vector_store, retriever, llm, questions_count, difficulty
+            )
         except ValueError as e:
             raise HTTPException(status_code=500, detail=str(e))
 
