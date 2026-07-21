@@ -70,8 +70,11 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
       formData.append("difficulty", difficulty);
       formData.append("questions_count", questionsCount.toString());
 
-      // 3. if sending pdf or pasted text
-      if (pdfFile) {
+      // 3. append input data according to inputMode
+      if (inputMode === "topic") {
+        formData.append("input_type", "topic");
+        formData.append("topic", topic);
+      } else if (pdfFile) {
         formData.append("input_type", "pdf");
         formData.append("file", pdfFile);
       } else {
