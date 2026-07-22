@@ -50,6 +50,7 @@ async def generate_quiz(
         except ValueError as e:
             raise HTTPException(status_code=500, detail=str(e))
         except Exception as e:
+            print(f"[ERROR] Topic quiz generation failed: {e}", flush=True)
             raise HTTPException(
                 status_code=500,
                 detail="Our servers are facing high traffic, please try after some time.",
@@ -84,6 +85,7 @@ async def generate_quiz(
             except ValueError as e:
                 raise HTTPException(status_code=500, detail=str(e))
             except Exception as e:
+                print(f"[ERROR] PDF quiz generation failed: {e}", flush=True)
                 raise HTTPException(
                     status_code=500,
                     detail="Our servers are facing high traffic, please try after some time.",
@@ -116,6 +118,7 @@ async def generate_quiz(
         except ValueError as e:
             raise HTTPException(status_code=500, detail=str(e))
         except Exception as e:
+            print(f"[ERROR] Topic quiz generation failed: {e}", flush=True)
             raise HTTPException(
                 status_code=500,
                 detail="Our servers are facing high traffic, please try after some time.",
