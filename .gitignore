@@ -30,9 +30,12 @@ frontend/prisma/generated/
 *.tsbuildinfo
 next-env.d.ts
 
-# ── Environment variables ─────────────────────────────────
-# Commit .env.example if you have one; ignore everything else
+# ── Secrets, Keys & Environment Variables ─────────────────
+# Ignore all environment files and secret keys across root & subfolders
 .env
+.env*
+*.env
+*.env.*
 .env.local
 .env.development
 .env.development.local
@@ -40,6 +43,15 @@ next-env.d.ts
 .env.test.local
 .env.production
 .env.production.local
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+*credentials*.json
+client_secret*.json
+service_account*.json
 
 # ── Package lock files ────────────────────────────────────
 # Keep package-lock.json committed (deterministic installs)
@@ -125,9 +137,15 @@ dmypy.json
 .turbo/
 temp/
 tmp/
+backend/temp/*
+!backend/temp/.gitkeep
 
-# ── Database Files ─────────────────────────────────────────
+# ── Database & Vector Store Files ─────────────────────────
 *.sqlite
 *.sqlite3
 *.db
+chroma_db/
+.chroma/
+chromadb/
+backend/chroma_db/
 
