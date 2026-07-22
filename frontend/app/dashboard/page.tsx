@@ -115,30 +115,33 @@ export default async function OverviewPage() {
   const name = dbUser?.name || session?.user?.name || MOCK_USER.name;
   const firstName = name.split(" ")[0];
 
-  const renderHeatmap = () => {
-    const cells = [];
-    const seed = [
-      0, 0, 1, 0, 2, 0, 0, 3, 0, 1, 0, 0, 2, 0, 4, 1, 0, 0, 0, 2, 1, 0, 0, 0, 3, 0, 0, 1, 2, 0, 0,
-      0, 0, 1, 0, 3, 0, 2, 0, 0, 1, 0, 0, 0, 0, 1, 2, 0, 0, 3, 0, 0, 1, 0, 0, 2, 0, 0, 0, 1, 0, 4,
-      0, 0, 2, 0, 0, 1, 0, 0, 0, 3, 0, 1, 0, 0, 2, 0, 0, 1, 0, 2, 0, 1,
-    ];
-    for (let i = 0; i < 320; i++) {
-      const level = seed[i % seed.length];
-      let bgClass = "bg-white/5";
-      if (level === 1) bgClass = "bg-pink-500/20";
-      else if (level === 2) bgClass = "bg-pink-500/40";
-      else if (level === 3) bgClass = "bg-purple-500/60";
-      else if (level === 4) bgClass = "bg-purple-500/90";
+  const heatmapSeed = [
+    0, 1, 2, 0, 3, 1, 0, 2, 4, 1, 0, 0, 2, 3, 1, 0, 4, 2, 1, 0, 3, 2, 0, 1, 4, 0, 2, 1, 3, 0, 1,
+    1, 2, 4, 0, 3, 1, 2, 0, 1, 0, 3, 2, 4, 1, 0, 2, 1, 0, 3, 4, 1, 2, 0, 1, 3, 1, 4, 2, 0, 1, 3,
+    2, 0, 4, 1, 3, 0, 2, 1, 0, 4, 3, 2, 1, 0, 2, 4, 1, 0, 3, 2, 1, 4, 0, 2, 1, 3, 0, 4, 1, 2, 0,
+    3, 1, 0, 2, 4, 1, 2, 0, 3, 1, 0, 4, 2, 1, 0, 2, 3, 4, 1, 0, 2, 1, 3, 0, 4, 2, 1, 0, 3, 2, 1,
+  ];
 
-      cells.push(
+  const totalHeatmapDays = 400;
+  const heatmapData = Array.from({ length: totalHeatmapDays }, (_, i) => heatmapSeed[i % heatmapSeed.length]);
+  const activeDaysCount = heatmapData.filter((level) => level > 0).length;
+
+  const renderHeatmap = () => {
+    return heatmapData.map((level, i) => {
+      let bgClass = "bg-white/5";
+      if (level === 1) bgClass = "bg-pink-500/25";
+      else if (level === 2) bgClass = "bg-pink-500/50";
+      else if (level === 3) bgClass = "bg-purple-500/75";
+      else if (level === 4) bgClass = "bg-purple-400 shadow-sm shadow-purple-500/50";
+
+      return (
         <div
           key={i}
-          className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-[3px] transition-all duration-200 hover:scale-125 hover:ring-1 hover:ring-white shrink-0 ${bgClass}`}
-          title={`Day ${i + 1}: ${level} attempts`}
+          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[3px] transition-all duration-200 hover:scale-125 hover:ring-2 hover:ring-pink-400 hover:z-10 shrink-0 ${bgClass}`}
+          title={`Day ${i + 1}: ${level > 0 ? `${level} quiz attempts` : "No activity"}`}
         />
       );
-    }
-    return cells;
+    });
   };
 
   return (
@@ -280,8 +283,8 @@ export default async function OverviewPage() {
         <div className="glass-card rounded-2xl p-6 border border-white/5 flex flex-col gap-5 w-full">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <p className="text-xs text-zinc-400 font-medium">Activity Log (Past 36 Weeks)</p>
-              <h4 className="text-2xl font-extrabold text-white mt-1">14 Active Days</h4>
+              <p className="text-xs text-zinc-400 font-medium">Activity Log (Past 52 Weeks)</p>
+              <h4 className="text-2xl font-extrabold text-white mt-1">{activeDaysCount} Active Days</h4>
             </div>
 
             <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-xs text-zinc-400 flex items-center gap-2.5 max-w-md">
@@ -352,13 +355,12 @@ export default async function OverviewPage() {
                     </td>
                     <td className="p-4">
                       <span
-                        className={`text-[10px] px-2 py-0.5 rounded font-medium ${
-                          attempt.difficulty === "Easy"
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                            : attempt.difficulty === "Medium"
-                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                              : "bg-red-500/10 text-red-400 border border-red-500/20"
-                        }`}
+                        className={`text-[10px] px-2 py-0.5 rounded font-medium ${attempt.difficulty === "Easy"
+                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                          : attempt.difficulty === "Medium"
+                            ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                            : "bg-red-500/10 text-red-400 border border-red-500/20"
+                          }`}
                       >
                         {attempt.difficulty}
                       </span>
@@ -373,13 +375,12 @@ export default async function OverviewPage() {
                         </span>
                         <div className="w-12 bg-white/5 h-1 rounded-full overflow-hidden hidden sm:block">
                           <div
-                            className={`h-full rounded-full ${
-                              attempt.percentage >= 80
-                                ? "bg-emerald-500"
-                                : attempt.percentage >= 60
-                                  ? "bg-amber-500"
-                                  : "bg-red-500"
-                            }`}
+                            className={`h-full rounded-full ${attempt.percentage >= 80
+                              ? "bg-emerald-500"
+                              : attempt.percentage >= 60
+                                ? "bg-amber-500"
+                                : "bg-red-500"
+                              }`}
                             style={{ width: `${attempt.percentage}%` }}
                           ></div>
                         </div>
