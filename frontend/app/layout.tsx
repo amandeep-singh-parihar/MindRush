@@ -18,6 +18,14 @@ export const metadata: Metadata = {
     template: "%s | MindRush",
   },
   description: "Generate personalized AI quizzes in seconds with MindRush.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

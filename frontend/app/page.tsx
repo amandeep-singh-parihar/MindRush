@@ -8,7 +8,10 @@ import Footer from "../components/Footer";
 import { auth } from "@/auth";
 
 export const metadata = {
-  title: "Home",
+  title: {
+    absolute: "MindRush",
+  },
+  description: "Generate personalized AI quizzes in seconds with MindRush.",
 };
 
 export default async function Home() {
