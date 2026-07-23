@@ -3,6 +3,10 @@ import prisma from "@/lib/prisma";
 import ProfileForm from "@/components/Profile/ProfileForm";
 import PasswordForm from "@/components/Profile/PasswordForm";
 
+export const metadata = {
+  title: "Settings",
+};
+
 export default async function SettingsPage() {
   const session = await auth();
 

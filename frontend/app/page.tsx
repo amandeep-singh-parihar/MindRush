@@ -7,6 +7,10 @@ import FAQ from "../components/FAQ";
 import Footer from "../components/Footer";
 import { auth } from "@/auth";
 
+export const metadata = {
+  title: "Home",
+};
+
 export default async function Home() {
   const session = await auth();
   const isLoggedIn = !!session;

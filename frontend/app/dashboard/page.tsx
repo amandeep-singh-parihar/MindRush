@@ -12,6 +12,10 @@ import {
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 
+export const metadata = {
+  title: "Dashboard",
+};
+
 const MOCK_USER = {
   name: "Amandeep Singh",
   email: "amandeep@example.com",
@@ -116,14 +120,17 @@ export default async function OverviewPage() {
   const firstName = name.split(" ")[0];
 
   const heatmapSeed = [
-    0, 1, 2, 0, 3, 1, 0, 2, 4, 1, 0, 0, 2, 3, 1, 0, 4, 2, 1, 0, 3, 2, 0, 1, 4, 0, 2, 1, 3, 0, 1,
-    1, 2, 4, 0, 3, 1, 2, 0, 1, 0, 3, 2, 4, 1, 0, 2, 1, 0, 3, 4, 1, 2, 0, 1, 3, 1, 4, 2, 0, 1, 3,
-    2, 0, 4, 1, 3, 0, 2, 1, 0, 4, 3, 2, 1, 0, 2, 4, 1, 0, 3, 2, 1, 4, 0, 2, 1, 3, 0, 4, 1, 2, 0,
-    3, 1, 0, 2, 4, 1, 2, 0, 3, 1, 0, 4, 2, 1, 0, 2, 3, 4, 1, 0, 2, 1, 3, 0, 4, 2, 1, 0, 3, 2, 1,
+    0, 1, 2, 0, 3, 1, 0, 2, 4, 1, 0, 0, 2, 3, 1, 0, 4, 2, 1, 0, 3, 2, 0, 1, 4, 0, 2, 1, 3, 0, 1, 1,
+    2, 4, 0, 3, 1, 2, 0, 1, 0, 3, 2, 4, 1, 0, 2, 1, 0, 3, 4, 1, 2, 0, 1, 3, 1, 4, 2, 0, 1, 3, 2, 0,
+    4, 1, 3, 0, 2, 1, 0, 4, 3, 2, 1, 0, 2, 4, 1, 0, 3, 2, 1, 4, 0, 2, 1, 3, 0, 4, 1, 2, 0, 3, 1, 0,
+    2, 4, 1, 2, 0, 3, 1, 0, 4, 2, 1, 0, 2, 3, 4, 1, 0, 2, 1, 3, 0, 4, 2, 1, 0, 3, 2, 1,
   ];
 
   const totalHeatmapDays = 400;
-  const heatmapData = Array.from({ length: totalHeatmapDays }, (_, i) => heatmapSeed[i % heatmapSeed.length]);
+  const heatmapData = Array.from(
+    { length: totalHeatmapDays },
+    (_, i) => heatmapSeed[i % heatmapSeed.length]
+  );
   const activeDaysCount = heatmapData.filter((level) => level > 0).length;
 
   const renderHeatmap = () => {
@@ -284,7 +291,9 @@ export default async function OverviewPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <p className="text-xs text-zinc-400 font-medium">Activity Log (Past 52 Weeks)</p>
-              <h4 className="text-2xl font-extrabold text-white mt-1">{activeDaysCount} Active Days</h4>
+              <h4 className="text-2xl font-extrabold text-white mt-1">
+                {activeDaysCount} Active Days
+              </h4>
             </div>
 
             <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-xs text-zinc-400 flex items-center gap-2.5 max-w-md">
@@ -355,12 +364,13 @@ export default async function OverviewPage() {
                     </td>
                     <td className="p-4">
                       <span
-                        className={`text-[10px] px-2 py-0.5 rounded font-medium ${attempt.difficulty === "Easy"
-                          ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                          : attempt.difficulty === "Medium"
-                            ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                            : "bg-red-500/10 text-red-400 border border-red-500/20"
-                          }`}
+                        className={`text-[10px] px-2 py-0.5 rounded font-medium ${
+                          attempt.difficulty === "Easy"
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                            : attempt.difficulty === "Medium"
+                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                              : "bg-red-500/10 text-red-400 border border-red-500/20"
+                        }`}
                       >
                         {attempt.difficulty}
                       </span>
@@ -375,12 +385,13 @@ export default async function OverviewPage() {
                         </span>
                         <div className="w-12 bg-white/5 h-1 rounded-full overflow-hidden hidden sm:block">
                           <div
-                            className={`h-full rounded-full ${attempt.percentage >= 80
-                              ? "bg-emerald-500"
-                              : attempt.percentage >= 60
-                                ? "bg-amber-500"
-                                : "bg-red-500"
-                              }`}
+                            className={`h-full rounded-full ${
+                              attempt.percentage >= 80
+                                ? "bg-emerald-500"
+                                : attempt.percentage >= 60
+                                  ? "bg-amber-500"
+                                  : "bg-red-500"
+                            }`}
                             style={{ width: `${attempt.percentage}%` }}
                           ></div>
                         </div>
