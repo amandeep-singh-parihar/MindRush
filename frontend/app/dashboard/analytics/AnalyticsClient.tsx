@@ -98,9 +98,10 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
     };
   }, [scoreProgressions]);
 
-  const maxPoint = points.length > 0
-    ? points.reduce((prev, curr) => (curr.percentage >= prev.percentage ? curr : prev), points[0])
-    : null;
+  const maxPoint =
+    points.length > 0
+      ? points.reduce((prev, curr) => (curr.percentage >= prev.percentage ? curr : prev), points[0])
+      : null;
 
   return (
     <div className="space-y-8 animate-fadeIn">
