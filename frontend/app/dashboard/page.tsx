@@ -13,6 +13,7 @@ import {
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import ActivityHeatmap from "@/components/ActivityHeatmap";
+import QuickTemplates from "@/components/QuickTemplates";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -20,33 +21,6 @@ export const revalidate = 0;
 export const metadata = {
   title: "Dashboard",
 };
-
-const RECOMMENDED_TOPICS = [
-  {
-    topic: "CSS Grid & Flexbox",
-    category: "Design",
-    questions: 10,
-    color: "from-amber-500 to-orange-600",
-  },
-  {
-    topic: "TypeScript Advanced Types",
-    category: "Coding",
-    questions: 10,
-    color: "from-blue-500 to-indigo-600",
-  },
-  {
-    topic: "Ancient Roman Empire",
-    category: "History",
-    questions: 8,
-    color: "from-emerald-500 to-teal-600",
-  },
-  {
-    topic: "Machine Learning Basics",
-    category: "AI/ML",
-    questions: 10,
-    color: "from-purple-500 to-pink-600",
-  },
-];
 
 export default async function OverviewPage() {
   const session = await auth();
@@ -200,37 +174,8 @@ export default async function OverviewPage() {
         </div>
       </div>
 
-      {/* Quick Topics */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-pink-500" />
-          Quick AI Templates
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {RECOMMENDED_TOPICS.map((topic, i) => (
-            <Link
-              key={i}
-              href={`/dashboard?create=true&topic=${encodeURIComponent(topic.topic)}`}
-              className="glass-card rounded-2xl p-5 hover:border-pink-500/30 transition-all duration-300 cursor-pointer relative group overflow-hidden block"
-            >
-              <div
-                className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl ${topic.color} opacity-[0.05] group-hover:opacity-10 rounded-full blur-xl transition-all duration-300`}
-              ></div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-zinc-400 border border-white/5 font-semibold">
-                {topic.category}
-              </span>
-              <h4 className="text-base font-bold text-white mt-3 group-hover:text-pink-400 transition-colors">
-                {topic.topic}
-              </h4>
-              <p className="text-xs text-zinc-500 mt-1">{topic.questions} AI questions • 10m</p>
-              <div className="flex items-center gap-1 text-xs text-pink-500 font-semibold mt-4 group-hover:gap-2 transition-all">
-                Generate Now
-                <ChevronRight className="w-3 h-3" />
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+      {/* Quick AI Templates */}
+      <QuickTemplates />
 
       {/* Learning Intensity / Activity Calendar */}
       <div className="space-y-4">
