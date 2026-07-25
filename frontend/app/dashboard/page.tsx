@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
+import ActivityHeatmap from "@/components/ActivityHeatmap";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -101,36 +102,6 @@ export default async function OverviewPage() {
     percentage: Math.round(att.percentage),
     completedAt: att.completedAt.toISOString(),
   }));
-
-  // Activity Heatmap logic based on real attempts
-  const totalHeatmapDays = 280; // ~40 weeks
-  const attemptDatesSet = new Set(
-    (dbUser?.attempts || []).map((a) => a.completedAt.toISOString().split("T")[0])
-  );
-
-  const heatmapData: number[] = Array.from({ length: totalHeatmapDays }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (totalHeatmapDays - 1 - i));
-    const dateStr = d.toISOString().split("T")[0];
-    return attemptDatesSet.has(dateStr) ? 2 : 0;
-  });
-
-  const activeDaysCount = heatmapData.filter((level) => level > 0).length;
-
-  const renderHeatmap = () => {
-    return heatmapData.map((level, i) => {
-      let bgClass = "bg-white/5";
-      if (level > 0) bgClass = "bg-purple-400 shadow-sm shadow-purple-500/50";
-
-      return (
-        <div
-          key={i}
-          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[3px] transition-all duration-200 hover:scale-125 hover:ring-2 hover:ring-pink-400 hover:z-10 shrink-0 ${bgClass}`}
-          title={`Day ${i + 1}: ${level > 0 ? "Quiz Activity" : "No activity"}`}
-        />
-      );
-    });
-  };
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -261,38 +232,17 @@ export default async function OverviewPage() {
         </div>
       </div>
 
-      {/* Learning Intensity (Full Width) */}
+      {/* Learning Intensity / Activity Calendar */}
       <div className="space-y-4">
         <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
           <Calendar className="w-4 h-4 text-zinc-400" />
           Learning Activity Log
         </h3>
 
-        <div className="glass-card rounded-2xl p-6 border border-white/5 flex flex-col gap-5 w-full">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <p className="text-xs text-zinc-400 font-medium">Activity Log</p>
-              <h4 className="text-2xl font-extrabold text-white mt-1">
-                {activeDaysCount} Active Days
-              </h4>
-            </div>
-
-            <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-xs text-zinc-400 flex items-center gap-2.5 max-w-md">
-              <Flame className="w-4 h-4 text-amber-500 shrink-0" />
-              <div>
-                <span className="font-semibold text-white">Daily Streak Active!</span> Keep
-                answering quizzes everyday to build up your streak.
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full overflow-x-auto pb-2 scrollbar-none">
-            <div className="flex flex-col gap-2.5 min-w-max">
-              <div className="grid grid-flow-col grid-rows-7 gap-1.5 justify-start">
-                {renderHeatmap()}
-              </div>
-            </div>
-          </div>
+        <div className="glass-card rounded-2xl p-6 border border-white/5 w-full">
+          <ActivityHeatmap
+            attemptDates={(dbUser?.attempts || []).map((a) => a.completedAt.toISOString())}
+          />
         </div>
       </div>
 
