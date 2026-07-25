@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   AlertTriangle,
   Trash2,
@@ -12,6 +13,8 @@ import {
   ArrowRight,
   Eye,
   EyeOff,
+  Flame,
+  Skull,
 } from "lucide-react";
 import {
   verifyPasswordAndScheduleDeletionAction,
@@ -37,6 +40,31 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [modalError, setModalError] = useState<string | null>(null);
+
+  // 12-Second Red Horror Atmosphere Effect
+  const [horrorActive, setHorrorActive] = useState(false);
+  const [countdown, setCountdown] = useState(12);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    let interval: NodeJS.Timeout;
+
+    if (horrorActive) {
+      setCountdown(12);
+      interval = setInterval(() => {
+        setCountdown((prev) => Math.max(0, prev - 1));
+      }, 1000);
+
+      timer = setTimeout(() => {
+        setHorrorActive(false);
+      }, 12000);
+    }
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [horrorActive]);
 
   const isScheduled = !!deletionScheduledAt;
   const CONFIRMATION_REQUIRED_STRING = "DELETE MY ACCOUNT";
@@ -74,7 +102,7 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
     setStep(2);
   };
 
-  // Step 2: Verify Password & Schedule Deletion
+  // Step 2: Verify Password & Trigger 12s Horror Effect
   const handleVerifyPassword = async () => {
     setLoading(true);
     setModalError(null);
@@ -87,6 +115,8 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
           text: "Password verified! Account deletion scheduled for 7 days from today.",
         });
         closeModal();
+        // Trigger 12-second red horror screen effect
+        setHorrorActive(true);
       } else {
         setModalError(res.message || "Incorrect password. Please try again.");
       }
@@ -118,6 +148,46 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
 
   return (
     <div id="danger-zone" className="space-y-4 pt-4">
+      {/* Full-screen 12-Second Red Horror Atmosphere Overlay */}
+      {horrorActive &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6 backdrop-blur-md pointer-events-auto animate-horror-pulse overflow-hidden select-none">
+            {/* Scanlines visual noise */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none opacity-40" />
+
+            {/* Glowing Red Vignette Borders */}
+            <div className="absolute inset-0 border-[16px] border-red-600/70 blur-md pointer-events-none" />
+
+            {/* Center Horror Warning Box */}
+            <div className="relative z-10 text-center space-y-6 max-w-xl mx-auto">
+              <div className="mx-auto w-24 h-24 rounded-full bg-red-600/20 border-2 border-red-500 flex items-center justify-center animate-bounce shadow-[0_0_60px_rgba(239,68,68,0.9)]">
+                <Skull className="w-12 h-12 text-red-500 stroke-[2.5]" />
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-xs font-mono font-bold tracking-[0.3em] text-red-400 uppercase animate-pulse">
+                  ⚠️ SECURITY PURGE SIGNAL CONFIRMED
+                </p>
+                <h1 className="text-3xl sm:text-4xl font-black text-red-100 tracking-widest font-mono animate-horror-glitch uppercase">
+                  ACCOUNT TERMINATION INITIATED
+                </h1>
+                <p className="text-sm font-mono text-red-200/90 max-w-md mx-auto leading-relaxed">
+                  YOUR ACCOUNT HAS ENTERED THE 7-DAY DESTRUCTION CYCLE. ALL CREATED QUIZZES,
+                  ATTEMPTS & MASTERY PROFILE WILL BE PERMANENTLY ERASED.
+                </p>
+              </div>
+
+              {/* 12-Second Countdown Badge */}
+              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-950/90 border border-red-500/50 text-red-200 text-xs font-mono font-bold shadow-2xl">
+                <Flame className="w-4 h-4 text-red-500 animate-spin" />
+                <span>DISMISSING ATMOSPHERE IN {countdown}S</span>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+
       <div className="glass-card rounded-2xl p-6 border border-red-500/20 bg-red-950/10 space-y-5">
         <div className="flex items-start justify-between gap-4 border-b border-red-500/10 pb-4">
           <div>
