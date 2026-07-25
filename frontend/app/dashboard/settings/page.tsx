@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
 import ProfileForm from "@/components/Profile/ProfileForm";
 import PasswordForm from "@/components/Profile/PasswordForm";
+import DangerZone from "@/components/Profile/DangerZone";
 
 export const metadata = {
   title: "Settings",
@@ -44,6 +45,13 @@ export default async function SettingsPage() {
 
         {/* Password Modification */}
         <PasswordForm hasPassword={!!dbUser?.password} />
+
+        {/* Danger Area */}
+        <DangerZone
+          initialDeletionScheduledAt={
+            dbUser?.deletionScheduledAt ? dbUser.deletionScheduledAt.toISOString() : null
+          }
+        />
       </div>
     </div>
   );

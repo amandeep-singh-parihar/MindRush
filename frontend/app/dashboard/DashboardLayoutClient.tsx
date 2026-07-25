@@ -16,6 +16,7 @@ import {
   Sparkles,
   X,
   AlertCircle,
+  AlertTriangle,
   Menu,
 } from "lucide-react";
 
