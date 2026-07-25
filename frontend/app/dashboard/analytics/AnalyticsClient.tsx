@@ -61,7 +61,7 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
           <h4 className="text-2xl font-extrabold text-white mt-1.5">{stats.totalQuizzesTaken}</h4>
           <div className="flex items-center gap-1 text-[11px] text-pink-400 mt-2 font-medium">
             <Sparkles className="w-3.5 h-3.5" />
-            Tracked in PostgreSQL Database
+            Completed quizzes & practice sessions
           </div>
         </div>
 
