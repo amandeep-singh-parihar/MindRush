@@ -179,10 +179,7 @@ export default function QuickTemplates() {
       {/* Difficulty Selection Dialog Modal */}
       {selectedTemplate && !isGenerating && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-          <div
-            className="absolute inset-0 cursor-pointer"
-            onClick={closeModal}
-          />
+          <div className="absolute inset-0 cursor-pointer" onClick={closeModal} />
 
           <div className="relative glass-card w-full max-w-md rounded-3xl p-6 sm:p-7 border border-white/10 shadow-2xl shadow-purple-950/50 animate-scale-up z-10">
             {/* Close Button */}
@@ -225,15 +222,19 @@ export default function QuickTemplates() {
                 <div className="grid grid-cols-3 gap-2.5">
                   {(["Easy", "Medium", "Hard"] as const).map((lvl) => {
                     const isSelected = difficulty === lvl;
-                    let activeStyles = "border-white/5 bg-white/[0.02] text-zinc-400 hover:text-white";
+                    let activeStyles =
+                      "border-white/5 bg-white/[0.02] text-zinc-400 hover:text-white";
 
                     if (isSelected) {
                       if (lvl === "Easy") {
-                        activeStyles = "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 font-bold shadow-lg shadow-emerald-500/10";
+                        activeStyles =
+                          "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 font-bold shadow-lg shadow-emerald-500/10";
                       } else if (lvl === "Medium") {
-                        activeStyles = "bg-amber-500/15 border-amber-500/40 text-amber-300 font-bold shadow-lg shadow-amber-500/10";
+                        activeStyles =
+                          "bg-amber-500/15 border-amber-500/40 text-amber-300 font-bold shadow-lg shadow-amber-500/10";
                       } else {
-                        activeStyles = "bg-red-500/15 border-red-500/40 text-red-300 font-bold shadow-lg shadow-red-500/10";
+                        activeStyles =
+                          "bg-red-500/15 border-red-500/40 text-red-300 font-bold shadow-lg shadow-red-500/10";
                       }
                     }
 
