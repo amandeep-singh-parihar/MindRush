@@ -209,3 +209,9 @@ body {
   stroke: #ec4899 !important;
   stroke-width: 1px !important;
 }
+
+/* Global Select & Option Dark Theme Override */
+select option {
+  background-color: #09090b !important;
+  color: #f4f4f5 !important;
+}

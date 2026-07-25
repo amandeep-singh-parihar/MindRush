@@ -60,10 +60,18 @@ export default function HistoryClient({ initialHistory = [] }: { initialHistory?
               onChange={(e) => setHistoryFilter(e.target.value)}
               className="bg-transparent border-none outline-none text-white font-semibold cursor-pointer text-xs"
             >
-              <option value="all">All</option>
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
+              <option value="all" className="bg-zinc-950 text-white">
+                All
+              </option>
+              <option value="easy" className="bg-zinc-950 text-white">
+                Easy
+              </option>
+              <option value="medium" className="bg-zinc-950 text-white">
+                Medium
+              </option>
+              <option value="hard" className="bg-zinc-950 text-white">
+                Hard
+              </option>
             </select>
           </div>
         </div>
