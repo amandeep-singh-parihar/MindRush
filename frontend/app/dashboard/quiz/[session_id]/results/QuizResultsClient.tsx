@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CheckCircle2, XCircle, RotateCcw, Home, Trophy, Target, Sparkles } from "lucide-react";
+import confetti from "canvas-confetti";
 
 interface Question {
   question: string;
@@ -48,7 +49,42 @@ export default function QuizResultsClient() {
       return;
     }
     try {
-      setResults(JSON.parse(raw));
+      const parsed: ResultsPayload = JSON.parse(raw);
+      setResults(parsed);
+
+      // Trigger confetti blast if score >= 90%
+      if (parsed.questions?.length > 0) {
+        const pct = Math.round((parsed.score / parsed.questions.length) * 100);
+        if (pct >= 90) {
+          // Center main blast
+          confetti({
+            particleCount: 120,
+            spread: 90,
+            origin: { y: 0.6 },
+            colors: ["#ec4899", "#a855f7", "#6366f1", "#10b981", "#f59e0b"],
+          });
+
+          // Follow-up side cannons
+          const timer = setTimeout(() => {
+            confetti({
+              particleCount: 80,
+              angle: 60,
+              spread: 60,
+              origin: { x: 0, y: 0.6 },
+              colors: ["#ec4899", "#a855f7", "#38bdf8"],
+            });
+            confetti({
+              particleCount: 80,
+              angle: 120,
+              spread: 60,
+              origin: { x: 1, y: 0.6 },
+              colors: ["#ec4899", "#a855f7", "#38bdf8"],
+            });
+          }, 350);
+
+          return () => clearTimeout(timer);
+        }
+      }
     } catch {
       setNotFound(true);
     }
@@ -115,6 +151,13 @@ export default function QuizResultsClient() {
           <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-pink-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center mb-5">
             <Trophy className="w-9 h-9 text-yellow-400" />
           </div>
+
+          {pct >= 90 && (
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold mb-3 animate-bounce">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>🎉 Outstanding! 90%+ Mastery Achieved!</span>
+            </div>
+          )}
           <h2
             className={`text-3xl font-extrabold bg-gradient-to-r ${gradeColor} bg-clip-text text-transparent`}
           >
