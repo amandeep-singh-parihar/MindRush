@@ -689,7 +689,18 @@ export async function verifyPasswordAndScheduleDeletionAction(passwordInput: str
 
       const isValid = await bcrypt.compare(passwordInput.trim(), dbUser.password);
       if (!isValid) {
-        return { success: false, message: "Incorrect password. Please check your credentials and try again." };
+        return {
+          success: false,
+          message: "Incorrect password. Please check your credentials and try again.",
+        };
+      }
+    } else {
+      // For OAuth/Google users (no password set in DB), verify email input
+      if (passwordInput.trim().toLowerCase() !== dbUser.email.toLowerCase()) {
+        return {
+          success: false,
+          message: `OAuth account detected. Please enter your email (${dbUser.email}) to confirm deletion.`,
+        };
       }
     }
 
@@ -706,13 +717,13 @@ export async function verifyPasswordAndScheduleDeletionAction(passwordInput: str
     return {
       success: true,
       deletionScheduledAt: scheduledDate.toISOString(),
-      message: "Password verified! Account deletion scheduled for 7 days from today.",
+      message: "Authentication verified! Account deletion scheduled for 7 days from today.",
     };
   } catch (error: unknown) {
     console.error("[ERROR] Failed to verify password for deletion:", error);
     return {
       success: false,
-      message: error instanceof Error ? error.message : "Failed to verify password",
+      message: error instanceof Error ? error.message : "Failed to verify credentials",
     };
   }
 }

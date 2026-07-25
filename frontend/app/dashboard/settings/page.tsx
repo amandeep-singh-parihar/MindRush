@@ -48,6 +48,8 @@ export default async function SettingsPage() {
 
         {/* Danger Area */}
         <DangerZone
+          hasPassword={!!dbUser?.password}
+          userEmail={dbUser?.email || ""}
           initialDeletionScheduledAt={
             dbUser?.deletionScheduledAt ? dbUser.deletionScheduledAt.toISOString() : null
           }

@@ -10,6 +10,7 @@ import {
   ShieldAlert,
   X,
   Lock,
+  Mail,
   ArrowRight,
   Eye,
   EyeOff,
@@ -23,9 +24,15 @@ import {
 
 interface DangerZoneProps {
   initialDeletionScheduledAt?: string | null;
+  hasPassword?: boolean;
+  userEmail?: string;
 }
 
-export default function DangerZone({ initialDeletionScheduledAt = null }: DangerZoneProps) {
+export default function DangerZone({
+  initialDeletionScheduledAt = null,
+  hasPassword = true,
+  userEmail = "",
+}: DangerZoneProps) {
   const [deletionScheduledAt, setDeletionScheduledAt] = useState<string | null>(
     initialDeletionScheduledAt
   );
@@ -41,28 +48,20 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [modalError, setModalError] = useState<string | null>(null);
 
-  // 12-Second Red Horror Atmosphere Effect
+  // 2-Second Red Horror Atmosphere Effect
   const [horrorActive, setHorrorActive] = useState(false);
-  const [countdown, setCountdown] = useState(12);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    let interval: NodeJS.Timeout;
 
     if (horrorActive) {
-      setCountdown(12);
-      interval = setInterval(() => {
-        setCountdown((prev) => Math.max(0, prev - 1));
-      }, 1000);
-
       timer = setTimeout(() => {
         setHorrorActive(false);
-      }, 12000);
+      }, 1000);
     }
 
     return () => {
       clearTimeout(timer);
-      clearInterval(interval);
     };
   }, [horrorActive]);
 
@@ -102,7 +101,7 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
     setStep(2);
   };
 
-  // Step 2: Verify Password & Trigger 12s Horror Effect
+  // Step 2: Verify Password / Email & Trigger 12s Horror Effect
   const handleVerifyPassword = async () => {
     setLoading(true);
     setModalError(null);
@@ -112,16 +111,16 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
         setDeletionScheduledAt(res.deletionScheduledAt);
         setMsg({
           type: "success",
-          text: "Password verified! Account deletion scheduled for 7 days from today.",
+          text: "Verification successful! Account deletion scheduled for 7 days from today.",
         });
         closeModal();
         // Trigger 12-second red horror screen effect
         setHorrorActive(true);
       } else {
-        setModalError(res.message || "Incorrect password. Please try again.");
+        setModalError(res.message || "Verification failed. Please try again.");
       }
     } catch {
-      setModalError("An error occurred during password verification.");
+      setModalError("An error occurred during verification.");
     } finally {
       setLoading(false);
     }
@@ -178,10 +177,10 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
                 </p>
               </div>
 
-              {/* 12-Second Countdown Badge */}
+              {/* Horror Badge */}
               <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-950/90 border border-red-500/50 text-red-200 text-xs font-mono font-bold shadow-2xl">
                 <Flame className="w-4 h-4 text-red-500 animate-spin" />
-                <span>DISMISSING ATMOSPHERE IN {countdown}S</span>
+                <span>ACCOUNT TERMINATION INITIATED</span>
               </div>
             </div>
           </div>,
@@ -251,7 +250,7 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
               <h4 className="text-sm font-bold text-white">Delete Account</h4>
               <p className="text-xs text-zinc-400 mt-0.5">
                 Permanently purge your account, quizzes, and attempt records after a 7-day grace
-                window. Requires confirmation text & password verification.
+                window. Requires confirmation text & authorization verification.
               </p>
             </div>
             <button
@@ -266,7 +265,7 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
         )}
       </div>
 
-      {/* Multi-step Password Verification Confirmation Modal */}
+      {/* Multi-step Password / Email Verification Confirmation Modal */}
       {confirmModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
           <div className="absolute inset-0 cursor-pointer" onClick={closeModal} />
@@ -290,7 +289,11 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
                   Step {step} of 2 • Security Verification
                 </span>
                 <h3 className="text-lg font-extrabold text-white leading-snug">
-                  {step === 1 ? "Confirm Account Deletion" : "Enter Password to Verify"}
+                  {step === 1
+                    ? "Confirm Account Deletion"
+                    : hasPassword
+                      ? "Enter Password to Verify"
+                      : "Confirm Email to Verify"}
                 </h3>
               </div>
             </div>
@@ -348,7 +351,7 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
               </div>
             )}
 
-            {/* STEP 2: Password Verification */}
+            {/* STEP 2: Password or Email Verification */}
             {step === 2 && (
               <form
                 onSubmit={(e) => {
@@ -358,37 +361,53 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
                 className="space-y-4"
               >
                 <p className="text-xs text-zinc-300 leading-relaxed">
-                  Please enter your account password to authorize scheduling this account for 7-day
-                  deletion.
+                  {hasPassword
+                    ? "Please enter your account password to authorize scheduling this account for 7-day deletion."
+                    : `OAuth / Google account detected. Please enter your account email (${userEmail}) to confirm scheduling 7-day deletion.`}
                 </p>
 
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Lock className="w-3.5 h-3.5 text-pink-400" />
-                    Account Password
+                    {hasPassword ? (
+                      <>
+                        <Lock className="w-3.5 h-3.5 text-pink-400" />
+                        Account Password
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-3.5 h-3.5 text-pink-400" />
+                        Confirm Registered Email
+                      </>
+                    )}
                   </label>
 
                   <div className="relative">
                     <input
-                      type={showPassword ? "text" : "password"}
+                      type={hasPassword ? (showPassword ? "text" : "password") : "text"}
                       value={passwordInput}
                       onChange={(e) => setPasswordInput(e.target.value)}
-                      placeholder="Enter your current password"
+                      placeholder={
+                        hasPassword
+                          ? "Enter your current password"
+                          : userEmail || "Enter your registered email address"
+                      }
                       required
                       className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:border-red-500/50 outline-none transition-all pr-10"
                     />
 
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="w-4 h-4" />
-                      ) : (
-                        <Eye className="w-4 h-4" />
-                      )}
-                    </button>
+                    {hasPassword && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
 
