@@ -211,15 +211,20 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
               />
 
               {points.map((pt, idx) => (
-                <circle
-                  key={idx}
-                  cx={pt.x}
-                  cy={pt.y}
-                  r="5"
-                  className="fill-[#050409] stroke-pink-500 stroke-[3.5] hover:scale-125 transition-transform cursor-pointer"
-                >
-                  <title>{`${pt.date}: ${pt.percentage}%`}</title>
-                </circle>
+                <g key={idx} className="group cursor-pointer">
+                  {/* Invisible hit area to prevent mouse leave jitter */}
+                  <circle cx={pt.x} cy={pt.y} r="12" fill="transparent">
+                    <title>{`${pt.date}: ${pt.percentage}%`}</title>
+                  </circle>
+                  {/* Visible data point circle */}
+                  <circle
+                    cx={pt.x}
+                    cy={pt.y}
+                    r="5"
+                    style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                    className="fill-[#050409] stroke-pink-500 stroke-[3.5] group-hover:scale-125 transition-transform duration-200"
+                  />
+                </g>
               ))}
 
               {/* High Score Badge Callout */}
@@ -249,7 +254,9 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
               <Target className="w-4 h-4 text-pink-400" />
               Topic Strength Breakdown
             </h3>
-            <p className="text-xs text-zinc-500">Average accuracy by category based on DB records</p>
+            <p className="text-xs text-zinc-500">
+              Average accuracy by category based on DB records
+            </p>
           </div>
 
           {categoryBreakdown.length > 0 ? (
