@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import QuizLoadingModal from "./QuizLoadingModal";
 import {
   Sparkles,
   ChevronDown,
@@ -180,6 +181,22 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
           </div>,
           document.body
         )}
+
+      {/* ── Animated Loading Modal ── */}
+      <QuizLoadingModal
+        isOpen={isGenerating}
+        topicOrSource={
+          inputMode === "topic"
+            ? topic
+            : pdfFile
+              ? pdfFile.name
+              : pastedText
+                ? "Pasted Content"
+                : ""
+        }
+        difficulty={difficulty}
+        questionsCount={questionsCount}
+      />
 
       <form
         onSubmit={handleSubmit}
