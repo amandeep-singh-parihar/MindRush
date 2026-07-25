@@ -149,3 +149,5 @@ chroma_db/
 chromadb/
 backend/chroma_db/
 
+skills-lock.json
+frontend/skills-lock.json
