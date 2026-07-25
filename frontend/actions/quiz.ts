@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import bcrypt from "bcryptjs";
 
 export interface QuestionInput {
   id?: number;
@@ -662,6 +663,56 @@ export async function verifyOTPAndScheduleDeletionAction(otpInput: string) {
     return {
       success: false,
       message: error instanceof Error ? error.message : "Failed to verify OTP",
+    };
+  }
+}
+
+/**
+ * 11. Verify Password and Schedule 7-Day Deletion
+ */
+export async function verifyPasswordAndScheduleDeletionAction(passwordInput: string) {
+  try {
+    const user = await getOrCreateUser();
+    if (!user || !user.email) return { success: false, message: "User not authenticated" };
+
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+    });
+
+    if (!dbUser) return { success: false, message: "User not found" };
+
+    // If user has a password set (credentials user), verify with bcrypt
+    if (dbUser.password) {
+      if (!passwordInput || !passwordInput.trim()) {
+        return { success: false, message: "Please enter your current account password." };
+      }
+
+      const isValid = await bcrypt.compare(passwordInput.trim(), dbUser.password);
+      if (!isValid) {
+        return { success: false, message: "Incorrect password. Please check your credentials and try again." };
+      }
+    }
+
+    // Schedule deletion for 7 days
+    const scheduledDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { deletionScheduledAt: scheduledDate },
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/settings");
+
+    return {
+      success: true,
+      deletionScheduledAt: scheduledDate.toISOString(),
+      message: "Password verified! Account deletion scheduled for 7 days from today.",
+    };
+  } catch (error: unknown) {
+    console.error("[ERROR] Failed to verify password for deletion:", error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Failed to verify password",
     };
   }
 }

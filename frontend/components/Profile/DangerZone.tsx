@@ -8,13 +8,13 @@ import {
   Clock,
   ShieldAlert,
   X,
-  Mail,
-  KeyRound,
-  CheckCircle2,
+  Lock,
+  ArrowRight,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import {
-  sendAccountDeletionOTPAction,
-  verifyOTPAndScheduleDeletionAction,
+  verifyPasswordAndScheduleDeletionAction,
   cancelAccountDeletionAction,
 } from "@/actions/quiz";
 
@@ -31,9 +31,8 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
 
   // Form input states
   const [confirmText, setConfirmText] = useState("");
-  const [otpInput, setOtpInput] = useState("");
-  const [otpSentEmail, setOtpSentEmail] = useState("");
-  const [demoOtp, setDemoOtp] = useState<string | null>(null);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -53,9 +52,9 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
   const openModal = () => {
     setStep(1);
     setConfirmText("");
-    setOtpInput("");
+    setPasswordInput("");
+    setShowPassword(false);
     setModalError(null);
-    setDemoOtp(null);
     setConfirmModalOpen(true);
   };
 
@@ -64,53 +63,35 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
     setConfirmModalOpen(false);
     setStep(1);
     setConfirmText("");
-    setOtpInput("");
+    setPasswordInput("");
     setModalError(null);
   };
 
-  // Step 1: Send OTP
-  const handleSendOTP = async () => {
+  // Step 1 -> Step 2 transition
+  const handleProceedToPassword = () => {
     if (!isStringMatched) return;
-    setLoading(true);
     setModalError(null);
-    try {
-      const res = await sendAccountDeletionOTPAction();
-      if (res.success && res.email) {
-        setOtpSentEmail(res.email);
-        if (res.otpCode) setDemoOtp(res.otpCode);
-        setStep(2);
-      } else {
-        setModalError(res.message || "Failed to send OTP to email.");
-      }
-    } catch {
-      setModalError("An unexpected error occurred while sending OTP.");
-    } finally {
-      setLoading(false);
-    }
+    setStep(2);
   };
 
-  // Step 2: Verify OTP & Schedule Deletion
-  const handleVerifyOTP = async () => {
-    if (otpInput.trim().length !== 6) {
-      setModalError("Please enter the 6-digit OTP code.");
-      return;
-    }
+  // Step 2: Verify Password & Schedule Deletion
+  const handleVerifyPassword = async () => {
     setLoading(true);
     setModalError(null);
     try {
-      const res = await verifyOTPAndScheduleDeletionAction(otpInput);
+      const res = await verifyPasswordAndScheduleDeletionAction(passwordInput);
       if (res.success && res.deletionScheduledAt) {
         setDeletionScheduledAt(res.deletionScheduledAt);
         setMsg({
           type: "success",
-          text: "OTP verified! Account deletion scheduled for 7 days from today.",
+          text: "Password verified! Account deletion scheduled for 7 days from today.",
         });
         closeModal();
       } else {
-        setModalError(res.message || "Invalid OTP code.");
+        setModalError(res.message || "Incorrect password. Please try again.");
       }
     } catch {
-      setModalError("An error occurred during verification.");
+      setModalError("An error occurred during password verification.");
     } finally {
       setLoading(false);
     }
@@ -200,7 +181,7 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
               <h4 className="text-sm font-bold text-white">Delete Account</h4>
               <p className="text-xs text-zinc-400 mt-0.5">
                 Permanently purge your account, quizzes, and attempt records after a 7-day grace
-                window. Requires text match & email OTP verification.
+                window. Requires confirmation text & password verification.
               </p>
             </div>
             <button
@@ -215,7 +196,7 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
         )}
       </div>
 
-      {/* Multi-step Verification Confirmation Modal */}
+      {/* Multi-step Password Verification Confirmation Modal */}
       {confirmModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
           <div className="absolute inset-0 cursor-pointer" onClick={closeModal} />
@@ -239,7 +220,7 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
                   Step {step} of 2 • Security Verification
                 </span>
                 <h3 className="text-lg font-extrabold text-white leading-snug">
-                  {step === 1 ? "Confirm Account Deletion" : "Verify Email OTP Code"}
+                  {step === 1 ? "Confirm Account Deletion" : "Enter Password to Verify"}
                 </h3>
               </div>
             </div>
@@ -287,48 +268,58 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
                   <button
                     type="button"
                     disabled={!isStringMatched || loading}
-                    onClick={handleSendOTP}
+                    onClick={handleProceedToPassword}
                     className="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 disabled:opacity-40 disabled:hover:bg-red-500 text-xs font-bold text-white shadow-lg shadow-red-500/20 transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <Mail className="w-4 h-4" />
-                    {loading ? "Sending OTP..." : "Send OTP to Email"}
+                    <span>Continue</span>
+                    <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* STEP 2: Email OTP Input & Verification */}
+            {/* STEP 2: Password Verification */}
             {step === 2 && (
-              <div className="space-y-4">
-                <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl text-xs text-zinc-300 space-y-1">
-                  <div className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>OTP Dispatched</span>
-                  </div>
-                  <p className="text-zinc-400">
-                    A 6-digit verification code has been sent to{" "}
-                    <strong className="text-white">{otpSentEmail}</strong>.
-                  </p>
-                  {demoOtp && (
-                    <p className="text-[11px] text-amber-300 pt-1 border-t border-white/5 font-mono">
-                      Test Code: <span className="font-bold text-white">{demoOtp}</span>
-                    </p>
-                  )}
-                </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleVerifyPassword();
+                }}
+                className="space-y-4"
+              >
+                <p className="text-xs text-zinc-300 leading-relaxed">
+                  Please enter your account password to authorize scheduling this account for 7-day
+                  deletion.
+                </p>
 
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <KeyRound className="w-3.5 h-3.5 text-pink-400" />
-                    Enter 6-Digit OTP Code
+                    <Lock className="w-3.5 h-3.5 text-pink-400" />
+                    Account Password
                   </label>
-                  <input
-                    type="text"
-                    maxLength={6}
-                    value={otpInput}
-                    onChange={(e) => setOtpInput(e.target.value.replace(/\D/g, ""))}
-                    placeholder="e.g. 123456"
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-lg font-bold text-center tracking-widest text-white placeholder-zinc-600 focus:border-red-500/50 outline-none transition-all font-mono"
-                  />
+
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={passwordInput}
+                      onChange={(e) => setPasswordInput(e.target.value)}
+                      placeholder="Enter your current password"
+                      required
+                      className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:border-red-500/50 outline-none transition-all pr-10"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="pt-2 flex gap-3">
@@ -342,16 +333,15 @@ export default function DangerZone({ initialDeletionScheduledAt = null }: Danger
                   </button>
 
                   <button
-                    type="button"
-                    disabled={otpInput.trim().length !== 6 || loading}
-                    onClick={handleVerifyOTP}
+                    type="submit"
+                    disabled={loading}
                     className="flex-1 py-3 rounded-xl bg-red-500 hover:bg-red-600 disabled:opacity-40 disabled:hover:bg-red-500 text-xs font-bold text-white shadow-lg shadow-red-500/20 transition-all cursor-pointer flex items-center justify-center gap-2"
                   >
                     <Trash2 className="w-4 h-4" />
                     {loading ? "Verifying..." : "Verify & Schedule (7 Days)"}
                   </button>
                 </div>
-              </div>
+              </form>
             )}
           </div>
         </div>
