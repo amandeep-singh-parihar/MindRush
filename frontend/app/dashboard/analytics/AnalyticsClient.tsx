@@ -33,11 +33,11 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
   const categoryBreakdown = data?.categoryBreakdown || [];
   const scoreProgressions = data?.scoreProgressions || [];
 
-  // Generate dynamic or fallback SVG points for the Score Progression Trend chart
-  const { pathData, polygonPoints, points, maxScore, dates } = useMemo(() => {
+  // Generate dynamic SVG points for the Score Progression Trend chart
+  const { hasData, pathData, polygonPoints, points, maxScore, dates } = useMemo(() => {
     if (scoreProgressions.length >= 2) {
-      const chartWidth = 460;
-      const startX = 20;
+      const chartWidth = 450;
+      const startX = 25;
       const maxPts = scoreProgressions.length;
       const stepX = chartWidth / Math.max(1, maxPts - 1);
 
@@ -62,6 +62,7 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
         .join(" ")} ${parsedPoints[parsedPoints.length - 1].x},180`;
 
       return {
+        hasData: true,
         pathData: pathStr,
         polygonPoints: polyStr,
         points: parsedPoints,
@@ -72,34 +73,34 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
           parsedPoints[parsedPoints.length - 1].date,
         ],
       };
+    } else if (scoreProgressions.length === 1) {
+      const single = scoreProgressions[0];
+      const y = 170 - (single.percentage / 100) * 130;
+      const singlePoint = { x: 245, y, percentage: single.percentage, date: single.date };
+      return {
+        hasData: true,
+        pathData: `M 25,${y} L 475,${y}`,
+        polygonPoints: `25,180 25,${y} 475,${y} 475,180`,
+        points: [singlePoint],
+        maxScore: single.percentage,
+        dates: ["-", single.date, "-"],
+      };
     }
 
-    // Default sample curve matching user screenshot
-    const defaultPoints = [
-      { x: 20, y: 175, percentage: 40, date: "MAY 2026" },
-      { x: 100, y: 80, percentage: 80, date: "MAY 2026" },
-      { x: 190, y: 120, percentage: 65, date: "JUNE 2026" },
-      { x: 280, y: 65, percentage: 85, date: "JUNE 2026" },
-      { x: 370, y: 95, percentage: 75, date: "JULY 2026" },
-      { x: 470, y: 45, percentage: 90, date: "JULY 2026" },
-    ];
-
-    const pathStr = "M 20,175 L 100,80 L 190,120 L 280,65 L 370,95 L 470,45";
-    const polyStr = "20,180 20,175 100,80 190,120 280,65 370,95 470,45 470,180";
-
+    // Flat plain baseline when no attempt data exists yet
     return {
-      pathData: pathStr,
-      polygonPoints: polyStr,
-      points: defaultPoints,
-      maxScore: 90,
-      dates: ["MAY 2026", "JUNE 2026", "JULY 2026"],
+      hasData: false,
+      pathData: "M 25,170 L 475,170",
+      polygonPoints: "",
+      points: [],
+      maxScore: 0,
+      dates: [],
     };
   }, [scoreProgressions]);
 
-  const maxPoint = points.reduce(
-    (prev, curr) => (curr.percentage >= prev.percentage ? curr : prev),
-    points[0]
-  );
+  const maxPoint = points.length > 0
+    ? points.reduce((prev, curr) => (curr.percentage >= prev.percentage ? curr : prev), points[0])
+    : null;
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -228,15 +229,17 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
               ))}
 
               {/* High Score Badge Callout */}
-              <text
-                x={Math.min(430, Math.max(20, maxPoint.x - 25))}
-                y={maxPoint.y - 12}
-                fill="#f4f4f5"
-                fontSize="11"
-                fontWeight="bold"
-              >
-                {maxScore}% Max
-              </text>
+              {hasData && maxPoint && (
+                <text
+                  x={Math.min(430, Math.max(20, maxPoint.x - 25))}
+                  y={maxPoint.y - 12}
+                  fill="#f4f4f5"
+                  fontSize="11"
+                  fontWeight="bold"
+                >
+                  {maxScore}% Max
+                </text>
+              )}
             </svg>
 
             <div className="absolute bottom-2 left-6 right-6 flex justify-between text-[9px] text-zinc-500 font-semibold uppercase">
