@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import QuizLoadingModal from "./QuizLoadingModal";
+import { saveGeneratedQuizAction } from "@/actions/quiz";
 import {
   Sparkles,
   ChevronDown,
@@ -104,11 +105,33 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
 
       const data = await response.json();
 
+      // If user is logged in, save quiz into PostgreSQL database!
+      let dbQuizId: number | undefined;
+      if (isLoggedIn && data.quiz?.questions) {
+        try {
+          const saveRes = await saveGeneratedQuizAction({
+            title: data.quiz.title || (inputMode === "topic" ? `${topic} Quiz` : "Custom AI Quiz"),
+            topic: inputMode === "topic" ? topic : "Custom Content",
+            difficulty,
+            questionsCount,
+            description: data.quiz.description,
+            timeLimit: questionsCount * 2,
+            questions: data.quiz.questions,
+          });
+          if (saveRes.success && saveRes.quizId) {
+            dbQuizId = saveRes.quizId;
+          }
+        } catch (err) {
+          console.error("Failed to persist quiz in DB:", err);
+        }
+      }
+
       // Store quiz payload in sessionStorage keyed by session_id,
       // then navigate to the quiz play page.
       sessionStorage.setItem(
         `quiz_${data.session_id}`,
         JSON.stringify({
+          dbQuizId,
           questions: data.quiz.questions,
           difficulty,
           questionsCount,

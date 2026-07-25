@@ -3,54 +3,54 @@
 import { useState } from "react";
 import Link from "next/link";
 import { BookOpen, Plus, Search, Play, Share2, Trash2 } from "lucide-react";
+import { deleteQuizAction } from "@/actions/quiz";
 
-const MOCK_CREATED_QUIZZES = [
-  {
-    id: 101,
-    title: "React 19 Features & Server Actions",
-    topic: "ReactJS",
-    difficulty: "Hard",
-    questionsCount: 10,
-    timeLimit: 15,
-    visibility: "public",
-    playsCount: 42,
-    createdAt: "2026-07-10T12:00:00Z",
-  },
-  {
-    id: 102,
-    title: "Docker & Containerization Basics",
-    topic: "DevOps",
-    difficulty: "Medium",
-    questionsCount: 8,
-    timeLimit: 12,
-    visibility: "private",
-    playsCount: 3,
-    createdAt: "2026-07-08T09:30:00Z",
-  },
-  {
-    id: 103,
-    title: "English Grammar & Vocabulary Builder",
-    topic: "Language",
-    difficulty: "Easy",
-    questionsCount: 15,
-    timeLimit: 20,
-    visibility: "public",
-    playsCount: 128,
-    createdAt: "2026-06-25T16:45:00Z",
-  },
-];
+interface QuizItem {
+  id: number;
+  title: string;
+  topic: string;
+  difficulty: string;
+  questionsCount: number;
+  timeLimit: number;
+  visibility: string;
+  playsCount: number;
+  createdAt: string;
+}
 
-export default function QuizzesClient() {
+export default function QuizzesClient({ initialQuizzes = [] }: { initialQuizzes?: QuizItem[] }) {
+  const [quizzes, setQuizzes] = useState<QuizItem[]>(initialQuizzes);
   const [searchQuery, setSearchQuery] = useState("");
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const filteredQuizzes = MOCK_CREATED_QUIZZES.filter(
+  const filteredQuizzes = quizzes.filter(
     (quiz) =>
       quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       quiz.topic.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleShareQuiz = (quizId: number) => {
-    alert(`Mock link copied! Share quiz: ${window.location.origin}/quiz/${quizId}`);
+    const url = `${window.location.origin}/dashboard/quiz/${quizId}`;
+    navigator.clipboard.writeText(url);
+    alert(`Link copied to clipboard: ${url}`);
+  };
+
+  const handleDelete = async (quizId: number) => {
+    if (!confirm("Are you sure you want to delete this quiz? This action cannot be undone.")) {
+      return;
+    }
+    setDeletingId(quizId);
+    try {
+      const res = await deleteQuizAction(quizId);
+      if (res.success) {
+        setQuizzes((prev) => prev.filter((q) => q.id !== quizId));
+      } else {
+        alert(res.message || "Failed to delete quiz");
+      }
+    } catch (err) {
+      console.error("Error deleting quiz:", err);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -60,7 +60,7 @@ export default function QuizzesClient() {
         <div>
           <h2 className="text-2xl font-extrabold text-white tracking-tight">My Created Quizzes</h2>
           <p className="text-sm text-zinc-400 mt-1">
-            Manage, share, and play the customized quizzes you generated.
+            Manage, share, and play the customized quizzes stored in your database.
           </p>
         </div>
 
@@ -114,8 +114,7 @@ export default function QuizzesClient() {
                 </h4>
                 <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed mb-4">
                   Custom quiz on {quiz.topic} created on{" "}
-                  {new Date(quiz.createdAt).toLocaleDateString()}. Contains comprehensive questions
-                  to challenge your expertise.
+                  {new Date(quiz.createdAt).toLocaleDateString()}. Saved in PostgreSQL database.
                 </p>
 
                 <div className="flex items-center gap-4 text-xs text-zinc-400 mb-6 bg-white/[0.01] p-2.5 rounded-xl border border-white/5">
@@ -137,10 +136,13 @@ export default function QuizzesClient() {
               </div>
 
               <div className="flex items-center gap-2 pt-2 border-t border-white/5">
-                <button className="flex-1 btn-gradient py-2 px-3 rounded-xl text-xs font-semibold text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-pink-500/10 hover:shadow-pink-500/20 transition-all duration-200">
+                <Link
+                  href={`/dashboard/quiz/${quiz.id}`}
+                  className="flex-1 btn-gradient py-2 px-3 rounded-xl text-xs font-semibold text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-pink-500/10 hover:shadow-pink-500/20 transition-all duration-200"
+                >
                   <Play className="w-3.5 h-3.5 fill-white/10" />
                   Play Quiz
-                </button>
+                </Link>
                 <button
                   onClick={() => handleShareQuiz(quiz.id)}
                   className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-zinc-300 hover:text-white transition-colors cursor-pointer"
@@ -148,7 +150,12 @@ export default function QuizzesClient() {
                 >
                   <Share2 className="w-3.5 h-3.5" />
                 </button>
-                <button className="p-2 rounded-xl bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 text-red-400 hover:text-red-300 transition-colors cursor-pointer">
+                <button
+                  onClick={() => handleDelete(quiz.id)}
+                  disabled={deletingId === quiz.id}
+                  className="p-2 rounded-xl bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 text-red-400 hover:text-red-300 transition-colors cursor-pointer disabled:opacity-50"
+                  title="Delete Quiz"
+                >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -160,8 +167,8 @@ export default function QuizzesClient() {
           <BookOpen className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
           <h4 className="text-lg font-bold text-white">No quizzes found</h4>
           <p className="text-sm text-zinc-400 mt-2 max-w-sm mx-auto">
-            You haven't generated any quizzes with this name yet. Click 'Generate New Quiz' above to
-            generate one instantly.
+            You haven't saved any quizzes in your database yet. Generate a quiz using the form to
+            create your first one!
           </p>
         </div>
       )}

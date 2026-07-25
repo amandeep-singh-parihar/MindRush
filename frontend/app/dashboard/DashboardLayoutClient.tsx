@@ -250,10 +250,10 @@ export default function DashboardLayoutClient({
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                alert(
-                  `Mock generator submitted! Topic: ${quizTopic || "Custom Topic"}, Questions: ${quizNumQuestions}, Difficulty: ${quizDifficulty}, Time limit: ${quizTimeLimit}`
-                );
                 closeCreateModal();
+                if (quizTopic) {
+                  router.push(`/?topic=${encodeURIComponent(quizTopic)}`);
+                }
               }}
               className="space-y-4"
             >

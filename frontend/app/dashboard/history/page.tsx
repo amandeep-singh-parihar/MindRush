@@ -1,9 +1,14 @@
 import HistoryClient from "./HistoryClient";
+import { getUserHistoryData } from "@/actions/quiz";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata = {
-  title: "History",
+  title: "Attempt History",
 };
 
-export default function HistoryPage() {
-  return <HistoryClient />;
+export default async function HistoryPage() {
+  const history = await getUserHistoryData();
+  return <HistoryClient initialHistory={history} />;
 }

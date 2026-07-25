@@ -8,30 +8,19 @@ import {
   ChevronRight,
   History,
   Calendar,
+  BookOpen,
 } from "lucide-react";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata = {
   title: "Dashboard",
 };
 
-const MOCK_USER = {
-  name: "Amandeep Singh",
-  email: "amandeep@example.com",
-};
-
-const MOCK_STATS = {
-  totalQuizzesTaken: 34,
-  totalQuestionsAnswered: 340,
-  correctlyAnswered: 272,
-  accuracy: 80,
-  currentStreak: 5,
-  maxStreak: 12,
-  totalStudyTime: 245,
-};
-
-const MOCK_RECOMMENDED_TOPICS = [
+const RECOMMENDED_TOPICS = [
   {
     topic: "CSS Grid & Flexbox",
     category: "Design",
@@ -41,7 +30,7 @@ const MOCK_RECOMMENDED_TOPICS = [
   {
     topic: "TypeScript Advanced Types",
     category: "Coding",
-    questions: 12,
+    questions: 10,
     color: "from-blue-500 to-indigo-600",
   },
   {
@@ -58,53 +47,6 @@ const MOCK_RECOMMENDED_TOPICS = [
   },
 ];
 
-const MOCK_RECENT_ATTEMPTS = [
-  {
-    id: 1,
-    quizTitle: "Next.js 15 App Router Deep Dive",
-    topic: "Web Development",
-    difficulty: "Hard",
-    score: 8,
-    totalQuestions: 10,
-    percentage: 80,
-    timeTaken: 380,
-    completedAt: "2026-07-14T18:24:00Z",
-  },
-  {
-    id: 2,
-    quizTitle: "Quantum Mechanics Fundamentals",
-    topic: "Physics",
-    difficulty: "Medium",
-    score: 9,
-    totalQuestions: 10,
-    percentage: 90,
-    timeTaken: 290,
-    completedAt: "2026-07-13T10:15:00Z",
-  },
-  {
-    id: 3,
-    quizTitle: "Modern World History 1900s",
-    topic: "History",
-    difficulty: "Easy",
-    score: 7,
-    totalQuestions: 10,
-    percentage: 70,
-    timeTaken: 195,
-    completedAt: "2026-07-11T14:40:00Z",
-  },
-  {
-    id: 4,
-    quizTitle: "Data Structures & Algorithms in JS",
-    topic: "Computer Science",
-    difficulty: "Hard",
-    score: 6,
-    totalQuestions: 8,
-    percentage: 75,
-    timeTaken: 450,
-    completedAt: "2026-07-09T21:05:00Z",
-  },
-];
-
 export default async function OverviewPage() {
   const session = await auth();
 
@@ -112,40 +54,79 @@ export default async function OverviewPage() {
   if (session?.user?.email) {
     dbUser = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { name: true },
+      include: {
+        statistics: true,
+        attempts: {
+          include: {
+            quiz: {
+              include: {
+                questions: true,
+              },
+            },
+          },
+          orderBy: { completedAt: "desc" },
+          take: 5,
+        },
+      },
     });
   }
 
-  const name = dbUser?.name || session?.user?.name || MOCK_USER.name;
+  const name = dbUser?.name || session?.user?.name || "User";
   const firstName = name.split(" ")[0];
 
-  const heatmapSeed = [
-    0, 1, 2, 0, 3, 1, 0, 2, 4, 1, 0, 0, 2, 3, 1, 0, 4, 2, 1, 0, 3, 2, 0, 1, 4, 0, 2, 1, 3, 0, 1, 1,
-    2, 4, 0, 3, 1, 2, 0, 1, 0, 3, 2, 4, 1, 0, 2, 1, 0, 3, 4, 1, 2, 0, 1, 3, 1, 4, 2, 0, 1, 3, 2, 0,
-    4, 1, 3, 0, 2, 1, 0, 4, 3, 2, 1, 0, 2, 4, 1, 0, 3, 2, 1, 4, 0, 2, 1, 3, 0, 4, 1, 2, 0, 3, 1, 0,
-    2, 4, 1, 2, 0, 3, 1, 0, 4, 2, 1, 0, 2, 3, 4, 1, 0, 2, 1, 3, 0, 4, 2, 1, 0, 3, 2, 1,
-  ];
+  // User Real Statistics
+  const userStats = dbUser?.statistics || {
+    totalQuizzesTaken: dbUser?.attempts?.length || 0,
+    totalQuestionsAnswered:
+      dbUser?.attempts?.reduce((acc, a) => acc + (a.quiz?.questions?.length || 5), 0) || 0,
+    correctlyAnswered: dbUser?.attempts?.reduce((acc, a) => acc + a.score, 0) || 0,
+    accuracy: 0,
+    currentStreak: dbUser?.attempts?.length ? 1 : 0,
+    maxStreak: dbUser?.attempts?.length ? 1 : 0,
+    totalStudyTime: 0,
+  };
 
-  const totalHeatmapDays = 400;
-  const heatmapData = Array.from(
-    { length: totalHeatmapDays },
-    (_, i) => heatmapSeed[i % heatmapSeed.length]
+  const calculatedAccuracy =
+    userStats.totalQuestionsAnswered > 0
+      ? Math.round((userStats.correctlyAnswered / userStats.totalQuestionsAnswered) * 100)
+      : Math.round(userStats.accuracy || 0);
+
+  const attemptsList = (dbUser?.attempts || []).map((att) => ({
+    id: att.id,
+    quizTitle: att.quiz.title,
+    topic: att.quiz.topic,
+    difficulty: att.quiz.difficulty,
+    score: att.score,
+    totalQuestions: att.quiz.questions.length || 5,
+    percentage: Math.round(att.percentage),
+    completedAt: att.completedAt.toISOString(),
+  }));
+
+  // Activity Heatmap logic based on real attempts
+  const totalHeatmapDays = 280; // ~40 weeks
+  const attemptDatesSet = new Set(
+    (dbUser?.attempts || []).map((a) => a.completedAt.toISOString().split("T")[0])
   );
+
+  const heatmapData: number[] = Array.from({ length: totalHeatmapDays }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (totalHeatmapDays - 1 - i));
+    const dateStr = d.toISOString().split("T")[0];
+    return attemptDatesSet.has(dateStr) ? 2 : 0;
+  });
+
   const activeDaysCount = heatmapData.filter((level) => level > 0).length;
 
   const renderHeatmap = () => {
     return heatmapData.map((level, i) => {
       let bgClass = "bg-white/5";
-      if (level === 1) bgClass = "bg-pink-500/25";
-      else if (level === 2) bgClass = "bg-pink-500/50";
-      else if (level === 3) bgClass = "bg-purple-500/75";
-      else if (level === 4) bgClass = "bg-purple-400 shadow-sm shadow-purple-500/50";
+      if (level > 0) bgClass = "bg-purple-400 shadow-sm shadow-purple-500/50";
 
       return (
         <div
           key={i}
           className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[3px] transition-all duration-200 hover:scale-125 hover:ring-2 hover:ring-pink-400 hover:z-10 shrink-0 ${bgClass}`}
-          title={`Day ${i + 1}: ${level > 0 ? `${level} quiz attempts` : "No activity"}`}
+          title={`Day ${i + 1}: ${level > 0 ? "Quiz Activity" : "No activity"}`}
         />
       );
     });
@@ -193,11 +174,11 @@ export default async function OverviewPage() {
           <div>
             <p className="text-xs text-zinc-400 font-medium">Daily Streak</p>
             <h4 className="text-lg md:text-xl font-bold text-white mt-1">
-              {MOCK_STATS.currentStreak}{" "}
+              {userStats.currentStreak}{" "}
               <span className="text-xs font-normal text-zinc-500">days</span>
             </h4>
             <p className="text-[10px] text-amber-500/80 font-medium mt-0.5">
-              Best: {MOCK_STATS.maxStreak} days
+              Best: {userStats.maxStreak} days
             </p>
           </div>
         </div>
@@ -209,11 +190,11 @@ export default async function OverviewPage() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-xs text-zinc-400 font-medium">Avg Accuracy</p>
-            <h4 className="text-lg md:text-xl font-bold text-white mt-1">{MOCK_STATS.accuracy}%</h4>
+            <h4 className="text-lg md:text-xl font-bold text-white mt-1">{calculatedAccuracy}%</h4>
             <div className="w-full bg-white/5 h-1 rounded-full mt-1.5 overflow-hidden">
               <div
                 className="h-full bg-pink-500 rounded-full"
-                style={{ width: `${MOCK_STATS.accuracy}%` }}
+                style={{ width: `${calculatedAccuracy}%` }}
               />
             </div>
           </div>
@@ -227,9 +208,9 @@ export default async function OverviewPage() {
           <div>
             <p className="text-xs text-zinc-400 font-medium">Quizzes Completed</p>
             <h4 className="text-lg md:text-xl font-bold text-white mt-1">
-              {MOCK_STATS.totalQuizzesTaken}
+              {userStats.totalQuizzesTaken}
             </h4>
-            <p className="text-[10px] text-purple-400/80 font-medium mt-0.5">Top 8% this week</p>
+            <p className="text-[10px] text-purple-400/80 font-medium mt-0.5">Real DB Tracker</p>
           </div>
         </div>
 
@@ -241,9 +222,9 @@ export default async function OverviewPage() {
           <div>
             <p className="text-xs text-zinc-400 font-medium">Study Time</p>
             <h4 className="text-lg md:text-xl font-bold text-white mt-1">
-              {Math.round(MOCK_STATS.totalStudyTime / 60)}h {MOCK_STATS.totalStudyTime % 60}m
+              {Math.floor(userStats.totalStudyTime / 60)}h {userStats.totalStudyTime % 60}m
             </h4>
-            <p className="text-[10px] text-indigo-400/80 font-medium mt-0.5">+15% vs last week</p>
+            <p className="text-[10px] text-indigo-400/80 font-medium mt-0.5">Total Time</p>
           </div>
         </div>
       </div>
@@ -255,7 +236,7 @@ export default async function OverviewPage() {
           Quick AI Templates
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {MOCK_RECOMMENDED_TOPICS.map((topic, i) => (
+          {RECOMMENDED_TOPICS.map((topic, i) => (
             <Link
               key={i}
               href={`/dashboard?create=true&topic=${encodeURIComponent(topic.topic)}`}
@@ -284,13 +265,13 @@ export default async function OverviewPage() {
       <div className="space-y-4">
         <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
           <Calendar className="w-4 h-4 text-zinc-400" />
-          Learning Intensity
+          Learning Activity Log
         </h3>
 
         <div className="glass-card rounded-2xl p-6 border border-white/5 flex flex-col gap-5 w-full">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <p className="text-xs text-zinc-400 font-medium">Activity Log (Past 52 Weeks)</p>
+              <p className="text-xs text-zinc-400 font-medium">Activity Log</p>
               <h4 className="text-2xl font-extrabold text-white mt-1">
                 {activeDaysCount} Active Days
               </h4>
@@ -300,7 +281,7 @@ export default async function OverviewPage() {
               <Flame className="w-4 h-4 text-amber-500 shrink-0" />
               <div>
                 <span className="font-semibold text-white">Daily Streak Active!</span> Keep
-                answering quizzes everyday to unlock premium achievements.
+                answering quizzes everyday to build up your streak.
               </div>
             </div>
           </div>
@@ -309,17 +290,6 @@ export default async function OverviewPage() {
             <div className="flex flex-col gap-2.5 min-w-max">
               <div className="grid grid-flow-col grid-rows-7 gap-1.5 justify-start">
                 {renderHeatmap()}
-              </div>
-              <div className="flex justify-between items-center text-[10px] text-zinc-500 px-0.5">
-                <span>Less</span>
-                <div className="flex gap-1.5 items-center">
-                  <div className="w-2.5 h-2.5 rounded-sm bg-white/5"></div>
-                  <div className="w-2.5 h-2.5 rounded-sm bg-pink-500/20"></div>
-                  <div className="w-2.5 h-2.5 rounded-sm bg-pink-500/40"></div>
-                  <div className="w-2.5 h-2.5 rounded-sm bg-purple-500/60"></div>
-                  <div className="w-2.5 h-2.5 rounded-sm bg-purple-500/90"></div>
-                </div>
-                <span>More</span>
               </div>
             </div>
           </div>
@@ -342,75 +312,80 @@ export default async function OverviewPage() {
           </Link>
         </div>
 
-        <div className="glass-card rounded-2xl border border-white/5 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-white/5 bg-white/[0.01]">
-                  <th className="p-4 text-xs font-semibold text-zinc-400">Quiz Topic</th>
-                  <th className="p-4 text-xs font-semibold text-zinc-400">Difficulty</th>
-                  <th className="p-4 text-xs font-semibold text-zinc-400">Score</th>
-                  <th className="p-4 text-xs font-semibold text-zinc-400">Accuracy</th>
-                  <th className="p-4 text-xs font-semibold text-zinc-400">Date</th>
-                  <th className="p-4 text-xs font-semibold text-zinc-400 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {MOCK_RECENT_ATTEMPTS.map((attempt) => (
-                  <tr key={attempt.id} className="hover:bg-white/[0.01] transition-colors">
-                    <td className="p-4">
-                      <div className="font-semibold text-white text-sm">{attempt.quizTitle}</div>
-                      <div className="text-[11px] text-zinc-500">{attempt.topic}</div>
-                    </td>
-                    <td className="p-4">
-                      <span
-                        className={`text-[10px] px-2 py-0.5 rounded font-medium ${
-                          attempt.difficulty === "Easy"
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                            : attempt.difficulty === "Medium"
-                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                              : "bg-red-500/10 text-red-400 border border-red-500/20"
-                        }`}
-                      >
-                        {attempt.difficulty}
-                      </span>
-                    </td>
-                    <td className="p-4 text-sm font-semibold text-white">
-                      {attempt.score} / {attempt.totalQuestions}
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-zinc-300">
-                          {attempt.percentage}%
-                        </span>
-                        <div className="w-12 bg-white/5 h-1 rounded-full overflow-hidden hidden sm:block">
-                          <div
-                            className={`h-full rounded-full ${
-                              attempt.percentage >= 80
-                                ? "bg-emerald-500"
-                                : attempt.percentage >= 60
-                                  ? "bg-amber-500"
-                                  : "bg-red-500"
-                            }`}
-                            style={{ width: `${attempt.percentage}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4 text-xs text-zinc-400">
-                      {new Date(attempt.completedAt).toLocaleDateString()}
-                    </td>
-                    <td className="p-4 text-right">
-                      <button className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-white transition-all cursor-pointer">
-                        Review
-                      </button>
-                    </td>
+        {attemptsList.length > 0 ? (
+          <div className="glass-card rounded-2xl border border-white/5 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-white/5 bg-white/[0.01]">
+                    <th className="p-4 text-xs font-semibold text-zinc-400">Quiz Topic</th>
+                    <th className="p-4 text-xs font-semibold text-zinc-400">Difficulty</th>
+                    <th className="p-4 text-xs font-semibold text-zinc-400">Score</th>
+                    <th className="p-4 text-xs font-semibold text-zinc-400">Accuracy</th>
+                    <th className="p-4 text-xs font-semibold text-zinc-400">Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {attemptsList.map((attempt) => (
+                    <tr key={attempt.id} className="hover:bg-white/[0.01] transition-colors">
+                      <td className="p-4">
+                        <div className="font-semibold text-white text-sm">{attempt.quizTitle}</div>
+                        <div className="text-[11px] text-zinc-500">{attempt.topic}</div>
+                      </td>
+                      <td className="p-4">
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded font-medium ${
+                            attempt.difficulty === "Easy"
+                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                              : attempt.difficulty === "Medium"
+                                ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                                : "bg-red-500/10 text-red-400 border border-red-500/20"
+                          }`}
+                        >
+                          {attempt.difficulty}
+                        </span>
+                      </td>
+                      <td className="p-4 text-sm font-semibold text-white">
+                        {attempt.score} / {attempt.totalQuestions}
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-zinc-300">
+                            {attempt.percentage}%
+                          </span>
+                          <div className="w-12 bg-white/5 h-1 rounded-full overflow-hidden hidden sm:block">
+                            <div
+                              className={`h-full rounded-full ${
+                                attempt.percentage >= 80
+                                  ? "bg-emerald-500"
+                                  : attempt.percentage >= 60
+                                    ? "bg-amber-500"
+                                    : "bg-red-500"
+                              }`}
+                              style={{ width: `${attempt.percentage}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4 text-xs text-zinc-400">
+                        {new Date(attempt.completedAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="glass-card rounded-2xl p-8 text-center border border-white/5">
+            <BookOpen className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
+            <h4 className="text-base font-bold text-white">No quiz attempts recorded yet</h4>
+            <p className="text-xs text-zinc-400 mt-1">
+              Generate a quiz using the form above to record your first completed attempt in the
+              database!
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

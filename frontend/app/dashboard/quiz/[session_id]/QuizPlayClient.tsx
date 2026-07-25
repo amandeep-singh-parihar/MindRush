@@ -3,15 +3,18 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { CheckCircle2, XCircle, ChevronRight, Trophy, Home, Clock, Sparkles } from "lucide-react";
+import { submitQuizAttemptAction, getQuizByIdAction } from "@/actions/quiz";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface Question {
+  id?: number;
   question: string;
   options: string[];
   answer: string;
 }
 
 interface QuizPayload {
+  dbQuizId?: number;
   questions: Question[];
   difficulty: string;
   questionsCount: number;
@@ -56,18 +59,40 @@ export default function QuizPlayClient() {
   const [timeLeft, setTimeLeft] = useState(SECONDS_PER_QUESTION);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // ── Load quiz from sessionStorage ──────────────────────────────────────────
+  // ── Load quiz from sessionStorage or DB ─────────────────────────────────────
   useEffect(() => {
     const raw = sessionStorage.getItem(`quiz_${session_id}`);
-    if (!raw) {
-      setNotFound(true);
-      return;
+    if (raw) {
+      try {
+        const payload: QuizPayload = JSON.parse(raw);
+        setQuiz(payload);
+        setAnswers(new Array(payload.questions.length).fill(null));
+        return;
+      } catch {
+        // Continue to DB fallback below
+      }
     }
-    try {
-      const payload: QuizPayload = JSON.parse(raw);
-      setQuiz(payload);
-      setAnswers(new Array(payload.questions.length).fill(null));
-    } catch {
+
+    // Fallback: load quiz directly from PostgreSQL DB using quiz ID
+    const numericId = parseInt(session_id, 10);
+    if (!isNaN(numericId)) {
+      getQuizByIdAction(numericId)
+        .then((res) => {
+          if (res.success && res.quiz) {
+            const dbPayload: QuizPayload = {
+              dbQuizId: res.quiz.dbQuizId,
+              questions: res.quiz.questions,
+              difficulty: res.quiz.difficulty,
+              questionsCount: res.quiz.questionsCount,
+            };
+            setQuiz(dbPayload);
+            setAnswers(new Array(res.quiz.questions.length).fill(null));
+          } else {
+            setNotFound(true);
+          }
+        })
+        .catch(() => setNotFound(true));
+    } else {
       setNotFound(true);
     }
   }, [session_id]);
@@ -126,10 +151,28 @@ export default function QuizPlayClient() {
     if (isLast) {
       // Save results to sessionStorage and navigate to results page (sidebar visible there)
       const finalScore = finalAnswers.filter((ans, i) => ans === quiz.questions[i].answer).length;
+      const percentage = Math.round((finalScore / quiz.questions.length) * 100);
+
+      // Submit attempt to PostgreSQL DB if dbQuizId exists
+      if (quiz.dbQuizId) {
+        submitQuizAttemptAction({
+          quizId: quiz.dbQuizId,
+          score: finalScore,
+          percentage,
+          timeTaken: Math.max(10, quiz.questions.length * SECONDS_PER_QUESTION - timeLeft),
+          answers: quiz.questions.map((q, i) => ({
+            questionId: q.id,
+            questionText: q.question,
+            selectedAnswer: finalAnswers[i],
+            isCorrect: finalAnswers[i] === q.answer,
+          })),
+        }).catch((err) => console.error("Error saving attempt to DB:", err));
+      }
 
       sessionStorage.setItem(
         `results_${session_id}`,
         JSON.stringify({
+          dbQuizId: quiz.dbQuizId,
           questions: quiz.questions,
           answers: finalAnswers,
           score: finalScore,

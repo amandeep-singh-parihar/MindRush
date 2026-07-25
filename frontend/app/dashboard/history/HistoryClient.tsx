@@ -3,58 +3,24 @@
 import { useState } from "react";
 import { History, Search } from "lucide-react";
 
-const MOCK_RECENT_ATTEMPTS = [
-  {
-    id: 1,
-    quizTitle: "Next.js 15 App Router Deep Dive",
-    topic: "Web Development",
-    difficulty: "Hard",
-    score: 8,
-    totalQuestions: 10,
-    percentage: 80,
-    timeTaken: 380,
-    completedAt: "2026-07-14T18:24:00Z",
-  },
-  {
-    id: 2,
-    quizTitle: "Quantum Mechanics Fundamentals",
-    topic: "Physics",
-    difficulty: "Medium",
-    score: 9,
-    totalQuestions: 10,
-    percentage: 90,
-    timeTaken: 290,
-    completedAt: "2026-07-13T10:15:00Z",
-  },
-  {
-    id: 3,
-    quizTitle: "Modern World History 1900s",
-    topic: "History",
-    difficulty: "Easy",
-    score: 7,
-    totalQuestions: 10,
-    percentage: 70,
-    timeTaken: 195,
-    completedAt: "2026-07-11T14:40:00Z",
-  },
-  {
-    id: 4,
-    quizTitle: "Data Structures & Algorithms in JS",
-    topic: "Computer Science",
-    difficulty: "Hard",
-    score: 6,
-    totalQuestions: 8,
-    percentage: 75,
-    timeTaken: 450,
-    completedAt: "2026-07-09T21:05:00Z",
-  },
-];
+interface AttemptItem {
+  id: number;
+  quizId?: number;
+  quizTitle: string;
+  topic: string;
+  difficulty: string;
+  score: number;
+  totalQuestions: number;
+  percentage: number;
+  timeTaken: number;
+  completedAt: string;
+}
 
-export default function HistoryClient() {
+export default function HistoryClient({ initialHistory = [] }: { initialHistory?: AttemptItem[] }) {
   const [historySearch, setHistorySearch] = useState("");
   const [historyFilter, setHistoryFilter] = useState("all");
 
-  const filteredHistory = MOCK_RECENT_ATTEMPTS.filter((attempt) => {
+  const filteredHistory = initialHistory.filter((attempt) => {
     const matchesSearch =
       attempt.quizTitle.toLowerCase().includes(historySearch.toLowerCase()) ||
       attempt.topic.toLowerCase().includes(historySearch.toLowerCase());
@@ -68,7 +34,8 @@ export default function HistoryClient() {
       <div>
         <h2 className="text-2xl font-extrabold text-white tracking-tight">Full Attempt History</h2>
         <p className="text-sm text-zinc-400 mt-1">
-          Review all your previous scores, correct answers, and learning progress.
+          Review all your previous scores, correct answers, and learning progress recorded in your
+          database.
         </p>
       </div>
 
@@ -120,7 +87,6 @@ export default function HistoryClient() {
                   <th className="p-4 text-xs font-semibold text-zinc-400">Score Achieved</th>
                   <th className="p-4 text-xs font-semibold text-zinc-400">Accuracy</th>
                   <th className="p-4 text-xs font-semibold text-zinc-400">Time Spent</th>
-                  <th className="p-4 text-xs font-semibold text-zinc-400 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -179,11 +145,6 @@ export default function HistoryClient() {
                     <td className="p-4 text-xs text-zinc-300">
                       {Math.floor(attempt.timeTaken / 60)}m {attempt.timeTaken % 60}s
                     </td>
-                    <td className="p-4 text-right">
-                      <button className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-white transition-all cursor-pointer">
-                        Detailed Review
-                      </button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -193,9 +154,10 @@ export default function HistoryClient() {
       ) : (
         <div className="glass-card rounded-2xl p-12 text-center border border-white/5 max-w-xl mx-auto mt-8">
           <History className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
-          <h4 className="text-lg font-bold text-white">No history records matching filters</h4>
+          <h4 className="text-lg font-bold text-white">No history records found</h4>
           <p className="text-sm text-zinc-400 mt-2">
-            Try modifying your search or select "All" from the difficulty filters.
+            No quiz attempts have been saved to your database yet. Complete a quiz to view your
+            attempt history!
           </p>
         </div>
       )}
