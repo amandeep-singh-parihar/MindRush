@@ -77,7 +77,9 @@ Context:
         return json.loads(raw)
     except Exception as e:
         print("Quiz generation API error:", e)
-        raise ValueError("Our servers are facing high traffic, please try after some time.")
+        raise ValueError(
+            "Our servers are facing high traffic, please try after some time."
+        )
 
 
 def generate_output_from_topic(
@@ -111,7 +113,9 @@ Do not include any extra text, markdown, or code fences outside the JSON object.
         return json.loads(raw)
     except Exception as e:
         print("Topic quiz generation API error:", e)
-        raise ValueError("Our servers are facing high traffic, please try after some time.")
+        raise ValueError(
+            "Our servers are facing high traffic, please try after some time."
+        )
 
 
 def extract_topics_from_docs(context: str, llm, num_topics: int = 4) -> list[str]:
@@ -133,6 +137,8 @@ Context sample:
             return topics
     except Exception as e:
         print("Topic extraction API error:", e)
-        raise ValueError("Our servers are facing high traffic, please try after some time.")
+        raise ValueError(
+            "Our servers are facing high traffic, please try after some time."
+        )
 
     raise ValueError("Our servers are facing high traffic, please try after some time.")

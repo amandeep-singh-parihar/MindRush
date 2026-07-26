@@ -26,4 +26,3 @@ class EmbeddingManager:
 
 # Shared singleton — loaded once at startup
 embedding_manager = EmbeddingManager()
-

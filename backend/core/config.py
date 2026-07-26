@@ -12,4 +12,3 @@ ALLOW_ORIGINS = (
     if origins_env != "*"
     else ["*"]
 )
-

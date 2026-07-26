@@ -1,6 +1,6 @@
 import os
 import uuid
-from typing import Optional
+from typing import Literal, Optional
 
 from fastapi import FastAPI, Form, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +8,7 @@ from langchain_core.documents import Document
 
 from core.config import ALLOW_ORIGINS
 from core.llm import llm, gemini_llm
-from models.schemas import QuizRequest
+
 from services.ingestion import load_pdf, split_docs
 from services.embeddings import embedding_manager
 from services.vector_store import create_session_store
@@ -33,8 +33,8 @@ app.add_middleware(
 @app.post("/generate-quiz")
 async def generate_quiz(
     input_type: str = Form(...),
-    difficulty: str = Form(...),
-    questions_count: int = Form(...),
+    difficulty: Literal["Easy", "Medium", "Hard"] = Form(...),
+    questions_count: int = Form(..., ge=1, le=10),
     topic: Optional[str] = Form(None),
     text: Optional[str] = Form(None),
     file: Optional[UploadFile] = File(None),
