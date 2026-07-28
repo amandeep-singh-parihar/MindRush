@@ -48,7 +48,6 @@ export default function DangerZone({
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [modalError, setModalError] = useState<string | null>(null);
 
-  // 2-Second Red Horror Atmosphere Effect
   const [horrorActive, setHorrorActive] = useState(false);
 
   useEffect(() => {
@@ -147,18 +146,14 @@ export default function DangerZone({
 
   return (
     <div id="danger-zone" className="space-y-4 pt-4">
-      {/* Full-screen 12-Second Red Horror Atmosphere Overlay */}
       {horrorActive &&
         typeof document !== "undefined" &&
         createPortal(
           <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6 backdrop-blur-md pointer-events-auto animate-horror-pulse overflow-hidden select-none">
-            {/* Scanlines visual noise */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none opacity-40" />
 
-            {/* Glowing Red Vignette Borders */}
             <div className="absolute inset-0 border-[16px] border-red-600/70 blur-md pointer-events-none" />
 
-            {/* Center Horror Warning Box */}
             <div className="relative z-10 text-center space-y-6 max-w-xl mx-auto">
               <div className="mx-auto w-24 h-24 rounded-full bg-red-600/20 border-2 border-red-500 flex items-center justify-center animate-bounce shadow-[0_0_60px_rgba(239,68,68,0.9)]">
                 <Skull className="w-12 h-12 text-red-500 stroke-[2.5]" />
