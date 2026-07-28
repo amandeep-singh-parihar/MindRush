@@ -9,8 +9,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
     return redirect("/");
   }
 
-  // console.log("session", session);
-
   let dbUser = null;
   if (session?.user?.email) {
     dbUser = await prisma.user.findUnique({
