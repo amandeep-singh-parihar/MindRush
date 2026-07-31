@@ -1,9 +1,44 @@
-import json
 import re
+from typing import List
+
+from pydantic import BaseModel
+from langchain_core.output_parsers import PydanticOutputParser
+from langchain_core.prompts import PromptTemplate
+
 from services.vector_store import VectorStoreManager
 from services.retriever import RAGRetriever
 
 MAX_CONTEXT_CHARS = 4000
+
+
+# ── Pydantic schemas ──────────────────────────────────────────────────────────
+
+
+class Question(BaseModel):
+    question: str
+    options: List[str]
+    answer: str
+
+
+class Quiz(BaseModel):
+    questions: List[Question]
+
+
+class Topics(BaseModel):
+    topics: List[str]
+
+
+# ── Helper: strip markdown code fences ────────────────────────────────────────
+
+
+def _strip_code_fences(text: str) -> str:
+    """Remove ```json ... ``` fences that LLMs sometimes wrap around output."""
+    text = re.sub(r"^```(?:json)?\s*", "", text)
+    text = re.sub(r"\s*```$", "", text)
+    return text
+
+
+# ── Quiz generation from uploaded documents ───────────────────────────────────
 
 
 def generate_output(
@@ -20,66 +55,58 @@ def generate_output(
         raise ValueError("No documents found in the collection.")
 
     combined_docs = "\n".join(all_docs)
-    # print("combined_docs from quiz.py -> ", combined_docs)
 
     topics = extract_topics_from_docs(combined_docs, llm)
-    # print("topics from quiz.py -> ", topics)
 
     topic_context = []
 
     for topic in topics:
         retrieved_docs = retriever.retrieve(query=topic, top_k=3)
-        text_chunks = []
-        for doc in retrieved_docs:
-            if "document" in doc:
-                text_chunks.append(doc["document"])
-
-        # print("text chunk -> ", text_chunks)
+        text_chunks = [doc["document"] for doc in retrieved_docs if "document" in doc]
 
         if text_chunks:
             topic_text = "\n".join(text_chunks)
             topic_context.append(f"--- Topic: {topic} ---\n{topic_text}")
 
-    if topic_context:
-        context = "\n\n".join(topic_context)
-    else:
-        context = combined_docs
-
-    # print("topic context -> ", topic_context)
-    # print("final context -> ", context)
+    context = "\n\n".join(topic_context) if topic_context else combined_docs
 
     if len(context) > MAX_CONTEXT_CHARS:
         context = context[:MAX_CONTEXT_CHARS] + "\n...[context truncated]"
-        # print("after truncation -> ", context)
 
     # ~150 tokens per MCQ (question + 4 options + answer) with a safe floor
     max_tokens = max(1024, questions_count * 150)
 
-    prompt = f"""You are a Quiz Generator. Create {questions_count} {difficulty} multiple choice questions based on the provided context.
-Generate a JSON object with a single key "questions" which contains a list of {questions_count} questions.
-Each question must have:
-  - "question": string
-  - "options": list of exactly 4 strings
-  - "answer": string (must match one of the options exactly)
-Do not include any extra text, markdown, or code fences outside the JSON object.
+    parser = PydanticOutputParser(pydantic_object=Quiz)
 
-Context:
-{context}"""
+    prompt = PromptTemplate(
+        template=(
+            "You are a Quiz Generator. Generate {questions_count} questions "
+            "of {difficulty} difficulty based on the context provided.\n\n"
+            "Context:\n{context}\n\n"
+            "{format_instructions}"
+        ),
+        input_variables=["questions_count", "difficulty", "context"],
+        partial_variables={"format_instructions": parser.get_format_instructions()},
+    )
 
     try:
-        response = llm.invoke(prompt, config={"max_tokens": max_tokens})
-        raw = response.content.strip()
-
-        # Strip ```json ... ``` fences if present
-        raw = re.sub(r"^```(?:json)?\s*", "", raw)
-        raw = re.sub(r"\s*```$", "", raw)
-
-        return json.loads(raw)
+        formatted = prompt.format(
+            questions_count=questions_count,
+            difficulty=difficulty,
+            context=context,
+        )
+        response = llm.invoke(formatted, config={"max_tokens": max_tokens})
+        raw = _strip_code_fences(response.content.strip())
+        quiz = parser.parse(raw)
+        return quiz.model_dump()
     except Exception as e:
         print("Quiz generation API error:", e)
         raise ValueError(
             "Our servers are facing high traffic, please try after some time."
         )
+
+
+# ── Quiz generation from a plain topic string ────────────────────────────────
 
 
 def generate_output_from_topic(
@@ -88,29 +115,34 @@ def generate_output_from_topic(
     """Generate multiple choice questions directly based on a topic string."""
     if not llm:
         raise ValueError(
-            "Gemini LLM is not initialized. Please ensure GEMINI_API_KEY is set in your .env file."
+            "Gemini LLM is not initialized. "
+            "Please ensure GEMINI_API_KEY is set in your .env file."
         )
 
     max_tokens = max(1024, questions_count * 150)
 
-    prompt = f"""You are an expert Quiz Generator. Create {questions_count} {difficulty} multiple choice questions on the topic: "{topic}".
-Generate a JSON object with a single key "questions" which contains a list of {questions_count} questions.
-Each question must have:
-  - "question": string
-  - "options": list of exactly 4 strings
-  - "answer": string (must match one of the options exactly)
-Do not include any extra text, markdown, or code fences outside the JSON object.
-"""
+    parser = PydanticOutputParser(pydantic_object=Quiz)
+
+    prompt = PromptTemplate(
+        template=(
+            "You are an expert Quiz Generator. Create {questions_count} "
+            '{difficulty} multiple choice questions on the topic: "{topic}".\n\n'
+            "{format_instructions}"
+        ),
+        input_variables=["questions_count", "difficulty", "topic"],
+        partial_variables={"format_instructions": parser.get_format_instructions()},
+    )
 
     try:
-        response = llm.invoke(prompt, config={"max_tokens": max_tokens})
-        raw = response.content.strip()
-
-        # Strip ```json ... ``` fences if present
-        raw = re.sub(r"^```(?:json)?\s*", "", raw)
-        raw = re.sub(r"\s*```$", "", raw)
-
-        return json.loads(raw)
+        formatted = prompt.format(
+            questions_count=questions_count,
+            difficulty=difficulty,
+            topic=topic,
+        )
+        response = llm.invoke(formatted, config={"max_tokens": max_tokens})
+        raw = _strip_code_fences(response.content.strip())
+        quiz = parser.parse(raw)
+        return quiz.model_dump()
     except Exception as e:
         print("Topic quiz generation API error:", e)
         raise ValueError(
@@ -118,23 +150,35 @@ Do not include any extra text, markdown, or code fences outside the JSON object.
         )
 
 
+# ── Topic extraction from document context ────────────────────────────────────
+
+
 def extract_topics_from_docs(context: str, llm, num_topics: int = 4) -> list[str]:
     """Ask LLM to identify top key topics/concepts from document context."""
-    prompt = f"""Extract {num_topics} distinct key topics or concepts from the following text.
-Return ONLY a valid JSON list of strings representing the topic names, e.g., ["Topic 1", "Topic 2", "Topic 3"].
-Do not include extra text or markdown formatting outside the JSON array.
+    parser = PydanticOutputParser(pydantic_object=Topics)
 
-Context sample:
-{context[:3000]}"""
+    prompt = PromptTemplate(
+        template=(
+            "Extract {num_topics} distinct key topics or concepts from the "
+            "following text. Return ONLY the topics.\n\n"
+            "Context sample:\n{context}\n\n"
+            "{format_instructions}"
+        ),
+        input_variables=["num_topics", "context"],
+        partial_variables={"format_instructions": parser.get_format_instructions()},
+    )
 
     try:
-        response = llm.invoke(prompt)
-        raw = response.content.strip()
-        raw = re.sub(r"^```(?:json)?\s*", "", raw)
-        raw = re.sub(r"\s*```$", "", raw)
-        topics = json.loads(raw)
-        if isinstance(topics, list) and len(topics) > 0:
-            return topics
+        formatted = prompt.format(
+            num_topics=num_topics,
+            context=context[:3000],
+        )
+        response = llm.invoke(formatted)
+        raw = _strip_code_fences(response.content.strip())
+        result = parser.parse(raw)
+
+        if result.topics:
+            return result.topics
     except Exception as e:
         print("Topic extraction API error:", e)
         raise ValueError(
