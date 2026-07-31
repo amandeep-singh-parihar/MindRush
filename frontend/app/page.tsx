@@ -26,7 +26,7 @@ export default async function Home() {
       <Navbar />
 
       {/* Main Page Wrapper */}
-      <main className="relative flex-1 w-full max-w-7xl mx-auto pt-20 md:pt-20 pb-8 z-10 flex flex-col gap-10 md:gap-14">
+      <main className="relative flex-1 w-full max-w-7xl mx-auto pt-20 md:pt-20 pb-8 z-10 flex flex-col gap-10 md:gap-14 mt-4">
         {/* Hero Section */}
         <section className="flex flex-col items-center text-center gap-8 w-full" id="home">
           <div className="flex flex-col gap-4 items-center">
@@ -36,8 +36,8 @@ export default async function Home() {
                 AI{" "}
               </span>
               Quizzes
+              <br />
               <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-                {" "}
                 in Seconds
               </span>
             </h1>

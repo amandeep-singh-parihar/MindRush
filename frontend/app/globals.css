@@ -271,3 +271,36 @@ select option {
 .animate-horror-glitch {
   animation: horrorGlitchText 0.25s infinite linear;
 }
+
+/* ── QuizForm Redesign: Drop-up Menu & Panel Animations ── */
+@keyframes dropUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes expandPanel {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    max-height: 300px;
+    transform: translateY(0);
+  }
+}
+
+.animate-drop-up {
+  animation: dropUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-expand-panel {
+  animation: expandPanel 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
