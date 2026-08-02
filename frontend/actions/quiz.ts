@@ -215,8 +215,8 @@ export async function submitQuizAttemptAction(payload: SubmitAttemptPayload) {
       (existingStats?.totalStudyTime || 0) + Math.max(1, Math.round(payload.timeTaken / 60));
 
     // Calculate streak
-    let newStreak = (existingStats?.currentStreak || 0) + 1;
-    let newMaxStreak = Math.max(existingStats?.maxStreak || 0, newStreak);
+    const newStreak = (existingStats?.currentStreak || 0) + 1;
+    const newMaxStreak = Math.max(existingStats?.maxStreak || 0, newStreak);
 
     await prisma.userStatistics.upsert({
       where: { userId: user.id },

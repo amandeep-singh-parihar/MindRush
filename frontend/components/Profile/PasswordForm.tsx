@@ -92,7 +92,7 @@ const PasswordForm = ({ hasPassword }: { hasPassword: boolean }) => {
           message: res?.message || "Incorrect current password or update error.",
         });
       }
-    } catch (error) {
+    } catch {
       setToast({
         show: true,
         type: "error",

@@ -54,7 +54,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
           window.location.reload();
         }, 1500);
       }
-    } catch (err) {
+    } catch {
       setErrorMessage("An unexpected error occurred.");
       setIsLoading(false);
     }

@@ -40,7 +40,7 @@ const LoginModal = ({ open, onClose, onSwitchToSignup }: LoginModalInterface) =>
         onClose();
         window.location.reload();
       }
-    } catch (err) {
+    } catch {
       setErrorMessage("An unexpected error occurred.");
       setIsLoading(false);
     }

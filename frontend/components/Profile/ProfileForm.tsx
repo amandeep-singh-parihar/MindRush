@@ -65,7 +65,7 @@ const ProfileForm = ({ user }: { user: any }) => {
           message: res.message || "An error occurred while updating your profile.",
         });
       }
-    } catch (error) {
+    } catch {
       setToast({
         show: true,
         type: "error",
