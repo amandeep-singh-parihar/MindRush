@@ -34,35 +34,35 @@ With an aesthetic dark-themed glassmorphism user interface, real-time timers, co
 ### ⚡ 1. AI Quiz Generator
 Generate targeted quizzes on demand. Choose any custom topic or upload a PDF / paste text notes, set difficulty levels (Easy, Medium, Hard), and select the number of questions.
 
-![AI Quiz Generator](./assets/quiz-generator.png)
+![AI Quiz Generator](./assets/quiz_generator.png)
 
 ---
 
 ### 📊 2. User Overview & Streak Heatmap
 Track your learning intensity over the past 52 weeks with GitHub-style contribution heatmaps, active day counters, quick-start topic recommendations, and recent attempt logs.
 
-![User Overview](./assets/dashboard-overview.png)
+![User Overview](./assets/dashboard_overview.png)
 
 ---
 
 ### 🎯 3. Timed Interactive Quiz Interface
 Experience a distraction-free, real-time quiz interface complete with live countdown timers, question counters, smooth option selections, and score progression.
 
-![Interactive Quiz Interface](./assets/quiz-interface.png)
+![Interactive Quiz Interface](./assets/quiz_interface.png)
 
 ---
 
 ### 🏆 4. Quiz Completion & Answer Review
 Get immediate score summaries with accuracy percentages, difficulty badges, and step-by-step answer reviews detailing correct answers and explanations.
 
-![Quiz Results](./assets/quiz-results.png)
+![Quiz Results](./assets/quiz_results.png)
 
 ---
 
 ### 📈 5. Performance Analytics Dashboard
 Gain deep insight into your learning growth with score progression trend graphs, category strength breakdowns (Coding, Science, Logic, History), average completion speed, and AI-driven study tips.
 
-![Performance Analytics](./assets/analytics-dashboard.png)
+![Performance Analytics](./assets/analytics_dashboard.png)
 
 ---
 
