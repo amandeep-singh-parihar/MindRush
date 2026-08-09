@@ -104,66 +104,78 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
       : null;
 
   return (
-    <div className="space-y-8 animate-fadeIn">
+    <div className="space-y-6 animate-fadeIn">
       <div>
-        <h2 className="text-2xl font-extrabold text-white tracking-tight">Performance Analytics</h2>
-        <p className="text-sm text-zinc-400 mt-1">
+        <h2 className="text-xl font-bold text-white tracking-tight">Performance Analytics</h2>
+        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
           Real-time insights on your learning accuracy, completed attempts, and subject mastery.
         </p>
       </div>
 
       {/* Grid Section: Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card rounded-2xl p-5 border border-white/5">
-          <p className="text-xs text-zinc-400">Questions Correctly Answered</p>
-          <h4 className="text-2xl font-extrabold text-white mt-1.5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="surface-card rounded-xl p-5">
+          <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+            Questions Correctly Answered
+          </p>
+          <h4 className="text-2xl font-bold text-white mt-1.5">
             {stats.correctlyAnswered}{" "}
-            <span className="text-xs text-zinc-500 font-normal">
+            <span className="text-xs font-normal" style={{ color: "var(--text-subtle)" }}>
               / {stats.totalQuestionsAnswered}
             </span>
           </h4>
-          <div className="flex items-center gap-1 text-[11px] text-emerald-400 mt-2 font-medium">
-            <CheckCircle2 className="w-3.5 h-3.5 fill-emerald-400/10" />
+          <div className="text-[11px] mt-2 font-medium" style={{ color: "var(--text-muted)" }}>
             Overall accuracy at {stats.accuracy}%
           </div>
         </div>
 
-        <div className="glass-card rounded-2xl p-5 border border-white/5">
-          <p className="text-xs text-zinc-400">Total Quiz-taking Sessions</p>
-          <h4 className="text-2xl font-extrabold text-white mt-1.5">{stats.totalQuizzesTaken}</h4>
-          <div className="flex items-center gap-1 text-[11px] text-pink-400 mt-2 font-medium">
-            <Sparkles className="w-3.5 h-3.5" />
+        <div className="surface-card rounded-xl p-5">
+          <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+            Total Quiz-taking Sessions
+          </p>
+          <h4 className="text-2xl font-bold text-white mt-1.5">{stats.totalQuizzesTaken}</h4>
+          <div className="text-[11px] mt-2 font-medium" style={{ color: "var(--text-muted)" }}>
             Completed quizzes & practice sessions
           </div>
         </div>
 
-        <div className="glass-card rounded-2xl p-5 border border-white/5">
-          <p className="text-xs text-zinc-400">Total Quiz Study Time</p>
-          <h4 className="text-2xl font-extrabold text-white mt-1.5">
+        <div className="surface-card rounded-xl p-5">
+          <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+            Total Quiz Study Time
+          </p>
+          <h4 className="text-2xl font-bold text-white mt-1.5">
             {Math.floor(stats.totalStudyTime / 60)}h {stats.totalStudyTime % 60}m
           </h4>
-          <div className="flex items-center gap-1 text-[11px] text-indigo-400 mt-2 font-medium">
-            <Clock className="w-3.5 h-3.5" />
+          <div className="text-[11px] mt-2 font-medium" style={{ color: "var(--text-muted)" }}>
             Active time spent solving questions
           </div>
         </div>
       </div>
 
       {/* 2-Column Grid: Score Progression Trend Chart + Category Strength Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Score Progression Trend SVG Chart Card (8 cols) */}
-        <div className="lg:col-span-8 glass-card rounded-2xl p-6 border border-white/5 space-y-4">
+        <div className="lg:col-span-8 surface-card rounded-xl p-6 space-y-4">
           <div>
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-pink-400" />
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" style={{ color: "var(--accent)" }} />
               Score Progression Trend
             </h3>
-            <p className="text-xs text-zinc-500">Weekly accuracy growth across previous attempts</p>
+            <p className="text-xs" style={{ color: "var(--text-subtle)" }}>
+              Weekly accuracy growth across previous attempts
+            </p>
           </div>
 
           {/* SVG Chart Area */}
-          <div className="relative w-full h-64 bg-white/[0.01] rounded-xl border border-white/5 flex items-center justify-center p-4">
-            <svg viewBox="0 0 500 200" className="w-full h-full text-pink-500 overflow-visible">
+          <div
+            className="relative w-full h-64 rounded-xl border flex items-center justify-center p-4"
+            style={{ background: "var(--surface-2)", borderColor: "var(--border)" }}
+          >
+            <svg
+              viewBox="0 0 500 200"
+              className="w-full h-full overflow-visible"
+              style={{ color: "var(--accent)" }}
+            >
               <line
                 x1="0"
                 y1="45"
@@ -191,13 +203,8 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
 
               <defs>
                 <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ec4899" stopOpacity="0.25" />
-                  <stop offset="100%" stopColor="#a855f7" stopOpacity="0.0" />
-                </linearGradient>
-                <linearGradient id="gradientLine" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#ec4899" />
-                  <stop offset="50%" stopColor="#a855f7" />
-                  <stop offset="100%" stopColor="#6366f1" />
+                  <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.15" />
+                  <stop offset="100%" stopColor="var(--accent)" stopOpacity="0.0" />
                 </linearGradient>
               </defs>
 
@@ -206,8 +213,8 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
               <path
                 d={pathData}
                 fill="none"
-                stroke="url(#gradientLine)"
-                strokeWidth="3.5"
+                stroke="var(--accent)"
+                strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
@@ -222,9 +229,9 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
                   <circle
                     cx={pt.x}
                     cy={pt.y}
-                    r="5"
+                    r="4.5"
                     style={{ transformBox: "fill-box", transformOrigin: "center" }}
-                    className="fill-[#050409] stroke-pink-500 stroke-[3.5] group-hover:scale-125 transition-transform duration-200"
+                    className="fill-[#0d0d0d] stroke-orange-500 stroke-[2.5] group-hover:scale-125 transition-transform duration-200"
                   />
                 </g>
               ))}
@@ -234,7 +241,7 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
                 <text
                   x={Math.min(430, Math.max(20, maxPoint.x - 25))}
                   y={maxPoint.y - 12}
-                  fill="#f4f4f5"
+                  fill="var(--text-primary)"
                   fontSize="11"
                   fontWeight="bold"
                 >
@@ -243,7 +250,10 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
               )}
             </svg>
 
-            <div className="absolute bottom-2 left-6 right-6 flex justify-between text-[9px] text-zinc-500 font-semibold uppercase">
+            <div
+              className="absolute bottom-2 left-6 right-6 flex justify-between text-[9px] font-semibold uppercase"
+              style={{ color: "var(--text-subtle)" }}
+            >
               <span>{dates[0]}</span>
               <span>{dates[1]}</span>
               <span>{dates[2]}</span>
@@ -252,14 +262,14 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
         </div>
 
         {/* Category Strength Breakdown (4 cols) */}
-        <div className="lg:col-span-4 glass-card rounded-2xl p-6 border border-white/5 space-y-4">
+        <div className="lg:col-span-4 surface-card rounded-xl p-6 space-y-4">
           <div>
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <Target className="w-4 h-4 text-pink-400" />
-              Topic Strength Breakdown
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+              <Target className="w-4 h-4" style={{ color: "var(--accent)" }} />
+              Topic Strength
             </h3>
-            <p className="text-xs text-zinc-500">
-              Average accuracy by category based on DB records
+            <p className="text-xs" style={{ color: "var(--text-subtle)" }}>
+              Average accuracy by category
             </p>
           </div>
 
@@ -269,11 +279,13 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
                 <div key={idx} className="space-y-1">
                   <div className="flex justify-between text-xs font-medium">
                     <span className="text-white font-semibold">{cat.topic}</span>
-                    <span className="text-pink-400 font-semibold">{cat.accuracy}%</span>
+                    <span className="font-semibold" style={{ color: "var(--accent)" }}>
+                      {cat.accuracy}%
+                    </span>
                   </div>
                   <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"
+                      className="h-full bg-orange-500 rounded-full"
                       style={{ width: `${cat.accuracy}%` }}
                     />
                   </div>
@@ -281,7 +293,7 @@ export default function AnalyticsClient({ data }: { data?: AnalyticsData }) {
               ))}
             </div>
           ) : (
-            <div className="p-8 text-center border border-dashed border-white/10 rounded-xl">
+            <div className="p-8 text-center border border-dashed border-white/5 rounded-xl">
               <BarChart2 className="w-8 h-8 text-zinc-600 mx-auto mb-2" />
               <p className="text-xs text-zinc-400">
                 No topic statistics recorded yet. Complete quizzes to build your subject mastery

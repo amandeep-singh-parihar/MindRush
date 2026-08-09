@@ -74,31 +74,15 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
     >
       {/* ── Panel ── */}
       <div
-        className="relative w-full max-w-md rounded-3xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[88vh]"
+        className="relative w-full max-w-md rounded-xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[88vh]"
         style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
-          boxShadow: "0 25px 80px rgba(147,51,234,0.25), 0 0 0 1px rgba(255,255,255,0.04)",
+          background: "#161616",
+          border: "1px solid #2a2a2a",
+          boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
           animation: "modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ── Ambient glows ── */}
-        <div
-          className="absolute -top-20 -left-20 w-64 h-64 rounded-full pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, rgba(219,39,119,0.18) 0%, transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, rgba(147,51,234,0.18) 0%, transparent 70%)",
-          }}
-        />
-
         {/* ── Grid bg overlay ── */}
         <div
           className="absolute inset-0 pointer-events-none opacity-50"
@@ -137,17 +121,16 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
             <div className="relative">
               <div
                 className="absolute inset-0 rounded-full blur-xl opacity-80"
-                style={{ background: "rgba(219,39,119,0.6)" }}
+                style={{ background: "rgba(249,115,22,0.3)" }}
               />
               <div
                 className="relative flex items-center justify-center w-11 h-11 rounded-xl"
                 style={{
-                  background:
-                    "linear-gradient(135deg, rgba(219,39,119,0.25) 0%, rgba(147,51,234,0.25) 100%)",
-                  border: "1px solid rgba(219,39,119,0.3)",
+                  background: "rgba(249,115,22,0.1)",
+                  border: "1px solid rgba(249,115,22,0.2)",
                 }}
               >
-                <Brain className="w-6 h-6 text-pink-400 stroke-[2.5]" />
+                <Brain className="w-6 h-6 text-orange-400 stroke-[2.5]" />
               </div>
             </div>
 
@@ -232,8 +215,8 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
                     border: "1px solid rgba(255,255,255,0.08)",
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.border = "1px solid rgba(236,72,153,0.5)";
-                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(236,72,153,0.1)";
+                    e.currentTarget.style.border = "1px solid rgba(249,115,22,0.5)";
+                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(249,115,22,0.15)";
                   }}
                   onBlur={(e) => {
                     e.currentTarget.style.border = "1px solid rgba(255,255,255,0.08)";
@@ -264,8 +247,8 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
                     border: "1px solid rgba(255,255,255,0.08)",
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.border = "1px solid rgba(236,72,153,0.5)";
-                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(236,72,153,0.1)";
+                    e.currentTarget.style.border = "1px solid rgba(249,115,22,0.5)";
+                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(249,115,22,0.15)";
                   }}
                   onBlur={(e) => {
                     e.currentTarget.style.border = "1px solid rgba(255,255,255,0.08)";
@@ -296,8 +279,8 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
                     border: "1px solid rgba(255,255,255,0.08)",
                   }}
                   onFocus={(e) => {
-                    e.currentTarget.style.border = "1px solid rgba(236,72,153,0.5)";
-                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(236,72,153,0.1)";
+                    e.currentTarget.style.border = "1px solid rgba(249,115,22,0.5)";
+                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(249,115,22,0.15)";
                   }}
                   onBlur={(e) => {
                     e.currentTarget.style.border = "1px solid rgba(255,255,255,0.08)";
@@ -308,7 +291,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
                   type="button"
                   aria-label="Toggle password visibility"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -358,8 +341,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
               id="signup-submit-btn"
               type="submit"
               disabled={isLoading}
-              className="btn-gradient w-full flex items-center justify-center gap-2 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-xl mt-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ boxShadow: "0 8px 32px rgba(236,72,153,0.3)" }}
+              className="accent-btn w-full flex items-center justify-center gap-2 text-white font-semibold py-2.5 rounded-lg transition-colors mt-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
@@ -381,7 +363,7 @@ const SignupModal = ({ open, onClose, onSwitchToLogin }: SignupModalProps) => {
             Already have an account?{" "}
             <span
               onClick={onSwitchToLogin}
-              className="text-pink-400 hover:text-pink-300 cursor-pointer font-semibold transition-colors"
+              className="text-orange-400 hover:text-orange-300 cursor-pointer font-semibold transition-colors"
             >
               Sign in
             </span>

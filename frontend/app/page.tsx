@@ -18,30 +18,25 @@ export default async function Home() {
   const session = await auth();
   const isLoggedIn = !!session;
   return (
-    <div className="min-h-screen w-full relative flex flex-col font-sans overflow-x-hidden selection:bg-pink-500/30 selection:text-pink-200">
-      {/* Background Grid Overlay */}
-      <div className="absolute inset-0 grid-bg opacity-[0.2] pointer-events-none z-0"></div>
-
+    <div className="min-h-screen w-full relative flex flex-col font-sans overflow-x-hidden">
       {/* Header / Navbar */}
       <Navbar />
 
       {/* Main Page Wrapper */}
       <main className="relative flex-1 w-full max-w-7xl mx-auto pt-20 md:pt-20 pb-8 z-10 flex flex-col gap-10 md:gap-14 mt-4">
         {/* Hero Section */}
-        <section className="flex flex-col items-center text-center gap-8 w-full" id="home">
+        <section
+          className="flex flex-col items-center justify-center text-center gap-8 w-full min-h-[82vh]"
+          id="home"
+        >
           <div className="flex flex-col gap-4 items-center">
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight font-sans">
-              Generate{" "}
-              <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-                AI{" "}
-              </span>
-              Quizzes
-              <br />
-              <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-                in Seconds
-              </span>
+            <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-white leading-tight max-w-2xl mx-auto">
+              Generate <span style={{ color: "var(--accent)" }}>AI Quizzes</span> in seconds
             </h1>
-            <p className="text-base md:text-lg text-zinc-400 leading-relaxed max-w-2xl">
+            <p
+              className="text-base md:text-lg leading-relaxed max-w-2xl"
+              style={{ color: "var(--text-muted)" }}
+            >
               Enter any topic, difficulty, and number of questions. MindRush instantly creates
               personalized quizzes using AI to help you learn faster.
             </p>

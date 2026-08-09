@@ -48,22 +48,6 @@ export default function DangerZone({
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [modalError, setModalError] = useState<string | null>(null);
 
-  const [horrorActive, setHorrorActive] = useState(false);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    if (horrorActive) {
-      timer = setTimeout(() => {
-        setHorrorActive(false);
-      }, 1000);
-    }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [horrorActive]);
-
   const isScheduled = !!deletionScheduledAt;
   const CONFIRMATION_REQUIRED_STRING = "DELETE MY ACCOUNT";
   const isStringMatched = confirmText.trim() === CONFIRMATION_REQUIRED_STRING;
@@ -100,7 +84,7 @@ export default function DangerZone({
     setStep(2);
   };
 
-  // Step 2: Verify Password / Email & Trigger 12s Horror Effect
+  // Step 2: Verify Password / Email
   const handleVerifyPassword = async () => {
     setLoading(true);
     setModalError(null);
@@ -113,8 +97,6 @@ export default function DangerZone({
           text: "Verification successful! Account deletion scheduled for 7 days from today.",
         });
         closeModal();
-        // Trigger 12-second red horror screen effect
-        setHorrorActive(true);
       } else {
         setModalError(res.message || "Verification failed. Please try again.");
       }
@@ -146,43 +128,7 @@ export default function DangerZone({
 
   return (
     <div id="danger-zone" className="space-y-4 pt-4">
-      {horrorActive &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center p-6 backdrop-blur-md pointer-events-auto animate-horror-pulse overflow-hidden select-none">
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] pointer-events-none opacity-40" />
-
-            <div className="absolute inset-0 border-[16px] border-red-600/70 blur-md pointer-events-none" />
-
-            <div className="relative z-10 text-center space-y-6 max-w-xl mx-auto">
-              <div className="mx-auto w-24 h-24 rounded-full bg-red-600/20 border-2 border-red-500 flex items-center justify-center animate-bounce shadow-[0_0_60px_rgba(239,68,68,0.9)]">
-                <Skull className="w-12 h-12 text-red-500 stroke-[2.5]" />
-              </div>
-
-              <div className="space-y-3">
-                <p className="text-xs font-mono font-bold tracking-[0.3em] text-red-400 uppercase animate-pulse">
-                  ⚠️ SECURITY PURGE SIGNAL CONFIRMED
-                </p>
-                <h1 className="text-3xl sm:text-4xl font-black text-red-100 tracking-widest font-mono animate-horror-glitch uppercase">
-                  ACCOUNT TERMINATION INITIATED
-                </h1>
-                <p className="text-sm font-mono text-red-200/90 max-w-md mx-auto leading-relaxed">
-                  YOUR ACCOUNT HAS ENTERED THE 7-DAY DESTRUCTION CYCLE. ALL CREATED QUIZZES,
-                  ATTEMPTS & MASTERY PROFILE WILL BE PERMANENTLY ERASED.
-                </p>
-              </div>
-
-              {/* Horror Badge */}
-              <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-red-950/90 border border-red-500/50 text-red-200 text-xs font-mono font-bold shadow-2xl">
-                <Flame className="w-4 h-4 text-red-500 animate-spin" />
-                <span>ACCOUNT TERMINATION INITIATED</span>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
-
-      <div className="glass-card rounded-2xl p-6 border border-red-500/20 bg-red-950/10 space-y-5">
+      <div className="surface-card rounded-xl p-6 border border-red-500/20 bg-red-950/5 space-y-5">
         <div className="flex items-start justify-between gap-4 border-b border-red-500/10 pb-4">
           <div>
             <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
@@ -265,7 +211,7 @@ export default function DangerZone({
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
           <div className="absolute inset-0 cursor-pointer" onClick={closeModal} />
 
-          <div className="relative glass-card w-full max-w-md rounded-3xl p-6 sm:p-7 border border-red-500/30 shadow-2xl shadow-red-950/50 animate-scale-up z-10 space-y-5">
+          <div className="relative surface-card w-full max-w-md rounded-xl p-6 sm:p-7 border border-red-500/20 shadow-2xl animate-scale-up z-10 space-y-5">
             <button
               onClick={closeModal}
               disabled={loading}
@@ -365,12 +311,12 @@ export default function DangerZone({
                   <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
                     {hasPassword ? (
                       <>
-                        <Lock className="w-3.5 h-3.5 text-pink-400" />
+                        <Lock className="w-3.5 h-3.5 text-red-400" />
                         Account Password
                       </>
                     ) : (
                       <>
-                        <Mail className="w-3.5 h-3.5 text-pink-400" />
+                        <Mail className="w-3.5 h-3.5 text-red-400" />
                         Confirm Registered Email
                       </>
                     )}

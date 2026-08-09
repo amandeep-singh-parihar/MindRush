@@ -24,12 +24,13 @@ export default function NavbarActions({ session }: NavbarActionsProps) {
   }
 
   return (
-    <div className="hidden md:flex items-center gap-4">
+    <div className="hidden md:flex items-center gap-3">
       <button
         onClick={() => setOpenLoginModal(true)}
-        className="cursor-pointer text-sm font-medium text-zinc-300 hover:text-white transition-colors duration-200"
+        className="cursor-pointer text-sm font-medium transition-colors duration-200 hover:text-white"
+        style={{ color: "var(--text-muted)" }}
       >
-        Login
+        Log in
       </button>
 
       <LoginModal
@@ -43,7 +44,7 @@ export default function NavbarActions({ session }: NavbarActionsProps) {
 
       <button
         onClick={() => setOpenSignUpModal(true)}
-        className="cursor-pointer btn-gradient text-sm font-semibold text-white px-5 py-2 rounded-xl transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98] shadow-lg shadow-pink-500/20"
+        className="accent-btn cursor-pointer text-sm font-semibold px-4 py-2 rounded-lg"
       >
         Get Started
       </button>

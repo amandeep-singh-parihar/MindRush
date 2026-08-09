@@ -50,29 +50,35 @@ export default function DashboardLayoutClient({
   ];
 
   return (
-    <div className="min-h-screen w-full relative flex font-sans selection:bg-pink-500/30 selection:text-pink-200 bg-[#050409]">
-      {/* Background Grid Overlay */}
-      <div className="absolute inset-0 grid-bg opacity-[0.15] pointer-events-none z-0"></div>
-
+    <div
+      className="min-h-screen w-full relative flex font-sans"
+      style={{ background: "var(--bg)" }}
+    >
       {/* ----------------- DESKTOP SIDEBAR ----------------- */}
       {!isQuizRoute && (
-        <aside className="hidden lg:flex flex-col w-64 border-r border-white/5 z-20 sticky top-0 h-screen glass-card select-none">
+        <aside
+          className="hidden lg:flex flex-col w-60 z-20 sticky top-0 h-screen select-none"
+          style={{
+            background: "var(--surface)",
+            borderRight: "1px solid var(--border)",
+          }}
+        >
           {/* Brand Logo */}
-          <div className="p-6 border-b border-white/5 flex items-center gap-2.5">
-            <div className="relative">
-              <div className="absolute inset-0 bg-pink-500 rounded-full blur-md opacity-75"></div>
-              <Brain className="relative w-7 h-7 text-pink-500 stroke-[2.5]" />
-            </div>
+          <div
+            className="p-5 flex items-center gap-2"
+            style={{ borderBottom: "1px solid var(--border)" }}
+          >
+            <Brain className="w-5 h-5" style={{ color: "var(--accent)" }} strokeWidth={2.5} />
             <span
               onClick={() => router.push("/")}
-              className="cursor-pointer text-xl font-bold bg-gradient-to-r from-white via-zinc-100 to-pink-500 bg-clip-text text-transparent tracking-tight hover:opacity-80 transition-opacity"
+              className="cursor-pointer text-base font-bold text-white tracking-tight hover:opacity-80 transition-opacity"
             >
-              MindRush
+              Mind<span style={{ color: "var(--accent)" }}>Rush</span>
             </span>
           </div>
 
           {/* Navigation Link Menu */}
-          <nav className="flex-1 px-4 py-6 space-y-1">
+          <nav className="flex-1 px-3 py-5 space-y-0.5">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -81,16 +87,16 @@ export default function DashboardLayoutClient({
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 relative ${
-                    isActive
-                      ? "bg-white/[0.04] text-white border-l-2 border-pink-500 pl-3.5 shadow-[inset_4px_0_15px_-4px_rgba(236,72,153,0.15)]"
-                      : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]"
-                  }`}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150"
+                  style={{
+                    color: isActive ? "#fff" : "var(--text-muted)",
+                    background: isActive ? "var(--surface-2)" : "transparent",
+                    borderLeft: isActive ? "2px solid var(--accent)" : "2px solid transparent",
+                  }}
                 >
                   <Icon
-                    className={`w-4 h-4 transition-colors duration-300 ${
-                      isActive ? "text-pink-500" : "text-zinc-500 group-hover:text-zinc-400"
-                    }`}
+                    className="w-4 h-4"
+                    style={{ color: isActive ? "var(--accent)" : "var(--text-muted)" }}
                   />
                   {item.name}
                 </Link>
@@ -99,34 +105,51 @@ export default function DashboardLayoutClient({
           </nav>
 
           {/* User Card */}
-          <div className="p-4 border-t border-white/5 bg-white/[0.01]">
-            <div className="flex items-center gap-3 mb-4">
+          <div className="p-4" style={{ borderTop: "1px solid var(--border)" }}>
+            <div className="flex items-center gap-3 mb-3">
               {user.image && !imgError ? (
                 <img
                   src={user.image}
                   alt={user.name}
                   referrerPolicy="no-referrer"
                   onError={() => setImgError(true)}
-                  className="w-9 h-9 rounded-full ring-1 ring-pink-500/20 object-cover"
+                  className="w-8 h-8 rounded-full object-cover"
+                  style={{ border: "1px solid var(--border)" }}
                 />
               ) : (
-                <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-tr from-pink-500 to-purple-600">
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                  style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
+                >
                   {initials}
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-white truncate">{user.name}</p>
-                <p className="text-[11px] text-zinc-400 truncate">
-                  {user.email || "Free Tier User"}
+                <p className="text-sm font-medium text-white truncate">{user.name}</p>
+                <p className="text-[11px] truncate" style={{ color: "var(--text-subtle)" }}>
+                  {user.email || "Free Tier"}
                 </p>
               </div>
             </div>
 
             <button
               onClick={() => signOut()}
-              className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-200 cursor-pointer border border-transparent hover:border-red-500/10"
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-sm font-medium transition-colors duration-150 cursor-pointer"
+              style={{
+                color: "var(--text-muted)",
+                background: "transparent",
+                border: "1px solid var(--border)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.color = "#ef4444";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(239,68,68,0.3)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.color = "var(--text-muted)";
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+              }}
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5" />
               Sign Out
             </button>
           </div>
@@ -135,7 +158,14 @@ export default function DashboardLayoutClient({
 
       {/* ----------------- MOBILE NAVIGATION BAR ----------------- */}
       {!isQuizRoute && (
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#050409]/95 backdrop-blur-md border-t border-white/5 px-2 py-2 flex justify-around">
+        <nav
+          className="lg:hidden fixed bottom-0 left-0 right-0 z-40 px-2 py-2 flex justify-around"
+          style={{
+            background: "rgba(13,13,13,0.95)",
+            borderTop: "1px solid var(--border)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -144,12 +174,11 @@ export default function DashboardLayoutClient({
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex flex-col items-center gap-1 py-1.5 px-3 rounded-xl transition-all ${
-                  isActive ? "text-pink-500" : "text-zinc-400"
-                }`}
+                className="flex flex-col items-center gap-1 py-1.5 px-3 rounded-lg transition-colors"
+                style={{ color: isActive ? "var(--accent)" : "var(--text-muted)" }}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-[10px] font-semibold">{item.name.replace("Quiz ", "")}</span>
+                <span className="text-[10px] font-medium">{item.name.replace("Quiz ", "")}</span>
               </Link>
             );
           })}
@@ -160,25 +189,33 @@ export default function DashboardLayoutClient({
       <main className="flex-1 min-w-0 z-10 flex flex-col pb-24 lg:pb-8">
         {/* Mobile Header */}
         {!isQuizRoute && (
-          <header className="lg:hidden p-4 flex items-center justify-between border-b border-white/5 bg-[#050409]/60 backdrop-blur-md sticky top-0 z-30">
-            <Link href="/" className="flex items-center gap-2 group cursor-pointer">
-              <Brain className="w-6 h-6 text-pink-500 group-hover:scale-110 transition-transform" />
-              <span className="text-lg font-bold bg-gradient-to-r from-white via-zinc-100 to-pink-500 bg-clip-text text-transparent">
-                MindRush
+          <header
+            className="lg:hidden p-4 flex items-center justify-between sticky top-0 z-30"
+            style={{
+              background: "rgba(13,13,13,0.92)",
+              borderBottom: "1px solid var(--border)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <Link href="/" className="flex items-center gap-2 cursor-pointer">
+              <Brain className="w-5 h-5" style={{ color: "var(--accent)" }} strokeWidth={2.5} />
+              <span className="text-base font-bold text-white">
+                Mind<span style={{ color: "var(--accent)" }}>Rush</span>
               </span>
             </Link>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Link
                 href="/"
-                className="btn-gradient p-2 rounded-xl text-white shadow-md shadow-pink-500/20 cursor-pointer"
+                className="accent-btn p-2 rounded-lg cursor-pointer"
                 title="Create Quiz"
               >
                 <Plus className="w-4 h-4" />
               </Link>
               <Link
                 href="/dashboard/settings"
-                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-tr from-pink-500 to-purple-600"
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
               >
                 {initials}
               </Link>

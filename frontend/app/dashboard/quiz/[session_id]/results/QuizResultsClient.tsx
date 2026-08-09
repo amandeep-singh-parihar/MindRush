@@ -2,7 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CheckCircle2, XCircle, RotateCcw, Home, Trophy, Target, Sparkles } from "lucide-react";
+import {
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+  Home,
+  Trophy,
+  Target,
+  Sparkles,
+  Loader2,
+} from "lucide-react";
 import confetti from "canvas-confetti";
 
 interface Question {
@@ -61,7 +70,7 @@ export default function QuizResultsClient() {
             particleCount: 120,
             spread: 90,
             origin: { y: 0.6 },
-            colors: ["#ec4899", "#a855f7", "#6366f1", "#10b981", "#f59e0b"],
+            colors: ["#f97316", "#fbbf24", "#39d353", "#ffffff", "#52525b"],
           });
 
           // Follow-up side cannons
@@ -71,14 +80,14 @@ export default function QuizResultsClient() {
               angle: 60,
               spread: 60,
               origin: { x: 0, y: 0.6 },
-              colors: ["#ec4899", "#a855f7", "#38bdf8"],
+              colors: ["#f97316", "#fbbf24", "#ffffff"],
             });
             confetti({
               particleCount: 80,
               angle: 120,
               spread: 60,
               origin: { x: 1, y: 0.6 },
-              colors: ["#ec4899", "#a855f7", "#38bdf8"],
+              colors: ["#f97316", "#fbbf24", "#ffffff"],
             });
           }, 350);
 
@@ -104,7 +113,7 @@ export default function QuizResultsClient() {
         </div>
         <button
           onClick={() => router.push("/dashboard")}
-          className="btn-gradient px-6 py-3 rounded-xl text-sm font-semibold text-white flex items-center gap-2"
+          className="bg-orange-600 hover:bg-orange-500 px-6 py-3 rounded-xl text-sm font-semibold text-white flex items-center gap-2 transition-colors"
         >
           <Home className="w-4 h-4" />
           Back to Dashboard
@@ -117,7 +126,7 @@ export default function QuizResultsClient() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
-          <Sparkles className="w-8 h-8 text-pink-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
           <p className="text-zinc-400 text-sm">Loading results…</p>
         </div>
       </div>
@@ -137,32 +146,29 @@ export default function QuizResultsClient() {
           : "Needs Improvement";
   const gradeColor =
     pct >= 80
-      ? "from-emerald-400 to-teal-400"
+      ? "text-emerald-400"
       : pct >= 60
-        ? "from-amber-400 to-orange-400"
-        : "from-red-400 to-pink-400";
+        ? "text-orange-500"
+        : pct >= 40
+          ? "text-zinc-300"
+          : "text-red-400";
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 animate-fadeIn py-4">
       {/* Score card */}
-      <div className="glass-card rounded-3xl p-8 border border-white/5 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-purple-500/5 pointer-events-none" />
+      <div className="surface-card rounded-xl p-8 border border-white/5 text-center relative overflow-hidden">
         <div className="relative z-10">
-          <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-pink-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center mb-5">
-            <Trophy className="w-9 h-9 text-yellow-400" />
+          <div className="mx-auto w-16 h-16 rounded-xl bg-[#1e1e1e] border border-[#2a2a2a] flex items-center justify-center mb-5">
+            <Trophy className="w-8 h-8 text-orange-500" />
           </div>
 
           {pct >= 90 && (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold mb-3 animate-bounce">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold mb-3">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>🎉 Outstanding! 90%+ Mastery Achieved!</span>
             </div>
           )}
-          <h2
-            className={`text-3xl font-extrabold bg-gradient-to-r ${gradeColor} bg-clip-text text-transparent`}
-          >
-            {grade}
-          </h2>
+          <h2 className={`text-3xl font-extrabold ${gradeColor}`}>{grade}</h2>
           <p className="text-zinc-400 text-sm mt-2">Quiz complete!</p>
 
           <div className="mt-6 flex items-center justify-center gap-6">
@@ -188,9 +194,9 @@ export default function QuizResultsClient() {
       </div>
 
       {/* Answer breakdown */}
-      <div className="glass-card rounded-2xl border border-white/5 overflow-hidden">
+      <div className="surface-card rounded-xl border border-white/5 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-white/5 flex items-center gap-2">
-          <Target className="w-4 h-4 text-pink-500" />
+          <Target className="w-4 h-4 text-orange-500" />
           <h3 className="text-sm font-bold text-white">Answer Review</h3>
         </div>
         <div className="divide-y divide-white/5">
@@ -230,14 +236,14 @@ export default function QuizResultsClient() {
       <div className="flex gap-3">
         <button
           onClick={() => router.push(`/dashboard/quiz/${session_id}`)}
-          className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-sm font-semibold text-white transition-all cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-sm font-semibold text-white transition-colors cursor-pointer"
         >
           <RotateCcw className="w-4 h-4" />
           Retry Quiz
         </button>
         <button
           onClick={() => router.push("/dashboard")}
-          className="flex-1 btn-gradient flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-semibold text-white shadow-lg shadow-pink-500/20 cursor-pointer"
+          className="flex-1 bg-orange-600 hover:bg-orange-500 flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-semibold text-white transition-colors cursor-pointer"
         >
           <Home className="w-4 h-4" />
           Dashboard

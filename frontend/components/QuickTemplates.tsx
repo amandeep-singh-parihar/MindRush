@@ -17,7 +17,7 @@ const TEMPLATES: TopicTemplate[] = [
     topic: "CSS Grid & Flexbox",
     category: "Design",
     questions: 10,
-    color: "from-amber-500 to-orange-600",
+    color: "from-orange-500 to-amber-600",
   },
   {
     topic: "TypeScript Advanced Types",
@@ -35,7 +35,7 @@ const TEMPLATES: TopicTemplate[] = [
     topic: "Machine Learning Basics",
     category: "AI/ML",
     questions: 10,
-    color: "from-purple-500 to-pink-600",
+    color: "from-orange-500 to-orange-600",
   },
 ];
 
@@ -145,8 +145,8 @@ export default function QuickTemplates() {
 
       {/* Grid of Templates */}
       <div className="space-y-4">
-        <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-pink-500" />
+        <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+          <Sparkles className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
           Quick AI Templates
         </h3>
 
@@ -155,19 +155,19 @@ export default function QuickTemplates() {
             <div
               key={i}
               onClick={() => openTemplateModal(tmpl)}
-              className="glass-card rounded-2xl p-5 hover:border-pink-500/40 transition-all duration-300 cursor-pointer relative group overflow-hidden block"
+              className="surface-card rounded-xl p-5 hover:border-white/10 transition-colors duration-200 cursor-pointer relative group overflow-hidden block"
             >
-              <div
-                className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl ${tmpl.color} opacity-[0.05] group-hover:opacity-15 rounded-full blur-xl transition-all duration-300`}
-              />
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-zinc-400 border border-white/5 font-semibold">
                 {tmpl.category}
               </span>
-              <h4 className="text-base font-bold text-white mt-3 group-hover:text-pink-400 transition-colors">
+              <h4 className="text-sm font-semibold text-white mt-3 group-hover:text-[#fff] transition-colors">
                 {tmpl.topic}
               </h4>
               <p className="text-xs text-zinc-500 mt-1">{tmpl.questions} AI questions • 10m</p>
-              <div className="flex items-center gap-1 text-xs text-pink-500 font-semibold mt-4 group-hover:gap-2 transition-all">
+              <div
+                className="flex items-center gap-1 text-xs font-semibold mt-4 transition-all"
+                style={{ color: "var(--accent)" }}
+              >
                 Generate Now
                 <ChevronRight className="w-3 h-3" />
               </div>
@@ -181,22 +181,22 @@ export default function QuickTemplates() {
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
           <div className="absolute inset-0 cursor-pointer" onClick={closeModal} />
 
-          <div className="relative glass-card w-full max-w-md rounded-3xl p-6 sm:p-7 border border-white/10 shadow-2xl shadow-purple-950/50 animate-scale-up z-10">
+          <div className="relative surface-card w-full max-w-md rounded-xl p-6 sm:p-7 shadow-2xl animate-scale-up z-10">
             {/* Close Button */}
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
             {/* Template Title Banner */}
             <div className="flex items-start gap-3 mb-6">
-              <div className="p-3 bg-gradient-to-tr from-pink-500/20 to-purple-500/20 border border-pink-500/30 text-pink-400 rounded-2xl">
+              <div className="p-3 bg-orange-500/10 border border-orange-500/20 text-orange-400 rounded-xl">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0 pr-6">
-                <span className="text-[10px] uppercase font-bold text-pink-400 tracking-wider">
+                <span className="text-[10px] uppercase font-bold text-orange-400 tracking-wider">
                   {selectedTemplate.category} Template
                 </span>
                 <h3 className="text-lg font-extrabold text-white tracking-tight leading-snug truncate">
@@ -228,13 +228,12 @@ export default function QuickTemplates() {
                     if (isSelected) {
                       if (lvl === "Easy") {
                         activeStyles =
-                          "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 font-bold shadow-lg shadow-emerald-500/10";
+                          "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 font-bold";
                       } else if (lvl === "Medium") {
                         activeStyles =
-                          "bg-amber-500/15 border-amber-500/40 text-amber-300 font-bold shadow-lg shadow-amber-500/10";
+                          "bg-amber-500/15 border-amber-500/40 text-amber-300 font-bold";
                       } else {
-                        activeStyles =
-                          "bg-red-500/15 border-red-500/40 text-red-300 font-bold shadow-lg shadow-red-500/10";
+                        activeStyles = "bg-red-500/15 border-red-500/40 text-red-300 font-bold";
                       }
                     }
 
@@ -243,7 +242,7 @@ export default function QuickTemplates() {
                         key={lvl}
                         type="button"
                         onClick={() => setDifficulty(lvl)}
-                        className={`py-3 px-3 rounded-2xl border text-xs tracking-wide transition-all cursor-pointer flex flex-col items-center gap-1 ${activeStyles}`}
+                        className={`py-3 px-3 rounded-xl border text-xs tracking-wide transition-all cursor-pointer flex flex-col items-center gap-1 ${activeStyles}`}
                       >
                         {lvl === "Easy" && <Shield className="w-4 h-4" />}
                         {lvl === "Medium" && <Zap className="w-4 h-4" />}
@@ -266,9 +265,9 @@ export default function QuickTemplates() {
                       key={num}
                       type="button"
                       onClick={() => setQuestionsCount(num)}
-                      className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                      className={`py-2 px-3 rounded-lg border text-xs font-semibold transition-all cursor-pointer ${
                         questionsCount === num
-                          ? "bg-purple-500/20 text-purple-300 border-purple-500/40"
+                          ? "bg-orange-500/10 text-orange-400 border-orange-500/20"
                           : "bg-white/[0.02] text-zinc-400 border-white/5 hover:text-zinc-200"
                       }`}
                     >
@@ -283,10 +282,10 @@ export default function QuickTemplates() {
                 <button
                   type="button"
                   onClick={handleGenerate}
-                  className="btn-gradient w-full py-3.5 rounded-xl text-sm font-semibold text-white shadow-xl shadow-pink-500/25 flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="accent-btn w-full py-2.5 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <Sparkles className="w-4 h-4" />
-                  Generate Quiz ✨
+                  Generate Quiz
                 </button>
               </div>
             </div>

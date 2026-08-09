@@ -2,7 +2,16 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { CheckCircle2, XCircle, ChevronRight, Trophy, Home, Clock, Sparkles } from "lucide-react";
+import {
+  CheckCircle2,
+  XCircle,
+  ChevronRight,
+  Trophy,
+  Home,
+  Clock,
+  Sparkles,
+  Loader2,
+} from "lucide-react";
 import { submitQuizAttemptAction, getQuizByIdAction } from "@/actions/quiz";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -217,7 +226,7 @@ export default function QuizPlayClient() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
-          <Sparkles className="w-8 h-8 text-pink-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
           <p className="text-zinc-400 text-sm">Loading quiz…</p>
         </div>
       </div>
@@ -264,8 +273,8 @@ export default function QuizPlayClient() {
       {/* Progress bar */}
       <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-pink-500 to-purple-500 rounded-full transition-all duration-500"
-          style={{ width: `${progressPct}%` }}
+          className="h-full rounded-full transition-all duration-500"
+          style={{ backgroundColor: "var(--accent)", width: `${progressPct}%` }}
         />
       </div>
 
@@ -278,8 +287,7 @@ export default function QuizPlayClient() {
       </div>
 
       {/* Question card */}
-      <div className="glass-card rounded-2xl p-6 border border-white/5 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-pink-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="surface-card rounded-xl p-6 border border-white/5 relative overflow-hidden">
         <p className="text-lg font-bold text-white leading-snug relative z-10">
           {currentQuestion.question}
         </p>
@@ -292,7 +300,7 @@ export default function QuizPlayClient() {
           const isSelected = option === selectedAnswer;
 
           let optionStyle =
-            "bg-white/[0.03] border-white/8 text-zinc-300 hover:border-pink-500/40 hover:bg-white/[0.06]";
+            "bg-white/[0.03] border-white/8 text-zinc-300 hover:border-orange-500/40 hover:bg-white/[0.06]";
 
           if (isRevealed) {
             if (isCorrect) {
@@ -331,7 +339,7 @@ export default function QuizPlayClient() {
       {isRevealed && (
         <button
           onClick={handleNext}
-          className="cursor-pointer btn-gradient w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-semibold text-white shadow-lg shadow-pink-500/20 transition-all hover:scale-[1.01] active:scale-[0.99]"
+          className="cursor-pointer bg-orange-600 hover:bg-orange-500 w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-semibold text-white transition-colors"
         >
           {currentIndex + 1 >= totalQuestions ? (
             <>

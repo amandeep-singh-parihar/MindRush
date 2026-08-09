@@ -34,54 +34,74 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
       {/* Toggle button */}
       <button
         onClick={() => setOpen(!open)}
-        className="md:hidden p-2 text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors cursor-pointer"
+        className="md:hidden p-2 rounded-lg transition-colors cursor-pointer"
+        style={{
+          color: "var(--text-muted)",
+          background: "var(--surface-2)",
+          border: "1px solid var(--border)",
+        }}
         aria-label="Toggle Menu"
       >
-        {open ? <X className="w-5 h-5 text-pink-400" /> : <Menu className="w-5 h-5" />}
+        {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
-      {/* Opaque Glass Drawer */}
+      {/* Drawer */}
       {open && (
-        <div className="md:hidden absolute left-0 right-0 top-full mt-2 p-5 bg-zinc-950/95 border border-white/15 backdrop-blur-2xl shadow-2xl shadow-pink-500/10 rounded-2xl flex flex-col gap-3 animate-fadeIn z-50">
+        <div
+          className="md:hidden absolute left-0 right-0 top-full mt-2 p-4 rounded-xl flex flex-col gap-3 animate-fade-in z-50"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
           {/* Navigation Links */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0.5">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="text-sm font-semibold text-zinc-300 hover:text-white transition-colors py-2.5 px-3 rounded-xl hover:bg-white/5"
+                className="text-sm font-medium py-2.5 px-3 rounded-lg transition-colors hover:text-white hover:bg-white/5"
+                style={{ color: "var(--text-muted)" }}
               >
                 {link.name}
               </Link>
             ))}
           </div>
 
-          <div className="h-px bg-white/10 my-1"></div>
+          <div style={{ height: "1px", background: "var(--border)" }} />
 
           {/* User Profile / Auth Actions */}
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2">
             {session?.user ? (
               <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/5">
+                <div
+                  className="flex items-center gap-3 p-2.5 rounded-lg"
+                  style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
+                >
                   {session.user.image && !imgError ? (
                     <img
                       src={session.user.image}
                       alt={session.user.name ?? "User"}
                       referrerPolicy="no-referrer"
                       onError={() => setImgError(true)}
-                      className="w-9 h-9 rounded-full ring-2 ring-pink-500/30 object-cover"
+                      className="w-8 h-8 rounded-full object-cover"
+                      style={{ border: "1px solid var(--border)" }}
                     />
                   ) : (
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white bg-gradient-to-tr from-pink-500 to-purple-600">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                      style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
+                    >
                       {session.user.name?.[0]?.toUpperCase() ?? "U"}
                     </div>
                   )}
                   <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-bold text-white truncate">
+                    <span className="text-sm font-semibold text-white truncate">
                       {session.user.name ?? "User"}
                     </span>
-                    <span className="text-[11px] text-zinc-400 truncate">
+                    <span className="text-[11px] truncate" style={{ color: "var(--text-muted)" }}>
                       {session.user.email ?? "Authenticated User"}
                     </span>
                   </div>
@@ -90,9 +110,13 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
                 <Link
                   href="/dashboard"
                   onClick={() => setOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-white transition-all"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold text-white transition-colors"
+                  style={{
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--border)",
+                  }}
                 >
-                  <User className="w-4 h-4 text-pink-400" />
+                  <User className="w-4 h-4" style={{ color: "var(--accent)" }} />
                   Dashboard
                 </Link>
 
@@ -101,7 +125,11 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
                     setOpen(false);
                     signOut();
                   }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-xs font-semibold text-red-400 transition-all cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-semibold text-red-400 transition-colors cursor-pointer"
+                  style={{
+                    background: "rgba(239,68,68,0.05)",
+                    border: "1px solid rgba(239,68,68,0.15)",
+                  }}
                 >
                   <LogOut className="w-4 h-4" />
                   Sign Out
@@ -114,7 +142,11 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
                     setOpen(false);
                     setOpenLoginModal(true);
                   }}
-                  className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-zinc-200 hover:text-white transition-colors cursor-pointer text-center"
+                  className="w-full py-2.5 rounded-lg text-xs font-semibold text-white transition-colors cursor-pointer text-center"
+                  style={{
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--border)",
+                  }}
                 >
                   Log In
                 </button>
@@ -124,9 +156,9 @@ export default function MobileMenu({ navLinks, session }: MobileMenuProps) {
                     setOpen(false);
                     setOpenSignUpModal(true);
                   }}
-                  className="w-full btn-gradient py-2.5 rounded-xl text-xs font-bold text-white shadow-lg shadow-pink-500/20 transition-transform active:scale-95 cursor-pointer text-center"
+                  className="w-full accent-btn py-2.5 rounded-lg text-xs font-bold cursor-pointer text-center"
                 >
-                  Get Started ✨
+                  Get Started
                 </button>
               </div>
             )}

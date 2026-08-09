@@ -53,7 +53,14 @@ export default function UserMenu({ session }: UserMenuProps) {
     <div ref={containerRef} className="relative hidden md:block">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl cursor-pointer transition-all duration-200 hover:bg-white/5"
+        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors"
+        style={{ color: "var(--text-muted)" }}
+        onMouseEnter={(e) =>
+          ((e.currentTarget as HTMLButtonElement).style.background = "var(--surface-2)")
+        }
+        onMouseLeave={(e) =>
+          ((e.currentTarget as HTMLButtonElement).style.background = "transparent")
+        }
       >
         {/* Avatar */}
         {session.user.image && !imgError ? (
@@ -62,44 +69,42 @@ export default function UserMenu({ session }: UserMenuProps) {
             alt={session.user.name ?? "User"}
             referrerPolicy="no-referrer"
             onError={() => setImgError(true)}
-            className="w-8 h-8 rounded-full ring-2 ring-pink-500/30 object-cover"
+            className="w-7 h-7 rounded-full object-cover"
+            style={{ border: "1px solid var(--border)" }}
           />
         ) : (
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white ring-2 ring-pink-500/30"
-            style={{
-              background: "linear-gradient(135deg, #ec4899 0%, #a855f7 100%)",
-            }}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
+            style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
           >
             {initials}
           </div>
         )}
 
-        <span className="text-sm font-medium text-zinc-300 max-w-[120px] truncate">
-          {firstName}
-        </span>
+        <span className="text-sm font-medium text-white max-w-[100px] truncate">{firstName}</span>
 
         <ChevronDown
-          className={`w-4 h-4 text-zinc-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          style={{ color: "var(--text-subtle)" }}
         />
       </button>
 
       {/* Dropdown */}
       {open && (
         <div
-          className="absolute right-0 top-full mt-2 w-56 rounded-xl z-50 py-2 overflow-hidden"
+          className="absolute right-0 top-full mt-2 w-52 rounded-xl z-50 py-1.5 overflow-hidden animate-fade-in"
           style={{
-            background: "rgba(15, 15, 20, 0.95)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            backdropFilter: "blur(20px)",
-            boxShadow: "0 16px 48px rgba(0,0,0,0.4)",
-            animation: "modalIn 0.15s ease-out both",
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
           }}
         >
           {/* User info header */}
-          <div className="px-4 py-3 border-b border-white/5">
+          <div className="px-4 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
             <p className="text-sm font-semibold text-white truncate">{session.user.name}</p>
-            <p className="text-xs text-zinc-500 truncate mt-0.5">{session.user.email}</p>
+            <p className="text-xs truncate mt-0.5" style={{ color: "var(--text-muted)" }}>
+              {session.user.email}
+            </p>
           </div>
 
           {/* Menu items */}
@@ -109,9 +114,10 @@ export default function UserMenu({ session }: UserMenuProps) {
                 setOpen(false);
                 router.push("/dashboard/settings");
               }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors cursor-pointer hover:bg-white/5"
+              style={{ color: "var(--text-muted)" }}
             >
-              <User className="w-4 h-4 text-zinc-500" />
+              <User className="w-4 h-4" />
               My Profile
             </button>
 
@@ -120,7 +126,8 @@ export default function UserMenu({ session }: UserMenuProps) {
                 setOpen(false);
                 router.push("/dashboard");
               }}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors cursor-pointer hover:bg-white/5"
+              style={{ color: "var(--text-muted)" }}
             >
               <LayoutDashboard className="w-4 h-4" />
               Dashboard

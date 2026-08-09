@@ -78,11 +78,14 @@ export default function ActivityHeatmap({ attemptDates = [] }: ActivityHeatmapPr
         <span>Past 365 Days</span>
         <div className="flex items-center gap-1.5">
           <span>Less</span>
-          <div className="w-2.5 h-2.5 rounded-sm bg-white/5 border border-white/10" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-pink-500/35" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-pink-500/65" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-purple-500/85" />
-          <div className="w-2.5 h-2.5 rounded-sm bg-purple-500" />
+          <div
+            className="w-2.5 h-2.5 rounded-sm bg-[#1e1e1e]"
+            style={{ border: "1px solid rgba(255,255,255,0.05)" }}
+          />
+          <div className="w-2.5 h-2.5 rounded-sm bg-[#0e4429]" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-[#006d32]" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-[#26a641]" />
+          <div className="w-2.5 h-2.5 rounded-sm bg-[#39d353]" />
           <span>More</span>
         </div>
       </div>

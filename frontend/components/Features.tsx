@@ -70,15 +70,16 @@ export default function Features() {
 
   return (
     <section className="w-full flex flex-col gap-6 py-4" id="features">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-white font-sans tracking-tight">
-          Features
-        </h2>
-        <p className="text-sm text-zinc-400 max-w-md mx-auto leading-relaxed">
+      <div className="flex flex-col items-center gap-1.5 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">Features</h2>
+        <p
+          className="text-sm max-w-md mx-auto leading-relaxed"
+          style={{ color: "var(--text-muted)" }}
+        >
           Everything you need to generate, customize, and master AI quizzes effortlessly.
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {featuresData.map((feature, index) => (
           <FeatureCard
             key={index}

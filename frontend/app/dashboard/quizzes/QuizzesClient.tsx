@@ -66,7 +66,7 @@ export default function QuizzesClient({ initialQuizzes = [] }: { initialQuizzes?
 
         <Link
           href="/"
-          className="btn-gradient px-5 py-3 rounded-2xl text-sm font-semibold text-white shadow-lg shadow-pink-500/25 flex items-center justify-center gap-2 cursor-pointer"
+          className="accent-btn px-5 py-2.5 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           Generate New Quiz
@@ -74,7 +74,7 @@ export default function QuizzesClient({ initialQuizzes = [] }: { initialQuizzes?
       </div>
 
       {/* Filter bar */}
-      <div className="flex items-center gap-3 glass-card rounded-2xl p-3 border border-white/5 max-w-md w-full">
+      <div className="flex items-center gap-3 surface-card rounded-xl p-3 border border-white/5 max-w-md w-full">
         <Search className="w-4 h-4 text-zinc-500 shrink-0 ml-1" />
         <input
           type="text"
@@ -91,7 +91,7 @@ export default function QuizzesClient({ initialQuizzes = [] }: { initialQuizzes?
           {filteredQuizzes.map((quiz) => (
             <div
               key={quiz.id}
-              className="glass-card rounded-2xl p-5 border border-white/5 flex flex-col justify-between hover:border-white/10 transition-all duration-300"
+              className="surface-card rounded-xl p-5 flex flex-col justify-between hover:border-white/10 transition-colors duration-200"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -138,14 +138,14 @@ export default function QuizzesClient({ initialQuizzes = [] }: { initialQuizzes?
               <div className="flex items-center gap-2 pt-2 border-t border-white/5">
                 <Link
                   href={`/dashboard/quiz/${quiz.id}`}
-                  className="flex-1 btn-gradient py-2 px-3 rounded-xl text-xs font-semibold text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-pink-500/10 hover:shadow-pink-500/20 transition-all duration-200"
+                  className="flex-1 accent-btn py-2 px-3 rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1.5 cursor-pointer transition-colors duration-200"
                 >
                   <Play className="w-3.5 h-3.5 fill-white/10" />
                   Play Quiz
                 </Link>
                 <button
                   onClick={() => handleShareQuiz(quiz.id)}
-                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-zinc-300 hover:text-white transition-colors cursor-pointer"
+                  className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 text-zinc-300 hover:text-white transition-colors cursor-pointer"
                   title="Share Quiz Link"
                 >
                   <Share2 className="w-3.5 h-3.5" />
@@ -153,7 +153,7 @@ export default function QuizzesClient({ initialQuizzes = [] }: { initialQuizzes?
                 <button
                   onClick={() => handleDelete(quiz.id)}
                   disabled={deletingId === quiz.id}
-                  className="p-2 rounded-xl bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 text-red-400 hover:text-red-300 transition-colors cursor-pointer disabled:opacity-50"
+                  className="p-2 rounded-lg bg-red-500/5 hover:bg-red-500/10 border border-red-500/10 text-red-400 hover:text-red-300 transition-colors cursor-pointer disabled:opacity-50"
                   title="Delete Quiz"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -163,7 +163,7 @@ export default function QuizzesClient({ initialQuizzes = [] }: { initialQuizzes?
           ))}
         </div>
       ) : (
-        <div className="glass-card rounded-2xl p-12 text-center border border-white/5 max-w-xl mx-auto mt-8">
+        <div className="surface-card rounded-xl p-12 text-center max-w-xl mx-auto mt-8">
           <BookOpen className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
           <h4 className="text-lg font-bold text-white">No quizzes found</h4>
           <p className="text-sm text-zinc-400 mt-2 max-w-sm mx-auto">

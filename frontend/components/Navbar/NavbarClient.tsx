@@ -21,13 +21,8 @@ export default function NavbarClient({ session }: { session: Session | null }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 20);
     };
-
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -35,21 +30,16 @@ export default function NavbarClient({ session }: { session: Session | null }) {
 
   return (
     <nav
-      className={`fixed top-3 left-1/2 -translate-x-1/2 w-[92%] max-w-7xl z-50 rounded-2xl px-6 transition-all duration-300 ${
-        scrolled
-          ? "bg-zinc-950/95 border border-white/15 backdrop-blur-2xl shadow-2xl shadow-pink-500/10 py-3.5"
-          : "bg-zinc-950/40 border border-white/5 backdrop-blur-md py-3"
+      className={`fixed top-3 left-1/2 -translate-x-1/2 w-[92%] max-w-7xl z-50 rounded-xl px-6 transition-all duration-200 ${
+        scrolled ? "glass-navbar py-3.5 shadow-lg" : "bg-transparent border border-transparent py-3"
       }`}
     >
       <div className="flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative">
-            <div className="absolute inset-0 bg-pink-500 rounded-full blur-md opacity-75 group-hover:opacity-100 transition-opacity"></div>
-            <Brain className="relative w-7 h-7 text-pink-500 dark:text-pink-400 stroke-[2.5]" />
-          </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-white via-slate-100 to-pink-500 bg-clip-text text-transparent font-sans tracking-tight">
-            MindRush
+        <Link href="/" className="flex items-center gap-2">
+          <Brain className="w-6 h-6" style={{ color: "var(--accent)" }} strokeWidth={2.5} />
+          <span className="text-lg font-bold text-white tracking-tight font-sans">
+            Mind<span style={{ color: "var(--accent)" }}>Rush</span>
           </span>
         </Link>
 
@@ -59,7 +49,8 @@ export default function NavbarClient({ session }: { session: Session | null }) {
             <Link
               key={link.name}
               href={link.href}
-              className="text-sm font-medium text-zinc-400 hover:text-white transition-colors duration-200"
+              className="text-sm font-medium transition-colors duration-200 hover:text-white"
+              style={{ color: "var(--text-muted)" }}
             >
               {link.name}
             </Link>

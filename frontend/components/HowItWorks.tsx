@@ -26,35 +26,39 @@ export default function HowItWorks() {
 
   return (
     <section className="w-full flex flex-col gap-5 py-4" id="how-it-works">
-      <h2 className="text-2xl font-bold text-white text-center font-sans tracking-tight">
-        How It Works
-      </h2>
+      <h2 className="text-2xl font-bold text-white text-center tracking-tight">How It Works</h2>
 
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-6 mt-2">
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mt-2">
         {steps.map((step, index) => (
           <div
             key={index}
             className="flex flex-col lg:flex-row items-center w-full lg:w-auto flex-1"
           >
             {/* Step Card */}
-            <div className="flex-1 w-full glass-card rounded-2xl p-6 flex flex-col items-center text-center border border-white/5 relative overflow-hidden transition-all duration-300 hover:border-white/10 hover:bg-white/5 hover:scale-[1.02] group">
-              <div className="absolute -inset-px bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-
-              <div className="p-3 rounded-xl bg-purple-500/10 text-purple-400 mb-4 group-hover:scale-110 transition-transform">
-                <step.icon className="w-6 h-6" />
+            <div className="surface-card rounded-xl p-6 flex flex-col items-center text-center w-full transition-colors duration-200 hover:border-[#383838]">
+              <div className="p-3 rounded-lg mb-4" style={{ background: "var(--surface-2)" }}>
+                <step.icon className="w-5 h-5" style={{ color: "var(--accent)" }} />
               </div>
 
-              <span className="text-sm font-semibold text-zinc-400 mb-1">Step 0{index + 1}</span>
-              <h3 className="text-base font-bold text-white mb-2 font-sans">{step.title}</h3>
-              <p className="text-xs text-zinc-500 max-w-[200px] leading-relaxed">
+              <span className="text-xs font-medium mb-1" style={{ color: "var(--text-subtle)" }}>
+                Step 0{index + 1}
+              </span>
+              <h3 className="text-sm font-semibold text-white mb-1.5">{step.title}</h3>
+              <p
+                className="text-xs max-w-[200px] leading-relaxed"
+                style={{ color: "var(--text-muted)" }}
+              >
                 {step.description}
               </p>
             </div>
 
             {/* Connecting Arrow */}
             {index < steps.length - 1 && (
-              <div className="flex items-center justify-center py-4 lg:py-0 lg:px-4 text-zinc-600">
-                <ArrowRight className="w-6 h-6 rotate-90 lg:rotate-0" />
+              <div
+                className="flex items-center justify-center py-3 lg:py-0 lg:px-3"
+                style={{ color: "var(--border-hover)" }}
+              >
+                <ArrowRight className="w-5 h-5 rotate-90 lg:rotate-0" />
               </div>
             )}
           </div>

@@ -35,38 +35,40 @@ export default function FAQ() {
 
   return (
     <section className="w-full flex flex-col gap-4 py-4" id="faq">
-      <h2 className="text-2xl font-bold text-white text-center font-sans tracking-tight">
+      <h2 className="text-2xl font-bold text-white text-center tracking-tight">
         Frequently Asked Questions
       </h2>
 
-      <div className="w-full max-w-3xl mx-auto flex flex-col gap-3 mt-2">
+      <div className="w-full max-w-3xl mx-auto flex flex-col gap-2 mt-2">
         {faqData.map((item, index) => {
           const isOpen = openIndex === index;
           return (
             <div
               key={index}
-              className="glass-card rounded-xl border border-white/5 overflow-hidden transition-all duration-300 hover:border-white/10"
+              className="surface-card rounded-xl overflow-hidden transition-colors duration-200 hover:border-[#383838]"
             >
-              {/* Accordion Trigger Header */}
+              {/* Accordion Trigger */}
               <button
                 onClick={() => handleToggle(index)}
-                className="w-full flex items-center justify-between p-5 text-left text-sm md:text-base font-bold text-white transition-colors hover:bg-white/5 cursor-pointer"
+                className="w-full flex items-center justify-between p-5 text-left text-sm font-semibold text-white cursor-pointer hover:bg-white/[0.02] transition-colors"
               >
                 <span>{item.question}</span>
                 <ChevronDown
-                  className={`w-5 h-5 text-zinc-400 shrink-0 transition-transform duration-300 ${
-                    isOpen ? "rotate-180 text-pink-500" : ""
+                  className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
+                    isOpen ? "rotate-180" : ""
                   }`}
+                  style={{ color: isOpen ? "var(--accent)" : "var(--text-muted)" }}
                 />
               </button>
 
               {/* Accordion Content */}
               <div
                 className={`transition-all duration-300 ease-in-out ${
-                  isOpen ? "max-h-96 border-t border-white/5" : "max-h-0"
+                  isOpen ? "max-h-96 border-t" : "max-h-0"
                 } overflow-hidden`}
+                style={{ borderColor: "var(--border)" }}
               >
-                <p className="p-5 text-xs md:text-sm text-zinc-400 leading-relaxed bg-zinc-950/20">
+                <p className="p-5 text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>
                   {item.answer}
                 </p>
               </div>

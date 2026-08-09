@@ -4,11 +4,11 @@ import {
   Target,
   Trophy,
   Clock,
-  Sparkles,
   ChevronRight,
   History,
   Calendar,
   BookOpen,
+  Plus,
 } from "lucide-react";
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
@@ -78,98 +78,122 @@ export default async function OverviewPage() {
   }));
 
   return (
-    <div className="space-y-8 animate-fadeIn">
-      {/* Header Banner Section */}
-      <div className="relative glass-card rounded-3xl p-6 md:p-8 overflow-hidden border border-white/5">
-        <div className="absolute right-0 top-0 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-        <div className="absolute left-1/3 bottom-0 w-60 h-60 bg-purple-500/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
-              Welcome back,{" "}
-              <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
-                {firstName}
-              </span>
-              !
-            </h2>
-            <p className="text-sm md:text-base text-zinc-400 mt-2 max-w-xl">
-              Ready to boost your knowledge today? Choose a recommended topic below or construct a
-              custom quiz using the power of AI.
-            </p>
-          </div>
-
-          <Link
-            href="/"
-            className="btn-gradient shrink-0 px-6 py-3.5 rounded-2xl text-sm font-semibold text-white shadow-xl shadow-pink-500/20 hover:shadow-pink-500/40 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <Sparkles className="w-4 h-4 fill-white/10" />
-            Create Custom Quiz
-          </Link>
+    <div className="space-y-6 animate-fadeIn">
+      {/* Header Banner */}
+      <div
+        className="rounded-xl p-6 md:p-7 flex flex-col md:flex-row md:items-center justify-between gap-5"
+        style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+        }}
+      >
+        <div>
+          <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">
+            Welcome back, <span style={{ color: "var(--accent)" }}>{firstName}</span>!
+          </h2>
+          <p className="text-sm mt-1 max-w-xl" style={{ color: "var(--text-muted)" }}>
+            Ready to boost your knowledge today? Choose a recommended topic below or construct a
+            custom quiz using the power of AI.
+          </p>
         </div>
+
+        <Link
+          href="/"
+          className="accent-btn shrink-0 px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <Plus className="w-4 h-4" />
+          Create Quiz
+        </Link>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Stat Item 1: Streak */}
-        <div className="glass-card rounded-2xl p-4 md:p-5 flex items-center gap-4 relative overflow-hidden">
-          <div className="p-3 bg-amber-500/10 text-amber-500 rounded-xl">
-            <Flame className="w-5 h-5 fill-amber-500/10 animate-pulse" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Streak */}
+        <div
+          className="rounded-xl p-4 md:p-5 flex items-center gap-3"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <div className="p-2.5 rounded-lg" style={{ background: "var(--surface-2)" }}>
+            <Flame className="w-4 h-4" style={{ color: "var(--accent)" }} />
           </div>
           <div>
-            <p className="text-xs text-zinc-400 font-medium">Daily Streak</p>
-            <h4 className="text-lg md:text-xl font-bold text-white mt-1">
+            <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+              Daily Streak
+            </p>
+            <h4 className="text-lg font-bold text-white mt-0.5">
               {userStats.currentStreak}{" "}
-              <span className="text-xs font-normal text-zinc-500">days</span>
+              <span className="text-xs font-normal" style={{ color: "var(--text-subtle)" }}>
+                days
+              </span>
             </h4>
-            <p className="text-[10px] text-amber-500/80 font-medium mt-0.5">
-              Best: {userStats.maxStreak} days
+            <p className="text-[10px] mt-0.5" style={{ color: "var(--text-subtle)" }}>
+              Best: {userStats.maxStreak}d
             </p>
           </div>
         </div>
 
-        {/* Stat Item 2: Accuracy */}
-        <div className="glass-card rounded-2xl p-4 md:p-5 flex items-center gap-4 relative overflow-hidden">
-          <div className="p-3 bg-pink-500/10 text-pink-500 rounded-xl">
-            <Target className="w-5 h-5" />
+        {/* Accuracy */}
+        <div
+          className="rounded-xl p-4 md:p-5 flex items-center gap-3"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <div className="p-2.5 rounded-lg" style={{ background: "var(--surface-2)" }}>
+            <Target className="w-4 h-4" style={{ color: "var(--accent)" }} />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-zinc-400 font-medium">Avg Accuracy</p>
-            <h4 className="text-lg md:text-xl font-bold text-white mt-1">{calculatedAccuracy}%</h4>
-            <div className="w-full bg-white/5 h-1 rounded-full mt-1.5 overflow-hidden">
+            <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+              Avg Accuracy
+            </p>
+            <h4 className="text-lg font-bold text-white mt-0.5">{calculatedAccuracy}%</h4>
+            <div
+              className="w-full h-1 rounded-full mt-1.5 overflow-hidden"
+              style={{ background: "var(--surface-2)" }}
+            >
               <div
-                className="h-full bg-pink-500 rounded-full"
-                style={{ width: `${calculatedAccuracy}%` }}
+                className="h-full rounded-full"
+                style={{ width: `${calculatedAccuracy}%`, background: "var(--accent)" }}
               />
             </div>
           </div>
         </div>
 
-        {/* Stat Item 3: Total Quizzes */}
-        <div className="glass-card rounded-2xl p-4 md:p-5 flex items-center gap-4 relative overflow-hidden">
-          <div className="p-3 bg-purple-500/10 text-purple-500 rounded-xl">
-            <Trophy className="w-5 h-5" />
+        {/* Total Quizzes */}
+        <div
+          className="rounded-xl p-4 md:p-5 flex items-center gap-3"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <div className="p-2.5 rounded-lg" style={{ background: "var(--surface-2)" }}>
+            <Trophy className="w-4 h-4" style={{ color: "var(--accent)" }} />
           </div>
           <div>
-            <p className="text-xs text-zinc-400 font-medium">Quizzes Completed</p>
-            <h4 className="text-lg md:text-xl font-bold text-white mt-1">
-              {userStats.totalQuizzesTaken}
-            </h4>
-            <p className="text-[10px] text-purple-400/80 font-medium mt-0.5">Real DB Tracker</p>
+            <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+              Quizzes Completed
+            </p>
+            <h4 className="text-lg font-bold text-white mt-0.5">{userStats.totalQuizzesTaken}</h4>
+            <p className="text-[10px] mt-0.5" style={{ color: "var(--text-subtle)" }}>
+              Total
+            </p>
           </div>
         </div>
 
-        {/* Stat Item 4: Study Time */}
-        <div className="glass-card rounded-2xl p-4 md:p-5 flex items-center gap-4 relative overflow-hidden">
-          <div className="p-3 bg-indigo-500/10 text-indigo-500 rounded-xl">
-            <Clock className="w-5 h-5" />
+        {/* Study Time */}
+        <div
+          className="rounded-xl p-4 md:p-5 flex items-center gap-3"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <div className="p-2.5 rounded-lg" style={{ background: "var(--surface-2)" }}>
+            <Clock className="w-4 h-4" style={{ color: "var(--accent)" }} />
           </div>
           <div>
-            <p className="text-xs text-zinc-400 font-medium">Study Time</p>
-            <h4 className="text-lg md:text-xl font-bold text-white mt-1">
+            <p className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+              Study Time
+            </p>
+            <h4 className="text-lg font-bold text-white mt-0.5">
               {Math.floor(userStats.totalStudyTime / 60)}h {userStats.totalStudyTime % 60}m
             </h4>
-            <p className="text-[10px] text-indigo-400/80 font-medium mt-0.5">Total Time</p>
+            <p className="text-[10px] mt-0.5" style={{ color: "var(--text-subtle)" }}>
+              Total
+            </p>
           </div>
         </div>
       </div>
@@ -177,65 +201,118 @@ export default async function OverviewPage() {
       {/* Quick AI Templates */}
       <QuickTemplates />
 
-      {/* Learning Intensity / Activity Calendar */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-zinc-400" />
-          Learning Activity Log
+      {/* Activity Heatmap */}
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+          <Calendar className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
+          Learning Activity
         </h3>
 
-        <div className="glass-card rounded-2xl p-6 border border-white/5 w-full">
+        <div
+          className="rounded-xl p-5 w-full"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
           <ActivityHeatmap
             attemptDates={(dbUser?.attempts || []).map((a) => a.completedAt.toISOString())}
           />
         </div>
       </div>
 
-      {/* Recent Quiz Attempts (Full Width) */}
-      <div className="space-y-4">
+      {/* Recent Quiz Attempts */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-            <History className="w-4 h-4 text-zinc-400" />
-            Recent Quiz Attempts
+          <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+            <History className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
+            Recent Attempts
           </h3>
           <Link
             href="/dashboard/history"
-            className="text-xs text-pink-500 hover:text-pink-400 font-semibold transition-colors flex items-center gap-0.5 cursor-pointer"
+            className="text-xs font-medium flex items-center gap-0.5 transition-colors hover:opacity-80 cursor-pointer"
+            style={{ color: "var(--accent)" }}
           >
-            View All History
+            View All
             <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         {attemptsList.length > 0 ? (
-          <div className="glass-card rounded-2xl border border-white/5 overflow-hidden">
+          <div
+            className="rounded-xl overflow-hidden"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          >
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-white/5 bg-white/[0.01]">
-                    <th className="p-4 text-xs font-semibold text-zinc-400">Quiz Topic</th>
-                    <th className="p-4 text-xs font-semibold text-zinc-400">Difficulty</th>
-                    <th className="p-4 text-xs font-semibold text-zinc-400">Score</th>
-                    <th className="p-4 text-xs font-semibold text-zinc-400">Accuracy</th>
-                    <th className="p-4 text-xs font-semibold text-zinc-400">Date</th>
+                  <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                    <th
+                      className="p-4 text-xs font-semibold"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Quiz Topic
+                    </th>
+                    <th
+                      className="p-4 text-xs font-semibold"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Difficulty
+                    </th>
+                    <th
+                      className="p-4 text-xs font-semibold"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Score
+                    </th>
+                    <th
+                      className="p-4 text-xs font-semibold"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Accuracy
+                    </th>
+                    <th
+                      className="p-4 text-xs font-semibold"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      Date
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody>
                   {attemptsList.map((attempt) => (
-                    <tr key={attempt.id} className="hover:bg-white/[0.01] transition-colors">
+                    <tr
+                      key={attempt.id}
+                      className="transition-colors hover:bg-white/[0.02]"
+                      style={{ borderBottom: "1px solid var(--border)" }}
+                    >
                       <td className="p-4">
-                        <div className="font-semibold text-white text-sm">{attempt.quizTitle}</div>
-                        <div className="text-[11px] text-zinc-500">{attempt.topic}</div>
+                        <div className="font-medium text-white text-sm">{attempt.quizTitle}</div>
+                        <div className="text-[11px] mt-0.5" style={{ color: "var(--text-subtle)" }}>
+                          {attempt.topic}
+                        </div>
                       </td>
                       <td className="p-4">
                         <span
-                          className={`text-[10px] px-2 py-0.5 rounded font-medium ${
-                            attempt.difficulty === "Easy"
-                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                              : attempt.difficulty === "Medium"
-                                ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                                : "bg-red-500/10 text-red-400 border border-red-500/20"
-                          }`}
+                          className="text-[10px] px-2 py-0.5 rounded font-medium"
+                          style={{
+                            background:
+                              attempt.difficulty === "Easy"
+                                ? "rgba(34,197,94,0.1)"
+                                : attempt.difficulty === "Medium"
+                                  ? "rgba(234,179,8,0.1)"
+                                  : "rgba(239,68,68,0.1)",
+                            color:
+                              attempt.difficulty === "Easy"
+                                ? "#4ade80"
+                                : attempt.difficulty === "Medium"
+                                  ? "#facc15"
+                                  : "#f87171",
+                            border: `1px solid ${
+                              attempt.difficulty === "Easy"
+                                ? "rgba(34,197,94,0.2)"
+                                : attempt.difficulty === "Medium"
+                                  ? "rgba(234,179,8,0.2)"
+                                  : "rgba(239,68,68,0.2)"
+                            }`,
+                          }}
                         >
                           {attempt.difficulty}
                         </span>
@@ -245,24 +322,29 @@ export default async function OverviewPage() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-medium text-zinc-300">
+                          <span className="text-xs font-medium text-white">
                             {attempt.percentage}%
                           </span>
-                          <div className="w-12 bg-white/5 h-1 rounded-full overflow-hidden hidden sm:block">
+                          <div
+                            className="w-12 h-1 rounded-full overflow-hidden hidden sm:block"
+                            style={{ background: "var(--surface-2)" }}
+                          >
                             <div
-                              className={`h-full rounded-full ${
-                                attempt.percentage >= 80
-                                  ? "bg-emerald-500"
-                                  : attempt.percentage >= 60
-                                    ? "bg-amber-500"
-                                    : "bg-red-500"
-                              }`}
-                              style={{ width: `${attempt.percentage}%` }}
-                            ></div>
+                              className="h-full rounded-full"
+                              style={{
+                                width: `${attempt.percentage}%`,
+                                background:
+                                  attempt.percentage >= 80
+                                    ? "#4ade80"
+                                    : attempt.percentage >= 60
+                                      ? "#facc15"
+                                      : "#f87171",
+                              }}
+                            />
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 text-xs text-zinc-400">
+                      <td className="p-4 text-xs" style={{ color: "var(--text-muted)" }}>
                         {new Date(attempt.completedAt).toLocaleDateString()}
                       </td>
                     </tr>
@@ -272,12 +354,14 @@ export default async function OverviewPage() {
             </div>
           </div>
         ) : (
-          <div className="glass-card rounded-2xl p-8 text-center border border-white/5">
-            <BookOpen className="w-10 h-10 text-zinc-600 mx-auto mb-3" />
-            <h4 className="text-base font-bold text-white">No quiz attempts recorded yet</h4>
-            <p className="text-xs text-zinc-400 mt-1">
-              Generate a quiz using the form above to record your first completed attempt in the
-              database!
+          <div
+            className="rounded-xl p-8 text-center"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          >
+            <BookOpen className="w-8 h-8 mx-auto mb-3" style={{ color: "var(--text-subtle)" }} />
+            <h4 className="text-sm font-semibold text-white">No quiz attempts yet</h4>
+            <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
+              Generate a quiz using the form above to record your first attempt.
             </p>
           </div>
         )}

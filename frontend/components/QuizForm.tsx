@@ -15,6 +15,8 @@ import {
   X,
   AlertCircle,
   Type,
+  ArrowRight,
+  Loader2,
 } from "lucide-react";
 
 interface QuizFormProps {
@@ -233,24 +235,24 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
       return {
         icon: BookOpen,
         label: "Topic",
-        color: "text-purple-400 bg-purple-500/15 border-purple-500/25",
+        color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
       };
     if (showTextPanel)
       return {
         icon: Type,
         label: "Text",
-        color: "text-pink-400 bg-pink-500/15 border-pink-500/25",
+        color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
       };
     if (pdfFile)
       return {
         icon: FileText,
         label: "PDF",
-        color: "text-blue-400 bg-blue-500/15 border-blue-500/25",
+        color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
       };
     return {
       icon: BookOpen,
       label: "Topic",
-      color: "text-purple-400 bg-purple-500/15 border-purple-500/25",
+      color: "text-orange-400 bg-orange-500/10 border-orange-500/20",
     };
   };
 
@@ -259,22 +261,19 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
 
   return (
     <>
-      {/* ── Toast Notification (Portal — renders on body to escape stacking context) ── */}
       {isMounted &&
         toast?.show &&
         createPortal(
           <div className="fixed top-6 right-6 z-[9999] animate-slide-in-right">
-            <div className="rounded-2xl p-3.5 border border-white/10 bg-[#13151f]/95 backdrop-blur-xl shadow-2xl shadow-black/80 flex items-center gap-3.5 max-w-sm">
-              <div className="shrink-0 w-9 h-9 rounded-xl bg-red-500/15 border border-red-500/20 flex items-center justify-center text-red-400">
-                <AlertCircle className="w-5 h-5" />
-              </div>
+            <div className="bg-[#161616] border border-[#2a2a2a] border-l-4 border-l-red-500 rounded-lg p-3.5 shadow-xl shadow-black/60 flex items-start gap-3.5 max-w-sm">
+              <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0 pr-2">
-                <h4 className="text-sm font-bold text-red-400 tracking-tight">{toast.title}</h4>
-                <p className="text-xs text-zinc-400 mt-0.5 leading-snug">{toast.message}</p>
+                <h4 className="text-xs font-semibold text-white tracking-tight">{toast.title}</h4>
+                <p className="text-[11px] text-zinc-400 mt-1 leading-relaxed">{toast.message}</p>
               </div>
               <button
                 onClick={() => setToast((prev) => (prev ? { ...prev, show: false } : null))}
-                className="shrink-0 p-1 text-zinc-500 hover:text-zinc-300 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+                className="shrink-0 p-1 text-zinc-500 hover:text-zinc-300 rounded-md hover:bg-white/5 transition-colors cursor-pointer mt-0.5"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -303,7 +302,7 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
         <div className="flex flex-col gap-3">
           {/* ── Expansion Panel: Text Area (when text mode) ── */}
           {inputMode === "content" && showTextPanel && (
-            <div className="animate-expand-panel glass-card rounded-2xl p-4 border border-white/5 shadow-2xl shadow-purple-950/20">
+            <div className="animate-expand-panel surface-card rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-zinc-400 tracking-wider uppercase">
                   Paste your text
@@ -327,14 +326,14 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
                 onChange={(e) => setPastedText(e.target.value)}
                 placeholder="Paste your notes, article, or any text here…"
                 required={!pdfFile}
-                className="w-full bg-zinc-900/50 border border-white/8 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/20 transition-all duration-200 resize-none"
+                className="w-full bg-transparent border border-[#2a2a2a] rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-orange-500/40 transition-all duration-200 resize-none"
               />
             </div>
           )}
 
           {/* ── Expansion Panel: PDF File Chip ── */}
           {inputMode === "content" && pdfFile && !showTextPanel && (
-            <div className="animate-expand-panel glass-card rounded-2xl px-4 py-3 border border-white/5 shadow-2xl shadow-purple-950/20">
+            <div className="animate-expand-panel surface-card rounded-xl px-4 py-3">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-500/25 flex items-center justify-center">
                   <FileText className="w-4 h-4 text-blue-400" />
@@ -353,7 +352,7 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
           )}
 
           {/* ── Settings Panel (always visible) ── */}
-          <div className="glass-card rounded-2xl p-5 border border-white/8 shadow-2xl shadow-purple-950/30 mt-4">
+          <div className="surface-card rounded-xl p-5 mt-4">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-semibold text-zinc-300 tracking-wider uppercase">
                 Quiz Settings
@@ -373,7 +372,7 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
                     id="difficulty"
                     value={difficulty}
                     onChange={(e) => setDifficulty(e.target.value)}
-                    className="w-full appearance-none bg-zinc-900/60 border border-white/10 rounded-xl pl-4 pr-10 py-2.5 text-sm text-white focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500/30 transition-all duration-200 cursor-pointer"
+                    className="w-full appearance-none bg-transparent border border-[#2a2a2a] rounded-xl pl-4 pr-10 py-2.5 text-sm text-white focus:outline-none focus:border-orange-500/40 transition-all duration-200 cursor-pointer"
                   >
                     <option value="Easy" className="bg-zinc-950">
                       Easy
@@ -397,7 +396,7 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
                 >
                   Questions
                 </label>
-                <div className="relative flex items-center bg-zinc-900/60 border border-white/10 rounded-xl overflow-hidden">
+                <div className="relative flex items-center bg-transparent border border-[#2a2a2a] rounded-xl overflow-hidden">
                   <button
                     type="button"
                     onClick={handleDecrement}
@@ -433,7 +432,10 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
           {/* ══════════════════════════════════════════════════════════ */}
           {/* ── THE MAIN INPUT BAR ── */}
           {/* ══════════════════════════════════════════════════════════ */}
-          <div className="relative flex items-center gap-2 bg-[#0f1117] border border-white/10 rounded-full px-2 py-2 shadow-2xl shadow-black/40 transition-all duration-300 focus-within:border-pink-500/30 focus-within:shadow-pink-500/5">
+          <div
+            className="relative flex items-center gap-2 border rounded-full px-2 py-2 transition-all duration-200 focus-within:border-[#383838]"
+            style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+          >
             {/* ── + Button (Drop-up trigger) ── */}
             <div className="relative" ref={menuRef}>
               <button
@@ -453,29 +455,32 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
               {/* ── Drop-up Menu ── */}
               {menuOpen && (
                 <div className="absolute bottom-full left-0 mb-2.5 animate-drop-up z-50">
-                  <div className="rounded-xl border border-white/10 p-1.5 shadow-2xl shadow-black/60 min-w-[180px] bg-[#13151f]">
+                  <div
+                    className="rounded-xl border p-1.5 shadow-2xl min-w-[180px]"
+                    style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+                  >
                     {/* Topic */}
                     <button
                       type="button"
                       onClick={selectTopic}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 cursor-pointer ${
                         inputMode === "topic" && !showTextPanel
-                          ? "bg-purple-500/15 text-purple-300"
-                          : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                          ? "text-orange-400"
+                          : "text-zinc-400 hover:bg-white/[0.02] hover:text-white"
                       }`}
                     >
                       <div
                         className={`w-7 h-7 rounded-lg flex items-center justify-center ${
                           inputMode === "topic" && !showTextPanel
-                            ? "bg-purple-500/20 border border-purple-500/30"
-                            : "bg-white/5 border border-white/8"
+                            ? "bg-orange-500/10 border border-orange-500/20"
+                            : "bg-[#1e1e1e] border border-[#2a2a2a]"
                         }`}
                       >
                         <BookOpen className="w-3.5 h-3.5" />
                       </div>
                       <div className="text-left">
-                        <div className="font-medium">Topic</div>
-                        <div className="text-[10px] text-zinc-600 leading-tight">
+                        <div className="font-medium text-xs">Topic</div>
+                        <div className="text-[10px] text-zinc-500 leading-tight">
                           Enter any subject
                         </div>
                       </div>
@@ -487,22 +492,22 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
                       onClick={selectText}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 cursor-pointer ${
                         inputMode === "content" && showTextPanel
-                          ? "bg-pink-500/15 text-pink-300"
-                          : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                          ? "text-orange-400"
+                          : "text-zinc-400 hover:bg-white/[0.02] hover:text-white"
                       }`}
                     >
                       <div
                         className={`w-7 h-7 rounded-lg flex items-center justify-center ${
                           inputMode === "content" && showTextPanel
-                            ? "bg-pink-500/20 border border-pink-500/30"
-                            : "bg-white/5 border border-white/8"
+                            ? "bg-orange-500/10 border border-orange-500/20"
+                            : "bg-[#1e1e1e] border border-[#2a2a2a]"
                         }`}
                       >
                         <Type className="w-3.5 h-3.5" />
                       </div>
                       <div className="text-left">
-                        <div className="font-medium">Text</div>
-                        <div className="text-[10px] text-zinc-600 leading-tight">
+                        <div className="font-medium text-xs">Text</div>
+                        <div className="text-[10px] text-zinc-500 leading-tight">
                           Paste notes or articles
                         </div>
                       </div>
@@ -514,22 +519,22 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
                       onClick={selectPdf}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150 cursor-pointer ${
                         inputMode === "content" && pdfFile && !showTextPanel
-                          ? "bg-blue-500/15 text-blue-300"
-                          : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                          ? "text-orange-400"
+                          : "text-zinc-400 hover:bg-white/[0.02] hover:text-white"
                       }`}
                     >
                       <div
                         className={`w-7 h-7 rounded-lg flex items-center justify-center ${
                           inputMode === "content" && pdfFile && !showTextPanel
-                            ? "bg-blue-500/20 border border-blue-500/30"
-                            : "bg-white/5 border border-white/8"
+                            ? "bg-orange-500/10 border border-orange-500/20"
+                            : "bg-[#1e1e1e] border border-[#2a2a2a]"
                         }`}
                       >
                         <Upload className="w-3.5 h-3.5" />
                       </div>
                       <div className="text-left">
-                        <div className="font-medium">PDF</div>
-                        <div className="text-[10px] text-zinc-600 leading-tight">
+                        <div className="font-medium text-xs">PDF</div>
+                        <div className="text-[10px] text-zinc-500 leading-tight">
                           Upload a document
                         </div>
                       </div>
@@ -557,7 +562,7 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
                 placeholder={getPlaceholder()}
                 required
                 minLength={3}
-                className="flex-1 bg-[#0f1117] border-none text-sm text-white placeholder-zinc-500 focus:outline-none min-w-0 caret-pink-400 autofill:bg-[#0f1117] autofill:text-white [&:-webkit-autofill]:[-webkit-box-shadow:0_0_0_30px_#0f1117_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:white]"
+                className="flex-1 bg-transparent border-none text-sm text-white placeholder-zinc-500 focus:outline-none min-w-0 caret-orange-400 [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[box-shadow:0_0_0px_1000px_#161616_inset]"
               />
             ) : (
               <div className="flex-1 text-sm text-zinc-500 truncate min-w-0 select-none">
@@ -583,10 +588,14 @@ export default function QuizForm({ isLoggedIn }: QuizFormProps) {
               }}
               type="submit"
               disabled={isGenerating}
-              className="shrink-0 w-10 h-10 rounded-full btn-gradient flex items-center justify-center text-white transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed shadow-lg shadow-pink-500/25"
+              className="shrink-0 w-10 h-10 rounded-full btn-gradient flex items-center justify-center text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               title="Generate Quiz"
             >
-              <Sparkles className={`w-4 h-4 ${isGenerating ? "animate-spin" : ""}`} />
+              {isGenerating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <ArrowRight className="w-4 h-4" />
+              )}
             </button>
           </div>
 
