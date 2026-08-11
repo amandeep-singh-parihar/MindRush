@@ -29,6 +29,12 @@ With an aesthetic dark-themed glassmorphism user interface, real-time timers, co
 
 ---
 
+## 🏗️ Architecture
+
+![MindRush Architecture](./assets/arch.png)
+
+---
+
 ## 📸 Screen Showcase
 
 ### ⚡ 1. AI Quiz Generator
